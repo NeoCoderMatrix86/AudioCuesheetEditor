@@ -33,7 +33,7 @@ namespace AudioCuesheetEditor.Services.IO
         Textfile,
         Audiofile
     }
-    public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService, ITrackManager trackManager, ILogger<ImportManager> logger)
+    public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService, ITrackManager trackManager, IAudioImportService audioImportService, ILogger<ImportManager> logger)
     {
         public event EventHandler<IEnumerable<string>>? UploadFilesFinished;
 
@@ -43,6 +43,7 @@ namespace AudioCuesheetEditor.Services.IO
         private readonly IFileInputManager _fileInputManager = fileInputManager;
         private readonly ITextImportService _textImportService = textImportService;
         private readonly ITrackManager _trackManager = trackManager;
+        private readonly IAudioImportService _audioImportService = audioImportService;
 
         public void ImportData(String? data)
         {
@@ -95,6 +96,7 @@ namespace AudioCuesheetEditor.Services.IO
                         break;
                 }
             }
+            await _audioImportService.MapAudioImportAsync();
             stopwatch.Stop();
             if (_logger.IsEnabled(LogLevel.Debug))
             {
@@ -114,7 +116,6 @@ namespace AudioCuesheetEditor.Services.IO
                 _sessionStateContainer.Cuesheet = newCuesheet;
                 _traceChangeManager.AddChange(new TracedChange(_sessionStateContainer, new(previousValue, nameof(SessionStateContainer.Cuesheet))));
             }
-            //TODO: Import Audiofiles before resetting import
             await _sessionStateContainer.ResetImportAsync(false);
             stopwatch.Stop();
             if (_logger.IsEnabled(LogLevel.Debug))

@@ -55,7 +55,7 @@ namespace AudioCuesheetEditor.Services.IO
                 }
                 _cuesheetManager.SetProperty(x => x.Audiofiles, files);
             }
-            await _sessionStateContainer.ResetImportAsync(cancel);
+            //TODO: What if user cancels import?
         }
 
         Boolean MapImportfiles()
@@ -63,13 +63,13 @@ namespace AudioCuesheetEditor.Services.IO
             _sessionStateContainer.ImportAudiofileMapping.Clear();
             foreach (var audiofile in _sessionStateContainer.ActiveCuesheet!.Audiofiles)
             {
-                if (string.IsNullOrEmpty(audiofile.Name))
+                var importAudiofile = _sessionStateContainer.ImportAudiofiles.FirstOrDefault();
+                if (string.IsNullOrEmpty(audiofile.Name) || audiofile.Name == importAudiofile?.Name)
                 {
-                    var importAudiofile = _sessionStateContainer.ImportAudiofiles.FirstOrDefault();
-                    _sessionStateContainer.ImportAudiofileMapping.Add(audiofile, importAudiofile);
                     if (importAudiofile != null)
                     {
                         _sessionStateContainer.ImportAudiofiles.Remove(importAudiofile);
+                        _sessionStateContainer.ImportAudiofileMapping.Add(audiofile, importAudiofile);
                     }
                 }
                 else

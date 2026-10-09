@@ -98,6 +98,7 @@ along with Foobar.  If not, see
                         });
                     }
                 }
+                var switchToImportView = false;
                 await _dialogManager.ShowLoadingDialogAsync();
                 switch (_sessionStateContainer.Importfile?.FileType)
                 {
@@ -111,15 +112,20 @@ along with Foobar.  If not, see
                         await _sessionStateContainer.ResetImportAsync(false);
                         break;
                     case ImportFileType.Textfile:
+                        switchToImportView = true;
                         await LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.ImportView);
                         break;
+                }
+                //In import view we analyze the text by user and ask for mapping afterwards
+                if (switchToImportView == false)
+                {
+                    await _audioImportService.MapAudioImportAsync();
                 }
             }
             finally
             {
                 _dialogManager.HideLoadingDialog();
             }
-            await _audioImportService.MapAudioImportAsync();
         });
     }
 }
