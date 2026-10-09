@@ -46,9 +46,9 @@ namespace AudioCuesheetEditor.Services.IO
         }
 
         /// <inheritdoc/>
-        public async Task<String> GetObjectUrlAsync(string fileInputId)
+        public async Task<String> GetObjectUrlAsync(IBrowserFile browserFile)
         {
-            return await _jsRuntime.InvokeAsync<String>("getObjectURLFromMudFileUpload", fileInputId);
+            return await _jsRuntime.InvokeAsync<String>("getObjectURLFromMudFileUpload", browserFile.Name, browserFile.Size, browserFile.ContentType, browserFile.LastModified.ToUnixTimeMilliseconds());
         }
 
         public bool IsValidAudiofile(string fileName, string? fileContentType = null)
@@ -151,7 +151,7 @@ namespace AudioCuesheetEditor.Services.IO
                     string? objectUrl = null;
                     if (IsValidAudiofile(file.Name, file.ContentType))
                     {
-                        objectUrl = await _jsRuntime.InvokeAsync<String>("getObjectURLFromMudFileUpload", file.Name, file.Size, file.ContentType, file.LastModified.ToUnixTimeMilliseconds());
+                        objectUrl = await GetObjectUrlAsync(file);
                     }
                     else
                     {

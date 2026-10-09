@@ -42,11 +42,7 @@ along with Foobar.  If not, see
                 <MudStack Row AlignItems="AlignItems.Center">
                     <MudCheckBox T="Boolean" Value="@SelectedFiles.Contains(file)" ValueChanged="(selected) => SelectedChanged(file, selected)" />
                     <MudText Typo="Typo.h6" Style="width: 100%; line-break: anywhere;">@GetFileName(file)</MudText>
-                    @if (_fileInputIds.TryGetValue(file, out var fileInputId) == false)
-                    {
-                        _fileInputIds[file] = $"Audiofile_{Guid.NewGuid()}";
-                    }
-                    <MudFileUpload @key="file.ObjectURL" identifier="@_fileInputIds[file]" T="IBrowserFile" Accept="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" FilesChanged="(browserFile) => FileUploaded(browserFile, file)" Hidden>
+                    <MudFileUpload @key="file.ObjectURL" T="IBrowserFile" Accept="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" FilesChanged="(browserFile) => FileUploaded(browserFile, file)" Hidden>
                         <CustomContent>
                             <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Icon="@Icons.Material.Outlined.FileUpload" OnClick="context.OpenFilePickerAsync" aria-label="Upload file" />
                         </CustomContent>
@@ -64,6 +60,7 @@ along with Foobar.  If not, see
 </MudExpansionPanels>
 
 @code {
+    //TODO: MudFileUpload can not be found because of missing Class "file-upload-input"
     [Parameter]
     [EditorRequired]
     public Cuesheet? Cuesheet { get; set; }
@@ -80,8 +77,6 @@ along with Foobar.  If not, see
 
     [Parameter]
     public EventCallback<HashSet<Audiofile>> SelectedFilesChanged { get; set; }
-
-    Dictionary<Audiofile, string> _fileInputIds = new();
 
     async Task<String?> ShowInputDialog(string? initialValue)
     {
@@ -131,8 +126,7 @@ along with Foobar.  If not, see
     {
         if (browserFile != null)
         {
-            var fileInputId = _fileInputIds[audiofile];
-            await _audiofileManager.SetPropertiesAsync(audiofile, browserFile, fileInputId!);
+            await _audiofileManager.SetPropertiesAsync(audiofile, browserFile);
         }
     }
 
