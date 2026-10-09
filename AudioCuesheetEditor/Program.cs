@@ -55,7 +55,7 @@ builder.Services.AddScoped<LocalizationService>();
 builder.Services.AddScoped<ValidationService>();
 builder.Services.AddScoped<IFileInputManager, FileInputManager>();
 builder.Services.AddScoped<PlaybackService>();
-builder.Services.AddScoped<DialogManager>();
+builder.Services.AddScoped<IDialogManager, DialogManager>();
 builder.Services.AddScoped<ExportfileGenerator>();
 builder.Services.AddScoped<AutocompleteManager>();
 builder.Services.AddScoped<ITrackManager, TrackManager>();

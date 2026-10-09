@@ -21,16 +21,15 @@ using MudBlazor;
 namespace AudioCuesheetEditor.Services.IO
 {
     /// <inheritdoc/>
-    public class AudioImportService(DialogManager dialogManager, ISessionStateContainer sessionStateContainer, ICuesheetManager cuesheetManager) : IAudioImportService
+    public class AudioImportService(IDialogManager dialogManager, ISessionStateContainer sessionStateContainer, ICuesheetManager cuesheetManager) : IAudioImportService
     {
         private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
-        private readonly DialogManager _dialogManager = dialogManager;
+        private readonly IDialogManager _dialogManager = dialogManager;
         private readonly ICuesheetManager _cuesheetManager = cuesheetManager;
 
         /// <inheritdoc/>
         public async Task<Boolean> MapAudioImportAsync()
         {
-            //TODO: Tests?
             var mappingRequired = MapImportfiles();
             var cancel = false;
             if (mappingRequired)

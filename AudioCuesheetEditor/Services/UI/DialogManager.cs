@@ -22,7 +22,7 @@ using MudBlazor;
 
 namespace AudioCuesheetEditor.Services.UI
 {
-    public class DialogManager(IDialogService dialogService, ITraceChangeManager traceChangeManager, ITrackManager trackManager, ISessionStateContainer sessionStateContainer)
+    public class DialogManager(IDialogService dialogService, ITraceChangeManager traceChangeManager, ITrackManager trackManager, ISessionStateContainer sessionStateContainer) : IDialogManager
     {
         private readonly IDialogService _dialogService = dialogService;
         private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
@@ -194,7 +194,7 @@ namespace AudioCuesheetEditor.Services.UI
         public async Task ShowLoadingDialogAsync()
         {
             if (_loadingDialog == null)
-            { 
+            {
                 var options = new DialogOptions() { BackdropClick = false, FullWidth = true, MaxWidth = MaxWidth.ExtraSmall, NoHeader = true };
                 _loadingDialog = await _dialogService.ShowAsync<LoadingDialog>(options);
                 await Task.Delay(1);
