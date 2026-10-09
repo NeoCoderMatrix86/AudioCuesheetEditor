@@ -37,6 +37,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         public void SetProperty<TProperty>(Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value)
         {
             _traceChangeManager.BulkEdit = true;
+            //TODO: Adds changes to _traceChangeManager if running in import view also
             var cuesheet = _sessionStateContainer.ActiveCuesheet;
             SetValue(cuesheet!, propertyExpression, value);
             _traceChangeManager.BulkEdit = false;

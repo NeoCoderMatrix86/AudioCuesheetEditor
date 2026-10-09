@@ -61,7 +61,7 @@ namespace AudioCuesheetEditor.Services.IO
             }
         }
         
-        public async Task AnalyseImportfile()
+        public async Task<Boolean> AnalyseImportfile()
         {
             ResetTracing();
             var stopwatch = Stopwatch.StartNew();
@@ -96,12 +96,13 @@ namespace AudioCuesheetEditor.Services.IO
                         break;
                 }
             }
-            await _audioImportService.MapAudioImportAsync();
+            var cancelImport = await _audioImportService.MapAudioImportAsync();
             stopwatch.Stop();
             if (_logger.IsEnabled(LogLevel.Debug))
             {
                 _logger.LogDebug("AnalyseImportfile duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
             }
+            return cancelImport;
         }
         
         public async Task ImportCuesheetAsync()

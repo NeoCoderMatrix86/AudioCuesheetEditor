@@ -28,7 +28,7 @@ namespace AudioCuesheetEditor.Services.IO
         private readonly ICuesheetManager _cuesheetManager = cuesheetManager;
 
         /// <inheritdoc/>
-        public async Task MapAudioImportAsync()
+        public async Task<Boolean> MapAudioImportAsync()
         {
             //TODO: Tests?
             var mappingRequired = MapImportfiles();
@@ -55,7 +55,11 @@ namespace AudioCuesheetEditor.Services.IO
                 }
                 _cuesheetManager.SetProperty(x => x.Audiofiles, files);
             }
-            //TODO: What if user cancels import?
+            else
+            {
+                await _sessionStateContainer.ResetAudioImportAsync(cancel);
+            }
+            return cancel == false;
         }
 
         Boolean MapImportfiles()

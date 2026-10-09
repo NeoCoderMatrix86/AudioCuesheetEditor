@@ -86,19 +86,17 @@ else
         await _dialogManager.ShowLoadingDialogAsync();
         try
         {
-            await AnalyseImportfile();
+            IsAnalyzed = await AnalyseImportfile();
         }
         finally
         {
             _dialogManager.HideLoadingDialog();
         }
-        // Switch to analyzed data
-        IsAnalyzed = true;
     }
 
-    async Task AnalyseImportfile()
+    async Task<Boolean> AnalyseImportfile()
     {
-        await _importManager.AnalyseImportfile();
+        return await _importManager.AnalyseImportfile();
     }
 
     async Task ImportData()

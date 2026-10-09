@@ -30,6 +30,7 @@ namespace AudioCuesheetEditor.Services.UI
         public IImportfile? Importfile { get; set; }
         public Boolean ImportIsAnalyzed { get; set; }
         public Task ResetImportAsync(Boolean revokeObjectURLs);
+        public Task ResetAudioImportAsync(Boolean revokeObjectURLs);
         /// <summary>
         /// Initialize this class
         /// </summary>

@@ -24,6 +24,6 @@ namespace AudioCuesheetEditor.Services.IO
         /// Maps the import audio from session state to the active cuesheet. If mapping is not possible automatically the user gets a dialog.
         /// </summary>
         /// <returns></returns>
-        Task MapAudioImportAsync();
+        Task<Boolean> MapAudioImportAsync();
     }
 }

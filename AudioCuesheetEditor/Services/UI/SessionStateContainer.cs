@@ -83,6 +83,13 @@ namespace AudioCuesheetEditor.Services.UI
         public async Task ResetImportAsync(Boolean revokeObjectURLs)
         {
             Importfile = null;
+            await ResetAudioImportAsync(revokeObjectURLs);
+            ImportCuesheet = null;
+            ImportIsAnalyzed = false;
+        }
+
+        public async Task ResetAudioImportAsync(bool revokeObjectURLs)
+        {
             if (revokeObjectURLs)
             {
                 foreach (var audiofile in ImportAudiofiles)
@@ -100,11 +107,8 @@ namespace AudioCuesheetEditor.Services.UI
                     }
                 }
             }
-            
             ImportAudiofileMapping = [];
             ImportAudiofiles = [];
-            ImportCuesheet = null;
-            ImportIsAnalyzed = false;
         }
 
         /// <inheritdoc/>
@@ -154,5 +158,6 @@ namespace AudioCuesheetEditor.Services.UI
                 }
             }
         }
+
     }
 }

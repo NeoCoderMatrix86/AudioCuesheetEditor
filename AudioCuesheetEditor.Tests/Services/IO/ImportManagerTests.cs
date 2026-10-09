@@ -43,6 +43,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
         private readonly Mock<IFileInputManager> _fileInputManagerMock;
         private readonly Mock<ITextImportService> _textImportServiceMock;
         private readonly Mock<ITrackManager> _trackManagerMock;
+        private readonly Mock<IAudioImportService> _audioImportService;
         public ImportManagerTests()
         {
             _traceChangeManagerMock = new();
@@ -105,8 +106,9 @@ namespace AudioCuesheetEditor.Tests.Services.IO
                 _trackManagerMock.Object.CopyValues(track, clone, setLength: setLength);
                 return clone;
             });
+            _audioImportService = new();
             var loggerMock = new Mock<ILogger<ImportManager>>();
-            _service = new ImportManager(_sessionStateContainerMock.Object, _traceChangeManagerMock.Object, _fileInputManagerMock.Object, _textImportServiceMock.Object, _trackManagerMock.Object, loggerMock.Object);
+            _service = new ImportManager(_sessionStateContainerMock.Object, _traceChangeManagerMock.Object, _fileInputManagerMock.Object, _textImportServiceMock.Object, _trackManagerMock.Object, _audioImportService.Object, loggerMock.Object);
         }
 
         void TrackManager_SetValue<TProperty>(Track track, Expression<Func<Track, TProperty>> propertyExpression, TProperty value, Boolean signalTraceChangeManager = true)
@@ -385,7 +387,7 @@ TRACK 08 AUDIO
         }
 
         [TestMethod]
-        public void ImportCuesheet_WithImportCuesheetAvailable_ImportsCuesheetData()
+        public async Task ImportCuesheetAsync_WithImportCuesheetAvailable_ImportsCuesheetDataAsync()
         {
             // Arrange
             var track1 = new Track()
@@ -425,7 +427,7 @@ TRACK 08 AUDIO
             IList<Audiofile>? sessionStateContainerImportAudiofiles = [];
             _sessionStateContainerMock.SetupGet(x => x.ImportAudiofiles).Returns(() => sessionStateContainerImportAudiofiles);
             // Act
-            _service.ImportCuesheetAsync();
+            await _service.ImportCuesheetAsync();
             // Assert
             Assert.IsNotNull(sessionStateContainerCuesheet);
             Assert.AreEqual(sessionStateContainerImportCuesheet.Artist, sessionStateContainerCuesheet.Artist);
