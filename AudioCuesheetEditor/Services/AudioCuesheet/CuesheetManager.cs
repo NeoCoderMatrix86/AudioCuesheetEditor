@@ -36,11 +36,17 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// <inheritdoc/>
         public void SetProperty<TProperty>(Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value)
         {
-            _traceChangeManager.BulkEdit = true;
-            //TODO: Adds changes to _traceChangeManager if running in import view also
+            var workingOnCuesheet = _sessionStateContainer.ActiveCuesheet == _sessionStateContainer.Cuesheet;
+            if (workingOnCuesheet)
+            {
+                _traceChangeManager.BulkEdit = true;
+            }
             var cuesheet = _sessionStateContainer.ActiveCuesheet;
-            SetValue(cuesheet!, propertyExpression, value);
-            _traceChangeManager.BulkEdit = false;
+            SetValue(cuesheet!, propertyExpression, value, workingOnCuesheet);
+            if (workingOnCuesheet)
+            {
+                _traceChangeManager.BulkEdit = false;
+            }
         }
 
         /// <inheritdoc/>
@@ -283,7 +289,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             return Result.Success();
         }
 
-        void SetValue<TProperty>(Cuesheet cuesheet, Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value)
+        void SetValue<TProperty>(Cuesheet cuesheet, Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value, Boolean traceChanges = true)
         {
             if (propertyExpression.Body is not MemberExpression memberExpression)
             {
@@ -302,8 +308,10 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
             }
 
             propertyInfo.SetValue(cuesheet, value);
-
-            _traceChangeManager.AddChange(new(cuesheet, new(previousValue, propertyInfo.Name)));
+            if (traceChanges)
+            { 
+                _traceChangeManager.AddChange(new(cuesheet, new(previousValue, propertyInfo.Name)));
+            }
             _ = RevokeObjectUrlOfRemovedAudiofilesAsync(cuesheet, propertyInfo, previousValue);
         }
 
