@@ -46,9 +46,9 @@ namespace AudioCuesheetEditor.Services.IO
         }
 
         /// <inheritdoc/>
-        public async Task<String> GetObjectUrlAsync(string fileInputId)
+        public async Task<String> GetObjectUrlAsync(IBrowserFile browserFile)
         {
-            return await _jsRuntime.InvokeAsync<String>("getObjectURLFromMudFileUpload", fileInputId);
+            return await _jsRuntime.InvokeAsync<String>("getObjectURLFromMudFileUpload", browserFile.Name, browserFile.Size, browserFile.ContentType, browserFile.LastModified.ToUnixTimeMilliseconds());
         }
 
         public bool IsValidAudiofile(string fileName, string? fileContentType = null)
@@ -89,25 +89,22 @@ namespace AudioCuesheetEditor.Services.IO
 
         public async Task<Audiofile?> CreateAudiofileAsync(FileUpload fileUpload)
         {
-            Audiofile? audiofile = null;
-            if (fileUpload.ObjectUrl != null)
+            // Check file mime type
+            var codec = GetAudioCodec(fileUpload.Name, fileUpload.ContentType);
+            Audiofile? audiofile;
+            if (codec != null)
             {
-                // Check file mime type
-                var codec = GetAudioCodec(fileUpload.Name, fileUpload.ContentType);
-                if (codec != null)
+                TimeSpan? duration = null;
+                if (String.IsNullOrEmpty(fileUpload.ObjectUrl) == false)
                 {
-                    TimeSpan? duration = null;
-                    if (String.IsNullOrEmpty(fileUpload.ObjectUrl) == false)
-                    {
-                        var durationSeconds = await _jsRuntime.InvokeAsync<double>("getAudioDurationFromFile", fileUpload.ObjectUrl);
-                        duration = TimeSpan.FromSeconds(durationSeconds);
-                    }
-                    audiofile = new Audiofile(fileUpload.Name, fileUpload.ObjectUrl, codec, duration);
+                    var durationSeconds = await _jsRuntime.InvokeAsync<double>("getAudioDurationFromFile", fileUpload.ObjectUrl);
+                    duration = TimeSpan.FromSeconds(durationSeconds);
                 }
-                else
-                {
-                    throw new ArgumentException("The audiofile provided is not of a valid type.");
-                }
+                audiofile = new Audiofile(fileUpload.Name, fileUpload.ObjectUrl, codec, duration);
+            }
+            else
+            {
+                throw new ArgumentException("The audiofile provided is not of a valid type.");
             }
             return audiofile;
         }
@@ -140,7 +137,7 @@ namespace AudioCuesheetEditor.Services.IO
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<FileUpload>> CreateFileUploadsAsync(IReadOnlyList<IBrowserFile> browserFiles, string? fileInputId = null)
+        public async Task<IEnumerable<FileUpload>> CreateFileUploadsAsync(IReadOnlyList<IBrowserFile> browserFiles)
         {
             List<FileUpload> fileUploads = [];
             foreach (var file in browserFiles)
@@ -154,7 +151,7 @@ namespace AudioCuesheetEditor.Services.IO
                     string? objectUrl = null;
                     if (IsValidAudiofile(file.Name, file.ContentType))
                     {
-                        objectUrl = await _jsRuntime.InvokeAsync<String>("getObjectURLFromMudFileUpload", fileInputId);
+                        objectUrl = await GetObjectUrlAsync(file);
                     }
                     else
                     {

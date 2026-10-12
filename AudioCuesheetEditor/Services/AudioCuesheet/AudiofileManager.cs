@@ -36,7 +36,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         public event EventHandler<Audiofile>? AudiofileChanged;
 
         /// <inheritdoc/>
-        public async Task SetPropertiesAsync(Audiofile audiofile, IBrowserFile browserFile, string fileInputId)
+        public async Task SetPropertiesAsync(Audiofile audiofile, IBrowserFile browserFile)
         {
             _traceChangeManager.BulkEdit = true;
             if (String.IsNullOrEmpty(audiofile.ObjectURL) == false)
@@ -44,7 +44,7 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
                 await ClearPropertiesAsync(audiofile, false);
             }
             var codec = _fileInputManager.GetAudioCodec(browserFile.Name, browserFile.ContentType);
-            var objectUrl = await _fileInputManager.GetObjectUrlAsync(fileInputId);
+            var objectUrl = await _fileInputManager.GetObjectUrlAsync(browserFile);
             TimeSpan? duration = null;
             if (String.IsNullOrEmpty(objectUrl) == false)
             {

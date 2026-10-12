@@ -55,12 +55,13 @@ builder.Services.AddScoped<LocalizationService>();
 builder.Services.AddScoped<ValidationService>();
 builder.Services.AddScoped<IFileInputManager, FileInputManager>();
 builder.Services.AddScoped<PlaybackService>();
-builder.Services.AddScoped<DialogManager>();
+builder.Services.AddScoped<IDialogManager, DialogManager>();
 builder.Services.AddScoped<ExportfileGenerator>();
 builder.Services.AddScoped<AutocompleteManager>();
 builder.Services.AddScoped<ITrackManager, TrackManager>();
 builder.Services.AddScoped<ICuesheetManager, CuesheetManager>();
 builder.Services.AddScoped<IAudiofileManager, AudiofileManager>();
+builder.Services.AddScoped<IAudioImportService, AudioImportService>();
 
 builder.Services.AddLogging();
 // Read out configuration for loglevel

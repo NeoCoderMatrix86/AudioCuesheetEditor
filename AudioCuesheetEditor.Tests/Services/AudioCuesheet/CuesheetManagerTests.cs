@@ -64,6 +64,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         {
             // Arrange
             var cuesheet = new Cuesheet();
+            _sessionStateContainer.SetupGet(x => x.Cuesheet).Returns(cuesheet);
             _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             // Act
             _cuesheetManager.SetProperty(x => x.Artist, "Artist");
@@ -114,6 +115,21 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             _cuesheetManager.SetProperty(x => x.Audiofiles, files);
             // Assert
             _jsRuntime.Verify(x => x.InvokeAsync<Microsoft.JSInterop.Infrastructure.IJSVoidResult>("revokeAudioObjectURL", It.Is<object[]>(args => args.Length == 1 && args[0].Equals(audiofile2.ObjectURL))), Times.Once());
+        }
+
+        [TestMethod]
+        public void SetProperty_OnImportCuesheet_DoesNotTraceChanges()
+        {
+            // Arrange
+            var importCuesheet = new Cuesheet();
+            var cuesheet = new Cuesheet();
+            _sessionStateContainer.SetupGet(x => x.ImportCuesheet).Returns(importCuesheet);
+            _sessionStateContainer.SetupGet(x => x.Cuesheet).Returns(cuesheet);
+            _sessionStateContainer.SetupGet(x => x.ActiveCuesheet).Returns(importCuesheet);
+            // Act
+            _cuesheetManager.SetProperty(x => x.Artist, nameof(SetProperty_OnImportCuesheet_DoesNotTraceChanges));
+            // Assert
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == importCuesheet)), Times.Never);
         }
 
         [TestMethod]

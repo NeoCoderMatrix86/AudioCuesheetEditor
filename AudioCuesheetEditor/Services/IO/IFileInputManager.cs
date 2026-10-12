@@ -26,11 +26,11 @@ namespace AudioCuesheetEditor.Services.IO
         bool IsValidAudiofile(string fileName, string? fileContentType = null);
         AudioCodec? GetAudioCodec(string fileName, string? fileContentType = null);
         /// <summary>
-        /// Get object url from a mud file upload
+        /// Get object url for an IBrowserFile.
         /// </summary>
-        /// <param name="fileInputId"></param>
+        /// <param name="browserFile"></param>
         /// <returns></returns>
-        Task<String> GetObjectUrlAsync(string fileInputId);
+        Task<String> GetObjectUrlAsync(IBrowserFile browserFile);
         /// <summary>
         /// Checks if a file content type and name matches given parameters
         /// </summary>
@@ -58,8 +58,7 @@ namespace AudioCuesheetEditor.Services.IO
         /// Generates file upload references for files
         /// </summary>
         /// <param name="browserFiles"></param>
-        /// <param name="fileInputId"></param>
         /// <returns></returns>
-        Task<IEnumerable<FileUpload>> CreateFileUploadsAsync(IReadOnlyList<IBrowserFile> browserFiles, string? fileInputId = null);
+        Task<IEnumerable<FileUpload>> CreateFileUploadsAsync(IReadOnlyList<IBrowserFile> browserFiles);
     }
 }

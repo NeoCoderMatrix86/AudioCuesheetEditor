@@ -19,7 +19,7 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<ViewModeImport> _localizer
 @inject ImportManager _importManager
-@inject DialogManager _dialogManager
+@inject IDialogManager _dialogManager
 @inject ISessionStateContainer _sessionStateContainer
 
 @if (IsAnalyzed == false)
@@ -86,24 +86,22 @@ else
         await _dialogManager.ShowLoadingDialogAsync();
         try
         {
-            await AnalyseImportfile();
+            IsAnalyzed = await AnalyseImportfile();
         }
         finally
         {
             _dialogManager.HideLoadingDialog();
         }
-        // Switch to analyzed data
-        IsAnalyzed = true;
     }
 
-    async Task AnalyseImportfile()
+    async Task<Boolean> AnalyseImportfile()
     {
-        await _importManager.AnalyseImportfile();
+        return await _importManager.AnalyseImportfile();
     }
 
-    void ImportData()
+    async Task ImportData()
     {
-        _importManager.ImportCuesheet();
+        await _importManager.ImportCuesheetAsync();
         ResetAsync();
         // Don't await since otherwise the rendering will stop and this view will not be reset
         _ = LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.DetailView);

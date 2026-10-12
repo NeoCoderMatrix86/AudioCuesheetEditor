@@ -23,9 +23,10 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<Index> _localizer
 @inject ImportManager _importManager
 @inject ISessionStateContainer _sessionStateContainer
-@inject DialogManager _dialogManager
+@inject IDialogManager _dialogManager
 @inject ISnackbar _snackbar
 @inject ICuesheetManager _cuesheetManager
+@inject IAudioImportService _audioImportService
 
 <CascadingValue Value="_currentViewmode">
     <MudTabs Rounded ApplyEffectsToContainer Outlined Color="Color.Success" ActivePanelIndex="(int)_currentViewmode" ActivePanelIndexChanged="this.AsNonRenderingEventHandler<int>(ActiveTabIndexChanged)">
@@ -97,21 +98,28 @@ along with Foobar.  If not, see
                         });
                     }
                 }
+                var switchToImportView = false;
                 await _dialogManager.ShowLoadingDialogAsync();
                 switch (_sessionStateContainer.Importfile?.FileType)
                 {
                     case ImportFileType.ProjectFile:
                         await _importManager.AnalyseImportfile();
-                        _sessionStateContainer.ResetImport();
+                        await _sessionStateContainer.ResetImportAsync(false);
                         break;
                     case ImportFileType.Cuesheet:
                         await _importManager.AnalyseImportfile();
-                        _importManager.ImportCuesheet();
-                        _sessionStateContainer.ResetImport();
+                        await _importManager.ImportCuesheetAsync();
+                        await _sessionStateContainer.ResetImportAsync(false);
                         break;
                     case ImportFileType.Textfile:
+                        switchToImportView = true;
                         await LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.ImportView);
                         break;
+                }
+                //In import view we analyze the text by user and ask for mapping afterwards
+                if (switchToImportView == false)
+                {
+                    await _audioImportService.MapAudioImportAsync();
                 }
             }
             finally
