@@ -1,7 +1,7 @@
 ﻿window.addEventListener('beforeunload', beforeunload);
 
 window.getObjectURLFromMudFileUpload = function (fileName, fileSize, fileContentType, fileLastModified) {
-    const inputElement = document.querySelector(`input.file-upload-input`);
+    const inputElement = document.querySelector(`input.file-upload`);
 
     const files = inputElement.files;
     for (let i = 0; i < files.length; i++) {

@@ -26,7 +26,7 @@ along with Foobar.  If not, see
 @inject IFileInputManager _fileInputManager
 
 <MudOverlay Visible="@_showOverlay" DarkBackground Class="pa-0" ZIndex="9999">
-    <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="InputFilesChanged" AppendMultipleFiles DragAndDrop Hidden="false" InputClass="file-upload-input" tabindex="-1">
+    <MudFileUpload T="IReadOnlyList<IBrowserFile>" FilesChanged="InputFilesChanged" AppendMultipleFiles DragAndDrop Hidden="false" InputClass="file-upload file-upload-input" tabindex="-1">
         <CustomContent>
             <MudPaper Class="d-flex align-center justify-center position-relative" Width="100vw" Height="100vh" Style="margin:0;opacity:0.65;">
                 <MudStack AlignItems="AlignItems.Center">
