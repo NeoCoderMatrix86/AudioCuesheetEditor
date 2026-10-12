@@ -30,6 +30,11 @@ namespace AudioCuesheetEditor.Services.IO
         /// <inheritdoc/>
         public async Task<Boolean> MapAudioImportAsync()
         {
+            // Just run an import if there are audiofiles to import, otherwise this service has nothing to do
+            if (_sessionStateContainer.ImportAudiofiles.Count == 0)
+            {
+                return true;
+            }
             var mappingRequired = MapImportfiles();
             var cancel = false;
             if (mappingRequired)
