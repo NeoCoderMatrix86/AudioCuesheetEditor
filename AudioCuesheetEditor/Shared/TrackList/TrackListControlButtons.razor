@@ -60,18 +60,30 @@ along with Foobar.  If not, see
     <MudHidden Breakpoint="Breakpoint.Xs" Invert>
         <MudMenu Color="Color.Tertiary" Variant="Variant.Filled" Icon="@Icons.Material.Filled.ArrowDropDown" Disabled="MoveTracksUpDisabled && MoveTracksDownDisabled">
             <MudMenuItem OnClick="MoveTracksUpClicked" Icon="@Icons.Material.Outlined.MoveUp" Disabled="MoveTracksUpDisabled" aria-label="@_localizer["Move selected tracks up"]">@_localizer["Move selected tracks up"]</MudMenuItem>
+            <MudMenuItem OnClick="MoveTracksUpSeveralClicked" Disabled="MoveTracksUpDisabled" aria-label="@_localizer["Move selected tracks up serveral positions"]">@_localizer["Move selected tracks up serveral positions"]</MudMenuItem>
             <MudMenuItem OnClick="MoveTracksDownClicked" Icon="@Icons.Material.Outlined.MoveDown" Disabled="MoveTracksDownDisabled" aria-label="@_localizer["Move selected tracks down"]">@_localizer["Move selected tracks down"]</MudMenuItem>
+            <MudMenuItem OnClick="MoveTracksDownSeveralClicked" Disabled="MoveTracksDownDisabled" aria-label="@_localizer["Move selected tracks down serveral positions"]">@_localizer["Move selected tracks down serveral positions"]</MudMenuItem>
         </MudMenu>
     </MudHidden>
 </MudButtonGroup>
 
 <MudHidden Breakpoint="Breakpoint.Xs">
-    <MudButtonGroup OverrideStyles="false">
+    <MudButtonGroup Color="Color.Tertiary" Variant="Variant.Filled">
         <MudTooltip Text="@_localizer["Move selected tracks up"]">
-            <MudIconButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="MoveTracksUpClicked" Icon="@Icons.Material.Outlined.MoveUp" Disabled="MoveTracksUpDisabled" aria-label="@_localizer["Move selected tracks up"]" />
+            <MudIconButton OnClick="MoveTracksUpClicked" Icon="@Icons.Material.Outlined.MoveUp" Disabled="MoveTracksUpDisabled" aria-label="@_localizer["Move selected tracks up"]" />
+        </MudTooltip>
+        <MudTooltip Text="@_localizer["Move selected tracks up"]">
+            <MudMenu Icon="@Icons.Material.Filled.ArrowDropDown" Style="align-self: auto;" Disabled="MoveTracksUpDisabled">
+                <MudMenuItem OnClick="MoveTracksUpSeveralClicked" aria-label="@_localizer["Move selected tracks up serveral positions"]">@_localizer["Move selected tracks up serveral positions"]</MudMenuItem>
+            </MudMenu>
         </MudTooltip>
         <MudTooltip Text="@_localizer["Move selected tracks down"]">
-            <MudIconButton Color="Color.Tertiary" Variant="Variant.Filled" OnClick="MoveTracksDownClicked" Icon="@Icons.Material.Outlined.MoveDown" Disabled="MoveTracksDownDisabled" aria-label="@_localizer["Move selected tracks down"]" />
+            <MudIconButton OnClick="MoveTracksDownClicked" Icon="@Icons.Material.Outlined.MoveDown" Disabled="MoveTracksDownDisabled" aria-label="@_localizer["Move selected tracks down"]" />
+        </MudTooltip>
+        <MudTooltip Text="@_localizer["Move selected tracks down"]">
+            <MudMenu Icon="@Icons.Material.Filled.ArrowDropDown" Style="align-self: auto;" Disabled="MoveTracksDownDisabled">
+                <MudMenuItem OnClick="MoveTracksDownSeveralClicked" aria-label="@_localizer["Move selected tracks down serveral positions"]">@_localizer["Move selected tracks down serveral positions"]</MudMenuItem>
+            </MudMenu>
         </MudTooltip>
     </MudButtonGroup>
 </MudHidden>
@@ -116,10 +128,16 @@ along with Foobar.  If not, see
     public EventCallback MoveTracksUpClicked { get; set; }
 
     [Parameter]
+    public EventCallback MoveTracksUpSeveralClicked { get; set; }
+
+    [Parameter]
     public Boolean MoveTracksUpDisabled { get; set; }
 
     [Parameter]
     public EventCallback MoveTracksDownClicked { get; set; }
+
+    [Parameter]
+    public EventCallback MoveTracksDownSeveralClicked { get; set; }
 
     [Parameter]
     public Boolean MoveTracksDownDisabled { get; set; }

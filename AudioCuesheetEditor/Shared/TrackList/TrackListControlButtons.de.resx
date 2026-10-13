@@ -144,7 +144,13 @@
   <data name="Move selected tracks down" xml:space="preserve">
     <value>Ausgewählte Titel nach unten bewegen</value>
   </data>
+  <data name="Move selected tracks down serveral positions" xml:space="preserve">
+    <value>Ausgewählte Titel mehrere Positionen nach unten bewegen</value>
+  </data>
   <data name="Move selected tracks up" xml:space="preserve">
     <value>Ausgewählte Titel nach oben bewegen</value>
+  </data>
+  <data name="Move selected tracks up serveral positions" xml:space="preserve">
+    <value>Ausgewählte Titel mehrere Positionen nach oben bewegen</value>
   </data>
 </root>

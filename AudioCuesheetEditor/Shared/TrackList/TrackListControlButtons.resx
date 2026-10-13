@@ -144,7 +144,13 @@
   <data name="Move selected tracks down" xml:space="preserve">
     <value>Move selected tracks down</value>
   </data>
+  <data name="Move selected tracks down serveral positions" xml:space="preserve">
+    <value>Move selected tracks down serveral positions</value>
+  </data>
   <data name="Move selected tracks up" xml:space="preserve">
     <value>Move selected tracks up</value>
+  </data>
+  <data name="Move selected tracks up serveral positions" xml:space="preserve">
+    <value>Move selected tracks up serveral positions</value>
   </data>
 </root>
