@@ -39,7 +39,7 @@ along with Foobar.  If not, see
                                      DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="_selectedTracks.Count == 0"
                                      DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Audiofile?.Tracks.Any() == false"
                                      MoveTracksUpDisabled="!_cuesheetManager.IsMoveUpPossible(_selectedTracks)" MoveTracksUpClicked="() => _cuesheetManager.MoveUp(_selectedTracks)"
-                                     MoveTracksDownDisabled="!_cuesheetManager.IsMoveDownPossible(_selectedTracks)" MoveTracksDownClicked="(MoveTracksDownClicked) => _cuesheetManager.MoveDown(_selectedTracks)"
+                                     MoveTracksDownDisabled="!_cuesheetManager.IsMoveDownPossible(_selectedTracks)" MoveTracksDownClicked="() => _cuesheetManager.MoveDown(_selectedTracks)"
                                      CopySelectedTracksDisabled="_selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
                                      FixedHeader="_fixedTableHeader" FixedHeaderClicked="() => _fixedTableHeader = !_fixedTableHeader" />
         </div>
