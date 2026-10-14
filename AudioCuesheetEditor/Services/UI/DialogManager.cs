@@ -229,13 +229,15 @@ namespace AudioCuesheetEditor.Services.UI
         }
 
         /// <inheritdoc/>
-        public async Task<Result<T>> ShowInputDialogAsync<T>(string? title, string? placeholder, string? label, T initialValue)
+        public async Task<Result<T>> ShowInputDialogAsync<T>(string? title, string? placeholder, string? label, T initialValue, string? OkText = "Ok", string? OkButtonStartIcon = null)
         {
             var parameters = new DialogParameters<InputDialog<T>>
             {
                 { x => x.Placeholder, placeholder },
                 { x => x.Label, label },
-                { x => x.InitialValue, initialValue }
+                { x => x.InitialValue, initialValue },
+                { x => x.OkText, OkText },
+                { x => x.OkButtonStartIcon, OkButtonStartIcon }
             };
             var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true, CloseButton = true };
             var dialog = await _dialogService.ShowAsync<InputDialog<T>>(title, parameters, options);

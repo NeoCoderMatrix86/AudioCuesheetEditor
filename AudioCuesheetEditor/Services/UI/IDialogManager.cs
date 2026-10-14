@@ -32,7 +32,9 @@ namespace AudioCuesheetEditor.Services.UI
         /// <param name="placeholder"></param>
         /// <param name="label"></param>
         /// <param name="initialValue"></param>
+        /// <param name="OkText"></param>
+        /// <param name="OkButtonStartIcon"></param>
         /// <returns></returns>
-        Task<Result<T>> ShowInputDialogAsync<T>(string? title, string? placeholder, string? label, T initialValue);
+        Task<Result<T>> ShowInputDialogAsync<T>(string? title, string? placeholder, string? label, T initialValue, string? OkText = "Ok", string? OkButtonStartIcon = null);
     }
 }

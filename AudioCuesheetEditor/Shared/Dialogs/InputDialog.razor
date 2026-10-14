@@ -33,14 +33,11 @@ along with Foobar.  If not, see
         }
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="CloseDialogOk">@_localizer["Ok"]</MudButton>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="CloseDialogOk" StartIcon="@OkButtonStartIcon">@OkText</MudButton>
     </DialogActions>
 </MudDialog>
 
 @code {
-    //TODO: Icon for ok button
-    //TODO: Text for ok button
-
     HotKeysContext? _hotKeysContext;
     T? _value;
 
@@ -52,6 +49,12 @@ along with Foobar.  If not, see
 
     [Parameter]
     public string? Placeholder { get; set; }
+
+    [Parameter]
+    public string? OkText { get; set; }
+
+    [Parameter]
+    public string? OkButtonStartIcon { get; set; }
 
     [CascadingParameter]
     private IMudDialogInstance? MudDialog { get; set; }
@@ -69,6 +72,10 @@ along with Foobar.  If not, see
     {
         base.OnParametersSet();
         _value = InitialValue;
+        if (String.IsNullOrEmpty(OkText))
+        {
+            OkText = _localizer["Ok"];
+        }
     }
 
     protected override void Dispose(bool disposing)
