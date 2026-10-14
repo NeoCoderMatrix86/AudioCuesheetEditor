@@ -24,5 +24,15 @@ namespace AudioCuesheetEditor.Services.UI
         Task ShowAndHandleModalEditDialogAsync(IEnumerable<Track> tracks);
         Task<bool> ShowImportAudiofilesDialogAsync();
         Task ShowLoadingDialogAsync();
+        /// <summary>
+        /// Show input dialog and wait for user input.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="title"></param>
+        /// <param name="placeholder"></param>
+        /// <param name="label"></param>
+        /// <param name="initialValue"></param>
+        /// <returns></returns>
+        Task<Result<T>> ShowInputDialogAsync<T>(string? title, string? placeholder, string? label, T initialValue);
     }
 }

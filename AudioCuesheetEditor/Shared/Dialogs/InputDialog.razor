@@ -15,14 +15,22 @@ You should have received a copy of the GNU General Public License
 along with Foobar.  If not, see
 <http: //www.gnu.org/licenses />.
 -->
+@typeparam T
 @inherits BaseLocalizedComponent
 
-@inject IStringLocalizer<InputTextDialog> _localizer
+@inject IStringLocalizer<InputDialog<T>> _localizer
 @inject HotKeys _hotKeys
 
 <MudDialog>
     <DialogContent>
-        <MudTextField @bind-Value="_inputValue" Label="@Label" Placeholder="@Placeholder" Variant="Variant.Outlined" Immediate OnKeyDown="TextFieldKeyDown" />
+        @if (IsNumericType)
+        {
+            <MudNumericField T="T" @bind-Value="_value" Label="@Label" Placeholder="@Placeholder" Variant="Variant.Outlined" Immediate OnKeyDown="OnKeyDown" />
+        }
+        else
+        {
+            <MudTextField T="T" @bind-Value="_value" Label="@Label" Placeholder="@Placeholder" Variant="Variant.Outlined" Immediate OnKeyDown="OnKeyDown" />
+        }
     </DialogContent>
     <DialogActions>
         <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="CloseDialogOk">@_localizer["Ok"]</MudButton>
@@ -30,11 +38,14 @@ along with Foobar.  If not, see
 </MudDialog>
 
 @code {
-    HotKeysContext? _hotKeysContext;
-    string? _inputValue;
+    //TODO: Icon for ok button
+    //TODO: Text for ok button
 
-    [CascadingParameter]
-    private IMudDialogInstance? MudDialog { get; set; }
+    HotKeysContext? _hotKeysContext;
+    T? _value;
+
+    [Parameter]
+    public T? InitialValue { get; set; }
 
     [Parameter]
     public string? Label { get; set; }
@@ -42,13 +53,22 @@ along with Foobar.  If not, see
     [Parameter]
     public string? Placeholder { get; set; }
 
-    [Parameter]
-    public string? InitialValue { get; set; }
+    [CascadingParameter]
+    private IMudDialogInstance? MudDialog { get; set; }
+
+    bool IsNumericType => typeof(T) == typeof(short) || typeof(T) == typeof(ushort) || typeof(T) == typeof(int) || typeof(T) == typeof(uint) || typeof(T) == typeof(long) 
+                       || typeof(T) == typeof(ulong) || typeof(T) == typeof(float) || typeof(T) == typeof(double) || typeof(T) == typeof(decimal);
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
         _hotKeysContext = _hotKeys.CreateContext().Add(ModKey.None, Key.Enter, CloseDialogOk);
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        _value = InitialValue;
     }
 
     protected override void Dispose(bool disposing)
@@ -57,13 +77,7 @@ along with Foobar.  If not, see
         _hotKeysContext?.DisposeAsync();
     }
 
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-        _inputValue = InitialValue;
-    }
-
-    void TextFieldKeyDown(KeyboardEventArgs args)
+    void OnKeyDown(KeyboardEventArgs args)
     {
         if (args.Key == "Enter")
         {
@@ -74,6 +88,6 @@ along with Foobar.  If not, see
 
     void CloseDialogOk(object? state = null)
     {
-        MudDialog?.Close(_inputValue);
+        MudDialog?.Close(_value);
     }
 }

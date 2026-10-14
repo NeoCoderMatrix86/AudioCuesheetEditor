@@ -20,7 +20,7 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<CuesheetData> _localizer
 @inject ValidationService _validationService
 @inject IFileInputManager _fileInputManager
-@inject IDialogService _dialogService
+@inject IDialogManager _dialogManager
 @inject ISessionStateContainer _sessionStateContainer
 @inject ICuesheetManager _cuesheetManager
 
@@ -93,36 +93,17 @@ along with Foobar.  If not, see
 
     async Task CDTextFileRename()
     {
-        var newFileName = await ShowInputDialog(Cuesheet?.CDTextfile?.Name);
-        if (String.IsNullOrEmpty(newFileName) == false)
+        var result = await _dialogManager.ShowInputDialogAsync<string?>(_localizer["Change file name"], _localizer["Enter the new file name here"], _localizer["New file name"], Cuesheet?.CDTextfile?.Name);
+        if (result.IsSuccess)
         {
-            var cdTextFile = Cuesheet?.CDTextfile;
-            if (cdTextFile != null)
+            if (String.IsNullOrEmpty(result.Value) == false)
             {
-                cdTextFile.Name = newFileName;
+                var cdTextFile = Cuesheet?.CDTextfile;
+                if (cdTextFile != null)
+                {
+                    cdTextFile.Name = result.Value;
+                }
             }
-        }
-    }
-
-    async Task<String?> ShowInputDialog(string? initialValue)
-    {
-        var parameters = new DialogParameters<InputTextDialog>
-        {
-            { x => x.Placeholder, _localizer["Enter the new file name here"] },
-            { x => x.Label, _localizer["New file name"] },
-            { x => x.InitialValue, initialValue }
-        };
-        var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true, CloseButton = true };
-        var dialog = await _dialogService.ShowAsync<InputTextDialog>(_localizer["Change file name"], parameters, options);
-        var result = await dialog.Result;
-        var newFileName = result?.Data as string;
-        if ((result?.Canceled == false) && (String.IsNullOrEmpty(newFileName) == false))
-        {
-            return newFileName;
-        }
-        else
-        {
-            return null;
         }
     }
 
