@@ -91,8 +91,9 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// Moves selected tracks down
         /// </summary>
         /// <param name="selectedTracks"></param>
+        /// <param name="positions"></param>
         /// <returns></returns>
-        Result MoveDown(HashSet<Track> selectedTracks);
+        Result MoveDown(HashSet<Track> selectedTracks, uint positions = 1);
         /// <summary>
         /// Moves selected audiofiles down
         /// </summary>

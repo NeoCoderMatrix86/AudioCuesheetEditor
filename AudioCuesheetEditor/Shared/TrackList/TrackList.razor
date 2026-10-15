@@ -42,7 +42,8 @@ along with Foobar.  If not, see
                                      MoveTracksUpDisabled="!_cuesheetManager.IsMoveUpPossible(_selectedTracks)" MoveTracksUpClicked="() => _cuesheetManager.MoveUp(_selectedTracks)"
                                      MoveTracksDownDisabled="!_cuesheetManager.IsMoveDownPossible(_selectedTracks)" MoveTracksDownClicked="() => _cuesheetManager.MoveDown(_selectedTracks)"
                                      CopySelectedTracksDisabled="_selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
-                                     FixedHeader="_fixedTableHeader" FixedHeaderClicked="() => _fixedTableHeader = !_fixedTableHeader" MoveTracksUpSeveralClicked="MoveTracksUpSeveralClicked" />
+                                     FixedHeader="_fixedTableHeader" FixedHeaderClicked="() => _fixedTableHeader = !_fixedTableHeader" MoveTracksUpSeveralClicked="MoveTracksUpSeveralClicked"
+                                     MoveTracksDownSeveralClicked="MoveTracksDownSeveralClicked" />
         </div>
         break;
 }
@@ -119,7 +120,6 @@ along with Foobar.  If not, see
 </MudMenu>
 
 @code {
-    //TODO: Add handlers for multiple moves
     HashSet<Track> _selectedTracks = new();
     MudMenu? _trackContextMenu;
     Track? _contextMenuTrack;
@@ -295,6 +295,15 @@ along with Foobar.  If not, see
         if (result.IsSuccess)
         {
             _cuesheetManager.MoveUp(_selectedTracks, result.Value);
+        }
+    }
+
+    async Task MoveTracksDownSeveralClicked()
+    {
+        var result = await _dialogManager.ShowInputDialogAsync<uint>(@_localizer["Move tracks down"], @_localizer["Number of positions to move down"], @_localizer["Enter positions to move down"], 1);
+        if (result.IsSuccess)
+        {
+            _cuesheetManager.MoveDown(_selectedTracks, result.Value);
         }
     }
 }

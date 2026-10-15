@@ -168,4 +168,13 @@
   <data name="Enter positions to move up" xml:space="preserve">
     <value>Anzahl der Positionen angeben</value>
   </data>
+  <data name="Move tracks down" xml:space="preserve">
+    <value>Titel nach unten bewegen</value>
+  </data>
+  <data name="Number of positions to move down" xml:space="preserve">
+    <value>Anzahl der Positionen die nach unten bewegt werden soll</value>
+  </data>
+  <data name="Enter positions to move down" xml:space="preserve">
+    <value>Anzahl der Positionen angeben</value>
+  </data>
 </root>

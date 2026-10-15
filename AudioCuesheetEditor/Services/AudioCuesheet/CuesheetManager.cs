@@ -225,40 +225,49 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         }
 
         /// <inheritdoc/>
-        public Result MoveDown(HashSet<Track> selectedTracks)
+        public Result MoveDown(HashSet<Track> selectedTracks, uint positions = 1)
         {
             if (IsMoveDownPossible(selectedTracks) == false)
             {
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks down is not possible!"));
             }
             _traceChangeManager.BulkEdit = true;
-            var cuesheet = _sessionStateContainer.ActiveCuesheet;
-            foreach (var selectedTrack in selectedTracks.OrderByDescending(x => x.Position))
+            while (positions > 0)
             {
-                var nextTrack = cuesheet?.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Position == selectedTrack.Position + 1);
-                if (nextTrack?.Audiofile != null && nextTrack.Audiofile != selectedTrack.Audiofile)
+                if (IsMoveDownPossible(selectedTracks) == false)
                 {
-                    SwitchAudiofile(selectedTrack, nextTrack.Audiofile);
+                    positions = 0;
+                    break;
                 }
-                else
+                var cuesheet = _sessionStateContainer.ActiveCuesheet;
+                foreach (var selectedTrack in selectedTracks.OrderByDescending(x => x.Position))
                 {
-                    var newBegin = nextTrack?.Begin;
-                    var newEnd = nextTrack?.End;
-                    if (nextTrack != null)
+                    var nextTrack = cuesheet?.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Position == selectedTrack.Position + 1);
+                    if (nextTrack?.Audiofile != null && nextTrack.Audiofile != selectedTrack.Audiofile)
                     {
-                        _trackManager.SetProperty(nextTrack, x => x.Position, selectedTrack.Position);
-                        _trackManager.SetProperty(nextTrack, x => x.Begin, selectedTrack.Begin);
-                        _trackManager.SetProperty(nextTrack, x => x.End, selectedTrack.End);
+                        SwitchAudiofile(selectedTrack, nextTrack.Audiofile);
                     }
-                    _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position + 1));
-                    _trackManager.SetProperty(selectedTrack, x => x.Begin, newBegin);
-                    _trackManager.SetProperty(selectedTrack, x => x.End, newEnd);
+                    else
+                    {
+                        var newBegin = nextTrack?.Begin;
+                        var newEnd = nextTrack?.End;
+                        if (nextTrack != null)
+                        {
+                            _trackManager.SetProperty(nextTrack, x => x.Position, selectedTrack.Position);
+                            _trackManager.SetProperty(nextTrack, x => x.Begin, selectedTrack.Begin);
+                            _trackManager.SetProperty(nextTrack, x => x.End, selectedTrack.End);
+                        }
+                        _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position + 1));
+                        _trackManager.SetProperty(selectedTrack, x => x.Begin, newBegin);
+                        _trackManager.SetProperty(selectedTrack, x => x.End, newEnd);
+                    }
                 }
-            }
-            foreach (var audiofile in cuesheet!.Audiofiles)
-            {
-                var orderedTracks = audiofile.Tracks.OrderBy(x => x.Position).ToList();
-                _audiofileManager.SetProperty(audiofile, x => x.Tracks, orderedTracks);
+                foreach (var audiofile in cuesheet!.Audiofiles)
+                {
+                    var orderedTracks = audiofile.Tracks.OrderBy(x => x.Position).ToList();
+                    _audiofileManager.SetProperty(audiofile, x => x.Tracks, orderedTracks);
+                }
+                positions--;
             }
             _traceChangeManager.BulkEdit = false;
             return Result.Success();
