@@ -159,4 +159,22 @@
   <data name="Link this track to previous track" xml:space="preserve">
     <value>Link this track to previous track</value>
   </data>
+  <data name="Move tracks up" xml:space="preserve">
+    <value>Move tracks up</value>
+  </data>
+  <data name="Number of positions to move up" xml:space="preserve">
+    <value>Number of positions to move up</value>
+  </data>
+  <data name="Enter positions to move up" xml:space="preserve">
+    <value>Enter positions to move up</value>
+  </data>
+  <data name="Move tracks down" xml:space="preserve">
+    <value>Move tracks down</value>
+  </data>
+  <data name="Number of positions to move down" xml:space="preserve">
+    <value>Number of positions to move down</value>
+  </data>
+  <data name="Enter positions to move down" xml:space="preserve">
+    <value>Enter positions to move down</value>
+  </data>
 </root>

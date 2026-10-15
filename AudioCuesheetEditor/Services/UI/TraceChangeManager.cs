@@ -175,6 +175,7 @@ namespace AudioCuesheetEditor.Services.UI
                     if (_bulkEditTracedChanges?.Count > 0)
                     {
                         _undoStack.Add(new TracedChanges(_bulkEditTracedChanges));
+                        _redoStack.Clear();
                         TracedObjectHistoryChanged?.Invoke(this, EventArgs.Empty);
                     }
                     _bulkEditTracedChanges = null;

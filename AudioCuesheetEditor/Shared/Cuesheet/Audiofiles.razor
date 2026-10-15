@@ -20,7 +20,7 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<Audiofiles> _localizer
 @inject IStringLocalizer<ValidationMessage> _validationMessageLocalizer
 @inject IAudiofileManager _audiofileManager
-@inject IDialogService _dialogService
+@inject IDialogManager _dialogManager
 
 @switch (CurrentViewMode)
 {
@@ -77,34 +77,15 @@ along with Foobar.  If not, see
     [Parameter]
     public EventCallback<HashSet<Audiofile>> SelectedFilesChanged { get; set; }
 
-    async Task<String?> ShowInputDialog(string? initialValue)
-    {
-        var parameters = new DialogParameters<InputTextDialog>
-        {
-            { x => x.Placeholder, _localizer["Enter the new file name here"] },
-            { x => x.Label, _localizer["New file name"] },
-            { x => x.InitialValue, initialValue }
-        };
-        var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true, CloseButton = true };
-        var dialog = await _dialogService.ShowAsync<InputTextDialog>(_localizer["Change file name"], parameters, options);
-        var result = await dialog.Result;
-        var newFileName = result?.Data as string;
-        if ((result?.Canceled == false) && (String.IsNullOrEmpty(newFileName) == false))
-        {
-            return newFileName;
-        }
-        else
-        {
-            return null;
-        }
-    }
-
     async Task FileRenameClicked(Audiofile audiofile)
     {
-        var newFileName = await ShowInputDialog(audiofile.Name);
-        if (String.IsNullOrEmpty(newFileName) == false)
+        var result = await _dialogManager.ShowInputDialogAsync<string?>(_localizer["Change file name"], _localizer["Enter the new file name here"], _localizer["New file name"], audiofile.Name);
+        if (result.IsSuccess)
         {
-            _audiofileManager.SetProperty(audiofile, x => x.Name, newFileName);
+            if (String.IsNullOrEmpty(result.Value) == false)
+            {
+                _audiofileManager.SetProperty(audiofile, x => x.Name, result.Value);
+            }
         }
     }
 

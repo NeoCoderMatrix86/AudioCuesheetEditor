@@ -126,6 +126,9 @@
   <data name="Enter countdown timer" xml:space="preserve">
     <value>Countdowntimer angeben</value>
   </data>
+  <data name="Record countdown in sconds" xml:space="preserve">
+    <value>Aufnahmecountdown in Sekunden</value>
+  </data>
   <data name="Record is already running!" xml:space="preserve">
     <value>Die Aufnahme läuft bereits!</value>
   </data>
@@ -137,6 +140,15 @@
   </data>
   <data name="Recording!" xml:space="preserve">
     <value>Aufnahme aktiv!</value>
+  </data>
+  <data name="Seconds till record starts" xml:space="preserve">
+    <value>Sekunden bis die Aufnahme startet</value>
+  </data>
+  <data name="Start countdown" xml:space="preserve">
+    <value>Countdown starten</value>
+  </data>
+  <data name="Start record countdown timer" xml:space="preserve">
+    <value>Aufnahmecountdown starten</value>
   </data>
   <data name="Start recording" xml:space="preserve">
     <value>Aufnahme starten</value>

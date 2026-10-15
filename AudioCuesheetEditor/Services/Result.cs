@@ -31,7 +31,11 @@ namespace AudioCuesheetEditor.Services
         /// <summary>
         /// Current action is not possible
         /// </summary>
-        NotPossible
+        NotPossible,
+        /// <summary>
+        /// Action was aborted
+        /// </summary>
+        Aborted,
     }
 
     /// <summary>

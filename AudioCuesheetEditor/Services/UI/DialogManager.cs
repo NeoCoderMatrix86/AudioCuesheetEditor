@@ -227,5 +227,30 @@ namespace AudioCuesheetEditor.Services.UI
             }
             return canceled;
         }
+
+        /// <inheritdoc/>
+        public async Task<Result<T>> ShowInputDialogAsync<T>(string? title, string? placeholder, string? label, T initialValue, string? OkText = "Ok", string? OkButtonStartIcon = null)
+        {
+            var parameters = new DialogParameters<InputDialog<T>>
+            {
+                { x => x.Placeholder, placeholder },
+                { x => x.Label, label },
+                { x => x.InitialValue, initialValue },
+                { x => x.OkText, OkText },
+                { x => x.OkButtonStartIcon, OkButtonStartIcon }
+            };
+            var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true, CloseButton = true };
+            var dialog = await _dialogService.ShowAsync<InputDialog<T>>(title, parameters, options);
+            var result = await dialog.Result;
+            if (result?.Canceled == false)
+            {
+                var value = (T)result.Data!;
+                return Result<T>.Success(value);
+            }
+            else
+            {
+                return Result<T>.Failure(new Error(ErrorType.Aborted, "User canceled the input dialog."));
+            }
+        }
     }
 }
