@@ -25,6 +25,7 @@ along with Foobar.  If not, see
 @inject ValidationService _validationService
 @inject PlaybackService _playbackService
 @inject IDialogService _dialogService
+@inject IDialogManager _dialogManager
 @inject ITrackManager _trackManager
 @inject ICuesheetManager _cuesheetManager
 @inject ITraceChangeManager _traceChangeManager
@@ -41,7 +42,7 @@ along with Foobar.  If not, see
                                      MoveTracksUpDisabled="!_cuesheetManager.IsMoveUpPossible(_selectedTracks)" MoveTracksUpClicked="() => _cuesheetManager.MoveUp(_selectedTracks)"
                                      MoveTracksDownDisabled="!_cuesheetManager.IsMoveDownPossible(_selectedTracks)" MoveTracksDownClicked="() => _cuesheetManager.MoveDown(_selectedTracks)"
                                      CopySelectedTracksDisabled="_selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
-                                     FixedHeader="_fixedTableHeader" FixedHeaderClicked="() => _fixedTableHeader = !_fixedTableHeader" />
+                                     FixedHeader="_fixedTableHeader" FixedHeaderClicked="() => _fixedTableHeader = !_fixedTableHeader" MoveTracksUpSeveralClicked="MoveTracksUpSeveralClicked" />
         </div>
         break;
 }
@@ -285,6 +286,15 @@ along with Foobar.  If not, see
         if (_form != null)
         {
             await _form.ValidateAsync();
+        }
+    }
+
+    async Task MoveTracksUpSeveralClicked()
+    {
+        var result = await _dialogManager.ShowInputDialogAsync<uint>(@_localizer["Move tracks up"], @_localizer["Number of positions to move up"], @_localizer["Enter positions to move up"], 1);
+        if (result.IsSuccess)
+        {
+            _cuesheetManager.MoveUp(_selectedTracks, result.Value);
         }
     }
 }

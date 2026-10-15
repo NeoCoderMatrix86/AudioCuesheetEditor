@@ -141,41 +141,50 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         }
 
         /// <inheritdoc/>
-        public Result MoveUp(HashSet<Track> selectedTracks)
+        public Result MoveUp(HashSet<Track> selectedTracks, uint positions = 1)
         {
             if (IsMoveUpPossible(selectedTracks) == false)
             {
                 return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks up is not possible!"));
             }
             _traceChangeManager.BulkEdit = true;
-            var cuesheet = _sessionStateContainer.ActiveCuesheet;
-            foreach (var selectedTrack in selectedTracks.OrderBy(x => x.Position))
+            while (positions > 0)
             {
-                var previousTrack = cuesheet?.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Position == selectedTrack.Position - 1);
-                if (previousTrack?.Audiofile != null && previousTrack.Audiofile != selectedTrack.Audiofile)
+                if (IsMoveUpPossible(selectedTracks) == false)
                 {
-                    SwitchAudiofile(selectedTrack, previousTrack.Audiofile);
+                    positions = 0;
+                    break;
                 }
-                else
+                var cuesheet = _sessionStateContainer.ActiveCuesheet;
+                foreach (var selectedTrack in selectedTracks.OrderBy(x => x.Position))
                 {
-                    var newBegin = previousTrack?.Begin;
-                    var newEnd = previousTrack?.End;
-                    if (previousTrack != null)
+                    var previousTrack = cuesheet?.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Position == selectedTrack.Position - 1);
+                    if (previousTrack?.Audiofile != null && previousTrack.Audiofile != selectedTrack.Audiofile)
                     {
-                        _trackManager.SetProperty(previousTrack, x => x.Position, selectedTrack.Position);
-                        _trackManager.SetProperty(previousTrack, x => x.Begin, selectedTrack.Begin);
-                        _trackManager.SetProperty(previousTrack, x => x.End, selectedTrack.End);
+                        SwitchAudiofile(selectedTrack, previousTrack.Audiofile);
                     }
-                    _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position - 1));
-                    _trackManager.SetProperty(selectedTrack, x => x.Begin, newBegin);
-                    _trackManager.SetProperty(selectedTrack, x => x.End, newEnd);
+                    else
+                    {
+                        var newBegin = previousTrack?.Begin;
+                        var newEnd = previousTrack?.End;
+                        if (previousTrack != null)
+                        {
+                            _trackManager.SetProperty(previousTrack, x => x.Position, selectedTrack.Position);
+                            _trackManager.SetProperty(previousTrack, x => x.Begin, selectedTrack.Begin);
+                            _trackManager.SetProperty(previousTrack, x => x.End, selectedTrack.End);
+                        }
+                        _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position - 1));
+                        _trackManager.SetProperty(selectedTrack, x => x.Begin, newBegin);
+                        _trackManager.SetProperty(selectedTrack, x => x.End, newEnd);
+                    }
+
                 }
-                
-            }
-            foreach (var audiofile in cuesheet!.Audiofiles)
-            {
-                var orderedTracks = audiofile.Tracks.OrderBy(x => x.Position).ToList();
-                _audiofileManager.SetProperty(audiofile, x => x.Tracks, orderedTracks);
+                foreach (var audiofile in cuesheet!.Audiofiles)
+                {
+                    var orderedTracks = audiofile.Tracks.OrderBy(x => x.Position).ToList();
+                    _audiofileManager.SetProperty(audiofile, x => x.Tracks, orderedTracks);
+                }
+                positions--;
             }
             _traceChangeManager.BulkEdit = false;
             return Result.Success();

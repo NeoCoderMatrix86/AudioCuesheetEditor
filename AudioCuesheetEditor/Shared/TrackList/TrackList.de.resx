@@ -159,4 +159,13 @@
   <data name="Link this track to previous track" xml:space="preserve">
     <value>Track mit vorherigem verknüpfen</value>
   </data>
+  <data name="Move tracks up" xml:space="preserve">
+    <value>Titel nach oben bewegen</value>
+  </data>
+  <data name="Number of positions to move up" xml:space="preserve">
+    <value>Anzahl der Positionen die nach oben bewegt werden soll</value>
+  </data>
+  <data name="Enter positions to move up" xml:space="preserve">
+    <value>Anzahl der Positionen angeben</value>
+  </data>
 </root>
