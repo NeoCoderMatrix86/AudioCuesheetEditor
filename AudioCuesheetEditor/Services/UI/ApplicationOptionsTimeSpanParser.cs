@@ -25,9 +25,9 @@ public class ApplicationOptionsTimeSpanParser
 {
     readonly ILocalStorageOptionsProvider _localStorageOptionsProvider;
 
-    ApplicationOptions? applicationOptions;
+    ApplicationOptions? _applicationOptions;
     readonly Task? _initTask;
-    bool disposedValue;
+    bool _disposedValue;
 
     public ApplicationOptionsTimeSpanParser(ILocalStorageOptionsProvider localStorageOptionsProvider)
     {
@@ -43,7 +43,7 @@ public class ApplicationOptionsTimeSpanParser
             throw new ArgumentException("'expression' should be a member expression");
         }
         await EnsureInitializedAsync();
-        var result = TimeSpanUtility.ParseTimeSpan(value, applicationOptions?.TimeSpanFormat);
+        var result = TimeSpanUtility.ParseTimeSpan(value, _applicationOptions?.TimeSpanFormat);
         switch (memberExpression.Member.MemberType)
         {
             case MemberTypes.Property:
@@ -57,7 +57,7 @@ public class ApplicationOptionsTimeSpanParser
     public async Task<TimeSpan?> GetTimespanAsync(string value)
     {
         await EnsureInitializedAsync();
-        var result = TimeSpanUtility.ParseTimeSpan(value, applicationOptions?.TimeSpanFormat);
+        var result = TimeSpanUtility.ParseTimeSpan(value, _applicationOptions?.TimeSpanFormat);
         return result;
     }
 
@@ -69,7 +69,7 @@ public class ApplicationOptionsTimeSpanParser
         {
             try
             {
-                formatted = timeSpan.Value.ToString(applicationOptions?.DisplayTimeSpanFormat);
+                formatted = timeSpan.Value.ToString(_applicationOptions?.DisplayTimeSpanFormat);
             }
             catch (FormatException)
             {
@@ -81,7 +81,7 @@ public class ApplicationOptionsTimeSpanParser
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!disposedValue)
+        if (!_disposedValue)
         {
             if (disposing)
             {
@@ -89,11 +89,11 @@ public class ApplicationOptionsTimeSpanParser
                 _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
             }
 
-            disposedValue = true;
+            _disposedValue = true;
         }
     }
 
-    async Task InitAsync() => applicationOptions ??= await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
+    async Task InitAsync() => _applicationOptions ??= await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
 
     async Task EnsureInitializedAsync()
     {
@@ -107,7 +107,7 @@ public class ApplicationOptionsTimeSpanParser
     {
         if (options is ApplicationOptions applicationOption)
         {
-            applicationOptions = applicationOption;
+            _applicationOptions = applicationOption;
         }
     }
 }

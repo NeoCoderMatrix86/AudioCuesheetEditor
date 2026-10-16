@@ -21,11 +21,9 @@ namespace AudioCuesheetEditor.Model.Options;
 
 public class DownloadOptions : Validateable, IOptions
 {
-    string? projectFilename = Projectfile.DefaultFilename;
-    string? cuesheetFilename = Exportfile.DefaultCuesheetFilename;
     public string? CuesheetFilename
     {
-        get => cuesheetFilename;
+        get;
         set
         {
             if (string.IsNullOrEmpty(value) == false)
@@ -36,12 +34,12 @@ public class DownloadOptions : Validateable, IOptions
                     value = $"{value}{FileExtensions.Cuesheet}";
                 }
             }
-            cuesheetFilename = value;
+            field = value;
         }
-    }
+    } = Exportfile.DefaultCuesheetFilename;
     public string? ProjectFilename
     {
-        get => projectFilename;
+        get;
         set
         {
             if (string.IsNullOrEmpty(value) == false)
@@ -52,7 +50,7 @@ public class DownloadOptions : Validateable, IOptions
                     value = $"{value}{FileExtensions.Projectfile}";
                 }
             }
-            projectFilename = value;
+            field = value;
         }
     }
     public override ValidationResult Validate(string property)

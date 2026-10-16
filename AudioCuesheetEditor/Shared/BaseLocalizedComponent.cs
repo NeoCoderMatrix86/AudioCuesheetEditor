@@ -21,7 +21,7 @@ namespace AudioCuesheetEditor.Shared;
 
 public abstract class BaseLocalizedComponent : ComponentBase, IDisposable
 {
-    bool disposedValue;
+    bool _disposedValue;
 
     [Inject]
     protected LocalizationService LocalizationService { get; set; } = default!;
@@ -46,7 +46,7 @@ public abstract class BaseLocalizedComponent : ComponentBase, IDisposable
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!disposedValue)
+        if (!_disposedValue)
         {
             if (disposing)
             {
@@ -55,7 +55,7 @@ public abstract class BaseLocalizedComponent : ComponentBase, IDisposable
                 TraceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
             }
 
-            disposedValue = true;
+            _disposedValue = true;
         }
     }
 

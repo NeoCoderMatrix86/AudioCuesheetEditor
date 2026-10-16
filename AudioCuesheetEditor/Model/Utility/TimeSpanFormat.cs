@@ -35,14 +35,12 @@ public class TimeSpanFormat : Validateable
 
     public event EventHandler? SchemeChanged;
 
-    string? scheme;
-
     public string? Scheme
     {
-        get => scheme;
+        get;
         set
         {
-            scheme = value;
+            field = value;
             SchemeChanged?.Invoke(this, EventArgs.Empty);
             OnValidateablePropertyChanged();
         }

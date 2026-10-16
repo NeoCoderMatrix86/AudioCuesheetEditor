@@ -14,31 +14,26 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
 
 namespace AudioCuesheetEditor.Tests.Model.Entity;
 
 public class ValidateableTestClass : Validateable
 {
-    string? testProperty;
-    int? testProperty2;
-
     public string? TestProperty
     {
-        get => testProperty;
+        get;
         set
         {
-            testProperty = value;
+            field = value;
             OnValidateablePropertyChanged();
         }
     }
     public int? TestProperty2
     {
-        get => testProperty2;
+        get;
         set
         {
-            testProperty2 = value;
+            field = value;
             OnValidateablePropertyChanged();
         }
     }

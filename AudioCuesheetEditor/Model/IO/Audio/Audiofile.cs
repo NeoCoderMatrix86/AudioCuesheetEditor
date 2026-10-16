@@ -35,10 +35,6 @@ public class Audiofile() : Validateable, IAudiofile
         new AudioCodec("audio/flac", ".flac", "AudioCodec FLAC")
     ];
 
-    //TODO
-    AudioCodec? _audioCodec;
-    string? _name;
-    
     public Audiofile(string? name, string? objectURL, AudioCodec? audioCodec, TimeSpan? duration = null) : this()
     {
         Name = name;
@@ -49,15 +45,15 @@ public class Audiofile() : Validateable, IAudiofile
 
     public string? Name
     {
-        get => _name;
+        get;
         set
         {
             var extension = Path.GetExtension(value);
-            if (extension?.Equals(_audioCodec?.FileExtension, StringComparison.CurrentCultureIgnoreCase) == false)
+            if (extension?.Equals(AudioCodec?.FileExtension, StringComparison.CurrentCultureIgnoreCase) == false)
             {
-                value = $"{value}{_audioCodec?.FileExtension}";
+                value = $"{value}{AudioCodec?.FileExtension}";
             }
-            _name = value;
+            field = value;
         }
     }
 
@@ -71,14 +67,14 @@ public class Audiofile() : Validateable, IAudiofile
 
     public AudioCodec? AudioCodec
     {
-        get => _audioCodec;
+        get;
         set
         {
-            _audioCodec = value;
-            if ((_audioCodec != null) && (Name?.EndsWith(_audioCodec.FileExtension) == false))
+            field = value;
+            if ((field != null) && (Name?.EndsWith(field.FileExtension) == false))
             {
                 //Replace file ending
-                Name = string.Format("{0}{1}", Path.GetFileNameWithoutExtension(Name), _audioCodec.FileExtension);
+                Name = string.Format("{0}{1}", Path.GetFileNameWithoutExtension(Name), field.FileExtension);
             }
         }
     }

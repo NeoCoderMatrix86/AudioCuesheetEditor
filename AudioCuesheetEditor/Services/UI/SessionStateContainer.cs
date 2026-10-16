@@ -26,12 +26,8 @@ public class SessionStateContainer : ISessionStateContainer, IDisposable
 {
     readonly ILocalStorageOptionsProvider _localStorageOptionsProvider;
     readonly IJSRuntime _jsRuntime;
-
-    Cuesheet _cuesheet = new();
-    Cuesheet? _importCuesheet;
-    Cuesheet? _activeCuesheet;
     ViewOptions? _viewOptions;
-    bool disposedValue;
+    bool _disposedValue;
 
     public event EventHandler? CuesheetChanged;
     public event EventHandler? ActiveCuesheetChanged;
@@ -51,20 +47,20 @@ public class SessionStateContainer : ISessionStateContainer, IDisposable
 
     public Cuesheet Cuesheet 
     {
-        get => _cuesheet;
+        get;
         set
         {
-            _cuesheet = value;
+            field = value;
             SetActiveCuesheet();
             CuesheetChanged?.Invoke(this, EventArgs.Empty);
         }
-    }
+    } = new();
     public Cuesheet? ImportCuesheet 
     {
-        get => _importCuesheet;
+        get;
         set
         {
-            _importCuesheet = value;
+            field = value;
             SetActiveCuesheet();
         }
     }
@@ -112,17 +108,17 @@ public class SessionStateContainer : ISessionStateContainer, IDisposable
     }
 
     /// <inheritdoc/>
-    public Cuesheet? ActiveCuesheet => _activeCuesheet;
+    public Cuesheet? ActiveCuesheet { get; private set; }
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!disposedValue)
+        if (!_disposedValue)
         {
             if (disposing)
             {
                 _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
             }
-            disposedValue = true;
+            _disposedValue = true;
         }
     }
 
@@ -143,17 +139,17 @@ public class SessionStateContainer : ISessionStateContainer, IDisposable
         }
         if (_viewOptions.ActiveTab == ViewMode.ImportView)
         {
-            if (_activeCuesheet != ImportCuesheet)
+            if (ActiveCuesheet != ImportCuesheet)
             {
-                _activeCuesheet = ImportCuesheet;
+                ActiveCuesheet = ImportCuesheet;
                 ActiveCuesheetChanged?.Invoke(this, EventArgs.Empty);
             }
         }
         else
         {
-            if (_activeCuesheet != Cuesheet)
+            if (ActiveCuesheet != Cuesheet)
             {
-                _activeCuesheet = Cuesheet;
+                ActiveCuesheet = Cuesheet;
                 ActiveCuesheetChanged?.Invoke(this, EventArgs.Empty);
             }
         }

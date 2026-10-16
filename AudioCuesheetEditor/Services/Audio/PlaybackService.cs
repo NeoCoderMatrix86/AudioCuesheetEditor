@@ -30,7 +30,6 @@ public class PlaybackService(IJSRuntime jsRuntime, ISessionStateContainer sessio
     Audiofile? _currentlyPlayingAudiofile;
     Timer? _updateTimer;
     readonly Lock _timerLock = new();
-    TimeSpan? _currentPosition;
     DotNetObjectReference<PlaybackService>? _dotNetObjectReference;
     TimeSpan _durationBeforeCurrentlyPlayingAudiofile;
 
@@ -38,12 +37,12 @@ public class PlaybackService(IJSRuntime jsRuntime, ISessionStateContainer sessio
 
     public TimeSpan? CurrentPosition
     {
-        get => _currentPosition;
+        get;
         private set
         {
-            if (_currentPosition != value)
+            if (field != value)
             {
-                _currentPosition = value;
+                field = value;
                 CurrentPositionChanged?.Invoke();
             }
         }

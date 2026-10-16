@@ -41,8 +41,6 @@ public class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> logger)
     public const string Application = "AudioCuesheetEditor";
     public const string ProjectUrl = "https://github.com/NeoCoderMatrix86/AudioCuesheetEditor";
 
-    string? applicationVersion = null;
-
     public async Task<IReadOnlyCollection<MusicBrainzArtist>> SearchArtistAsync(string? searchString, CancellationToken token)
     {
         List<MusicBrainzArtist> artistSearchResult = [];
@@ -115,15 +113,15 @@ public class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> logger)
     {
         get
         {
-            if (applicationVersion == null)
+            if (field == null)
             {
                 var versionAttribute = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>();
                 if (versionAttribute != null)
                 {
-                    applicationVersion = versionAttribute.InformationalVersion;
+                    field = versionAttribute.InformationalVersion;
                 }
             }
-            return applicationVersion;
+            return field;
         }
     }
 }
