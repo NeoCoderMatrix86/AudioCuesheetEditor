@@ -48,7 +48,7 @@ public class AudiofileManagerTests
         _traceChangeManager = new Mock<ITraceChangeManager>();
         _jsRuntime = new Mock<IJSRuntime>();
         _trackManager = new Mock<ITrackManager>();
-        _trackManager.Setup(x => x.SetProperty(It.IsAny<Track>(), It.IsAny<Expression<Func<Track, It.IsAnyType>>>(), It.IsAny<It.IsAnyType>()))
+        _ = _trackManager.Setup(x => x.SetProperty(It.IsAny<Track>(), It.IsAny<Expression<Func<Track, It.IsAnyType>>>(), It.IsAny<It.IsAnyType>()))
             .Callback((Track track, LambdaExpression propExpr, object value) =>
             {
                 var memberExpression = propExpr.Body as MemberExpression;
@@ -57,7 +57,7 @@ public class AudiofileManagerTests
                     propertyInfo.SetValue(track, value);
                 }
             });
-        _trackManager.Setup(x => x.GetPreviousLinkedTrack(It.IsAny<Track>())).Returns(delegate (Track track)
+        _ = _trackManager.Setup(x => x.GetPreviousLinkedTrack(It.IsAny<Track>())).Returns(delegate (Track track)
         {
             if (track.IsLinkedToPreviousTrack == false)
             {
@@ -117,13 +117,13 @@ public class AudiofileManagerTests
         var objectUrl = "blob:123";
         var filename = "song.mp3";
         var browserFile = new Mock<IBrowserFile>();
-        browserFile.SetupGet(b => b.ContentType).Returns("audio/mpeg");
-        browserFile.SetupGet(b => b.Name).Returns(filename);
+        _ = browserFile.SetupGet(b => b.ContentType).Returns("audio/mpeg");
+        _ = browserFile.SetupGet(b => b.Name).Returns(filename);
         
         var codec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3");
-        _fileInputManager.Setup(f => f.GetAudioCodec(filename, "audio/mpeg")).Returns(codec);
-        _fileInputManager.Setup(f => f.GetObjectUrlAsync(browserFile.Object)).ReturnsAsync(objectUrl);
-        _jsRuntime.Setup(js => js.InvokeAsync<double>("getAudioDurationFromFile", It.IsAny<object?[]>())).Returns(new ValueTask<double>(90.0));
+        _ = _fileInputManager.Setup(f => f.GetAudioCodec(filename, "audio/mpeg")).Returns(codec);
+        _ = _fileInputManager.Setup(f => f.GetObjectUrlAsync(browserFile.Object)).ReturnsAsync(objectUrl);
+        _ = _jsRuntime.Setup(js => js.InvokeAsync<double>("getAudioDurationFromFile", It.IsAny<object?[]>())).Returns(new ValueTask<double>(90.0));
 
         var audiofile = new Audiofile();
         var audiofileChangedFired = 0;
@@ -156,13 +156,13 @@ public class AudiofileManagerTests
         var objectUrl = "blob:123";
         var filename = "song.mp3";
         var browserFile = new Mock<IBrowserFile>();
-        browserFile.SetupGet(b => b.ContentType).Returns("audio/mpeg");
-        browserFile.SetupGet(b => b.Name).Returns(filename);
+        _ = browserFile.SetupGet(b => b.ContentType).Returns("audio/mpeg");
+        _ = browserFile.SetupGet(b => b.Name).Returns(filename);
 
         var codec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3");
-        _fileInputManager.Setup(f => f.GetAudioCodec(filename, "audio/mpeg")).Returns(codec);
-        _fileInputManager.Setup(f => f.GetObjectUrlAsync(browserFile.Object)).ReturnsAsync(objectUrl);
-        _jsRuntime.Setup(js => js.InvokeAsync<double>("getAudioDurationFromFile", It.IsAny<object?[]>())).Returns(new ValueTask<double>(90.0));
+        _ = _fileInputManager.Setup(f => f.GetAudioCodec(filename, "audio/mpeg")).Returns(codec);
+        _ = _fileInputManager.Setup(f => f.GetObjectUrlAsync(browserFile.Object)).ReturnsAsync(objectUrl);
+        _ = _jsRuntime.Setup(js => js.InvokeAsync<double>("getAudioDurationFromFile", It.IsAny<object?[]>())).Returns(new ValueTask<double>(90.0));
         var track1 = new Track()
         {
             Position = 1,
@@ -208,13 +208,13 @@ public class AudiofileManagerTests
         var objectUrl = "blob:123";
         var filename = "song.mp3";
         var browserFile = new Mock<IBrowserFile>();
-        browserFile.SetupGet(b => b.ContentType).Returns("audio/mpeg");
-        browserFile.SetupGet(b => b.Name).Returns(filename);
+        _ = browserFile.SetupGet(b => b.ContentType).Returns("audio/mpeg");
+        _ = browserFile.SetupGet(b => b.Name).Returns(filename);
 
         var codec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3");
-        _fileInputManager.Setup(f => f.GetAudioCodec(filename, "audio/mpeg")).Returns(codec);
-        _fileInputManager.Setup(f => f.GetObjectUrlAsync(browserFile.Object)).ReturnsAsync(objectUrl);
-        _jsRuntime.Setup(js => js.InvokeAsync<double>("getAudioDurationFromFile", It.IsAny<object?[]>())).Returns(new ValueTask<double>(90.0));
+        _ = _fileInputManager.Setup(f => f.GetAudioCodec(filename, "audio/mpeg")).Returns(codec);
+        _ = _fileInputManager.Setup(f => f.GetObjectUrlAsync(browserFile.Object)).ReturnsAsync(objectUrl);
+        _ = _jsRuntime.Setup(js => js.InvokeAsync<double>("getAudioDurationFromFile", It.IsAny<object?[]>())).Returns(new ValueTask<double>(90.0));
 
         var audiofile = new Audiofile
         {
@@ -372,7 +372,7 @@ public class AudiofileManagerTests
         {
             Audiofiles = [audiofile]
         };
-        _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
+        _ = _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
         var audiofileChangedFired = 0;
         _audiofileManager.AudiofileChanged += delegate (object? sender, Audiofile e)
         {
@@ -417,7 +417,7 @@ public class AudiofileManagerTests
         {
             Audiofiles = [audiofile]
         };
-        _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
+        _ = _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
         var track = new Track()
         {
             IsLinkedToPreviousTrack = true
@@ -467,7 +467,7 @@ public class AudiofileManagerTests
             RecordingStart = DateTime.UtcNow,
             Audiofiles = [audiofile]
         };
-        _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
+        _ = _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
         var track = new Track()
         {
             IsLinkedToPreviousTrack = true
@@ -506,7 +506,7 @@ public class AudiofileManagerTests
         {
             Audiofiles = [audiofile]
         };
-        _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(importCuesheet);
+        _ = _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(importCuesheet);
         var track = new Track();
         var audiofileChangedFired = 0;
         _audiofileManager.AudiofileChanged += delegate (object? sender, Audiofile e)
@@ -585,7 +585,7 @@ public class AudiofileManagerTests
         track3.Cuesheet = cuesheet;
         track4.Cuesheet = cuesheet;
         track5.Cuesheet = cuesheet;
-        _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
+        _ = _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
         var audiofileChangedFired = 0;
         _audiofileManager.AudiofileChanged += delegate (object? sender, Audiofile e)
         {
@@ -672,7 +672,7 @@ public class AudiofileManagerTests
         track3.Audiofile = audiofile;
         track4.Audiofile = audiofile;
         track5.Audiofile = audiofile;
-        _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(importCuesheet);
+        _ = _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(importCuesheet);
         var audiofileChangedFired = 0;
         _audiofileManager.AudiofileChanged += delegate (object? sender, Audiofile e)
         {

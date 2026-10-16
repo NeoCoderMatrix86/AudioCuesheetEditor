@@ -30,7 +30,7 @@ public interface IFileInputManager
     /// </summary>
     /// <param name="browserFile"></param>
     /// <returns></returns>
-    Task<String> GetObjectUrlAsync(IBrowserFile browserFile);
+    Task<string> GetObjectUrlAsync(IBrowserFile browserFile);
     /// <summary>
     /// Checks if a file content type and name matches given parameters
     /// </summary>

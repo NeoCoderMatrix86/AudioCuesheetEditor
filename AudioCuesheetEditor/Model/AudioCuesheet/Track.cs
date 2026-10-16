@@ -22,8 +22,8 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet;
 public class Track : Validateable, ITrack
 {
     public ushort? Position { get; set; }
-    public String? Artist { get; set; }
-    public String? Title { get; set; }
+    public string? Artist { get; set; }
+    public string? Title { get; set; }
     public TimeSpan? Begin { get; set; }        
     public TimeSpan? End { get; set; }
     [JsonIgnore]
@@ -77,13 +77,13 @@ public class Track : Validateable, ITrack
     /// <summary>
     /// Set that this track is linked to the previous track in cuesheet
     /// </summary>
-    public Boolean IsLinkedToPreviousTrack { get; set; }
+    public bool IsLinkedToPreviousTrack { get; set; }
     [JsonIgnore]
     public Audiofile? Audiofile { get; set; }
 
     public override ValidationResult Validate(string property)
     {
-        ValidationStatus validationStatus = ValidationStatus.NoValidation;
+        var validationStatus = ValidationStatus.NoValidation;
         List<ValidationMessage>? validationMessages = null;
         switch (property)
         {
@@ -110,7 +110,7 @@ public class Track : Validateable, ITrack
                             if (positionTrackShouldHave != Position)
                             {
                                 validationMessages ??= [];
-                                validationMessages.Add(new ValidationMessage("Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!", Position, Artist ?? String.Empty, Title ?? String.Empty, Begin != null ? Begin : String.Empty, End != null ? End : String.Empty, positionTrackShouldHave));
+                                validationMessages.Add(new ValidationMessage("Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!", Position, Artist ?? string.Empty, Title ?? string.Empty, Begin != null ? Begin : string.Empty, End != null ? End : string.Empty, positionTrackShouldHave));
                             }
                         }
                     }

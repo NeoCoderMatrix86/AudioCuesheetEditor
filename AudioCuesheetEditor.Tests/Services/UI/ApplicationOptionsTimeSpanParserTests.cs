@@ -40,7 +40,7 @@ public class ApplicationOptionsTimeSpanParserTests
             }
         };
         var mockOptionsProvider = new Mock<ILocalStorageOptionsProvider>();
-        mockOptionsProvider
+        _ = mockOptionsProvider
             .Setup(p => p.GetOptionsAsync<ApplicationOptions>())
             .ReturnsAsync(options);
         var parser = new ApplicationOptionsTimeSpanParser(mockOptionsProvider.Object);
@@ -62,7 +62,7 @@ public class ApplicationOptionsTimeSpanParserTests
             }
         };
         var mockOptionsProvider = new Mock<ILocalStorageOptionsProvider>();
-        mockOptionsProvider
+        _ = mockOptionsProvider
             .Setup(p => p.GetOptionsAsync<ApplicationOptions>())
             .ReturnsAsync(options);
         var parser = new ApplicationOptionsTimeSpanParser(mockOptionsProvider.Object);
@@ -82,7 +82,7 @@ public class ApplicationOptionsTimeSpanParserTests
             DisplayTimeSpanFormat = @"hh\:mm\:ss"
         };
         var mockOptionsProvider = new Mock<ILocalStorageOptionsProvider>();
-        mockOptionsProvider
+        _ = mockOptionsProvider
             .Setup(p => p.GetOptionsAsync<ApplicationOptions>())
             .ReturnsAsync(options);
         var parser = new ApplicationOptionsTimeSpanParser(mockOptionsProvider.Object);
@@ -101,7 +101,7 @@ public class ApplicationOptionsTimeSpanParserTests
             DisplayTimeSpanFormat = "INVALID_FORMAT"
         };
         var mockOptionsProvider = new Mock<ILocalStorageOptionsProvider>();
-        mockOptionsProvider
+        _ = mockOptionsProvider
             .Setup(p => p.GetOptionsAsync<ApplicationOptions>())
             .ReturnsAsync(options);
         var parser = new ApplicationOptionsTimeSpanParser(mockOptionsProvider.Object);
@@ -123,7 +123,7 @@ public class ApplicationOptionsTimeSpanParserTests
             }
         };
         var mockOptionsProvider = new Mock<ILocalStorageOptionsProvider>();
-        mockOptionsProvider
+        _ = mockOptionsProvider
             .Setup(p => p.GetOptionsAsync<ApplicationOptions>())
             .ReturnsAsync(options);
         var parser = new ApplicationOptionsTimeSpanParser(mockOptionsProvider.Object);
@@ -146,7 +146,7 @@ public class ApplicationOptionsTimeSpanParserTests
             }
         };
         var mockOptionsProvider = new Mock<ILocalStorageOptionsProvider>();
-        mockOptionsProvider
+        _ = mockOptionsProvider
             .Setup(p => p.GetOptionsAsync<ApplicationOptions>())
             .ReturnsAsync(options);
         var parser = new ApplicationOptionsTimeSpanParser(mockOptionsProvider.Object);
@@ -162,7 +162,7 @@ public class ApplicationOptionsTimeSpanParserTests
         // Arrange
         var options = new ApplicationOptions();
         var mockOptionsProvider = new Mock<ILocalStorageOptionsProvider>();
-        mockOptionsProvider
+        _ = mockOptionsProvider
             .Setup(p => p.GetOptionsAsync<ApplicationOptions>())
             .ReturnsAsync(options);
         var parser = new ApplicationOptionsTimeSpanParser(mockOptionsProvider.Object);

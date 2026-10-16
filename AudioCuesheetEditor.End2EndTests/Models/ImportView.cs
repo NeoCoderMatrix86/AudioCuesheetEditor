@@ -39,27 +39,18 @@ partial class ImportView(IPage page, bool mobile)
 
     internal async Task GotoAsync()
     {
-        await _page.GotoAsync(BaseUrl);
+        _ = await _page.GotoAsync(BaseUrl);
         await _page.WaitForURLAsync(BaseUrl);
         await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
+        _ = await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
         await _page.GetByText("Import view").ClickAsync();
     }
 
-    internal async Task ImportFileAsync(string filepath)
-    {
-        await _page.GetByLabel("TextField file upload").SetInputFilesAsync(filepath);
-    }
+    internal async Task ImportFileAsync(string filepath) => await _page.GetByLabel("TextField file upload").SetInputFilesAsync(filepath);
 
-    internal async Task ImportTextAsync(string text)
-    {
-        await _page.GetByRole(AriaRole.Textbox, new() { Name = "Please enter text or upload a" }).FillAsync(text);
-    }
+    internal async Task ImportTextAsync(string text) => await _page.GetByRole(AriaRole.Textbox, new() { Name = "Please enter text or upload a" }).FillAsync(text);
 
-    internal async Task Analyze()
-    {
-        await _page.GetByRole(AriaRole.Button, new() { Name = "Analyze" }).ClickAsync();
-    }
+    internal async Task Analyze() => await _page.GetByRole(AriaRole.Button, new() { Name = "Analyze" }).ClickAsync();
 
     internal async Task CompleteImportAsync()
     {
@@ -74,7 +65,7 @@ partial class ImportView(IPage page, bool mobile)
         }
     }
 
-    internal async Task SelectTracksAsync(IEnumerable<int> trackTablePositions, Boolean uncheck = false)
+    internal async Task SelectTracksAsync(IEnumerable<int> trackTablePositions, bool uncheck = false)
     {
         foreach (var trackTablePosition in trackTablePositions)
         {
@@ -103,20 +94,11 @@ partial class ImportView(IPage page, bool mobile)
         await _page.GetByText(profile).ClickAsync();
     }
 
-    internal async Task ClearSchemeCommonDataAsync()
-    {
-        await _page.Locator("div").Filter(new() { HasTextRegex = SchemeCommonData() }).GetByLabel("Clear").ClickAsync();
-    }
+    internal async Task ClearSchemeCommonDataAsync() => await _page.Locator("div").Filter(new() { HasTextRegex = SchemeCommonData() }).GetByLabel("Clear").ClickAsync();
 
-    internal async Task ClearSchemeAudiofilesAsync()
-    {
-        await _page.Locator("div").Filter(new() { HasTextRegex = SchemeAudiofiles() }).GetByLabel("Clear").ClickAsync();
-    }
+    internal async Task ClearSchemeAudiofilesAsync() => await _page.Locator("div").Filter(new() { HasTextRegex = SchemeAudiofiles() }).GetByLabel("Clear").ClickAsync();
 
-    internal async Task SetSchemeCommonDataAsync(string schemeCommonData)
-    {
-        await _page.GetByRole(AriaRole.Textbox, new() { Name = "Scheme common data" }).FillAsync(schemeCommonData);
-    }
+    internal async Task SetSchemeCommonDataAsync(string schemeCommonData) => await _page.GetByRole(AriaRole.Textbox, new() { Name = "Scheme common data" }).FillAsync(schemeCommonData);
 
     internal async Task SelectSchemeCommonDataPlaceholderAsync(string placeholder)
     {

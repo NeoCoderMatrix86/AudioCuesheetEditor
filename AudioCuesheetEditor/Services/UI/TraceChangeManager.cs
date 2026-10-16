@@ -52,7 +52,7 @@ public class TraceChangeManager(ILogger<TraceChangeManager> logger) : ITraceChan
             while (_undoStack.Count > 0 && changes == null)
             {
                 changes = _undoStack[^1];
-                _undoStack.Remove(changes);
+                _ = _undoStack.Remove(changes);
                 if (changes.HasTraceableObject == false)
                 {
                     changes = null;
@@ -61,7 +61,7 @@ public class TraceChangeManager(ILogger<TraceChangeManager> logger) : ITraceChan
             if (changes != null && changes.HasTraceableObject)
             {
                 var redoChanges = new List<TracedChange>();
-                for (int i = changes.Changes.Count - 1; i >= 0; i--)
+                for (var i = changes.Changes.Count - 1; i >= 0; i--)
                 {
                     var change = changes.Changes.ElementAt(i);
                     var tracedObject = change?.TraceableObject;
@@ -90,7 +90,7 @@ public class TraceChangeManager(ILogger<TraceChangeManager> logger) : ITraceChan
                     }
                     if (change != null)
                     {
-                        changes.Changes.Remove(change);
+                        _ = changes.Changes.Remove(change);
                     }
                 }
                 //Push the old value to redo stack
@@ -109,7 +109,7 @@ public class TraceChangeManager(ILogger<TraceChangeManager> logger) : ITraceChan
             while (_redoStack.Count > 0 && changes == null)
             {
                 changes = _redoStack[^1];
-                _redoStack.Remove(changes);
+                _ = _redoStack.Remove(changes);
                 if (changes.HasTraceableObject == false)
                 {
                     changes = null;
@@ -118,7 +118,7 @@ public class TraceChangeManager(ILogger<TraceChangeManager> logger) : ITraceChan
             if (changes != null && changes.HasTraceableObject)
             {
                 var undoChanges = new List<TracedChange>();
-                for (int i = changes.Changes.Count - 1;i >= 0; i--) 
+                for (var i = changes.Changes.Count - 1;i >= 0; i--) 
                 {
                     var change = changes.Changes.ElementAt(i);
                     var tracedObject = change?.TraceableObject;
@@ -147,7 +147,7 @@ public class TraceChangeManager(ILogger<TraceChangeManager> logger) : ITraceChan
                     }
                     if (change != null)
                     {
-                        changes.Changes.Remove(change);
+                        _ = changes.Changes.Remove(change);
                     }
                 }
                 //Push the old value to redo stack
@@ -205,10 +205,10 @@ public class TraceChangeManager(ILogger<TraceChangeManager> logger) : ITraceChan
 
     public void RemoveTracedChanges(IEnumerable<object> traceables)
     {
-        _undoStack.RemoveAll(x => x.HasTraceableObject == false);
-        _undoStack.RemoveAll(x => x.Changes.Any(y => traceables.Contains(y.TraceableObject)));
-        _redoStack.RemoveAll(x => x.HasTraceableObject == false);
-        _redoStack.RemoveAll(x => x.Changes.Any(y => traceables.Contains(y.TraceableObject)));
+        _ = _undoStack.RemoveAll(x => x.HasTraceableObject == false);
+        _ = _undoStack.RemoveAll(x => x.Changes.Any(y => traceables.Contains(y.TraceableObject)));
+        _ = _redoStack.RemoveAll(x => x.HasTraceableObject == false);
+        _ = _redoStack.RemoveAll(x => x.Changes.Any(y => traceables.Contains(y.TraceableObject)));
         TracedObjectHistoryChanged?.Invoke(this, EventArgs.Empty);
     }
 }

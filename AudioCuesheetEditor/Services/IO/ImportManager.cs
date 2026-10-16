@@ -45,7 +45,7 @@ public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceC
     readonly ITrackManager _trackManager = trackManager;
     readonly IAudioImportService _audioImportService = audioImportService;
 
-    public void ImportData(String? data)
+    public void ImportData(string? data)
     {
         var stopwatch = Stopwatch.StartNew();
         _sessionStateContainer.Importfile = new Importfile()
@@ -61,12 +61,12 @@ public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceC
         }
     }
     
-    public async Task<Boolean> AnalyseImportfile()
+    public async Task<bool> AnalyseImportfile()
     {
         ResetTracing();
         var stopwatch = Stopwatch.StartNew();
         var fileContent = _sessionStateContainer.Importfile?.FileContent;
-        if (String.IsNullOrEmpty(fileContent) == false)
+        if (string.IsNullOrEmpty(fileContent) == false)
         {
             switch (_sessionStateContainer.Importfile?.FileType)
             {
@@ -198,7 +198,7 @@ public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceC
         }
         if (cuesheetToCopy is ImportCuesheet importCuesheet)
         {
-            if (String.IsNullOrEmpty(importCuesheet.CDTextfile) == false)
+            if (string.IsNullOrEmpty(importCuesheet.CDTextfile) == false)
             {
                 target.CDTextfile = new CDTextfile(importCuesheet.CDTextfile);
             }
@@ -224,7 +224,7 @@ public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceC
                 targetAudiofile ??= new Audiofile()
                 {
                     Name = importAudiofile.Name,
-                    AudioCodec = String.IsNullOrEmpty(importAudiofile.Name) == false ? _fileInputManager.GetAudioCodec(importAudiofile.Name) : null
+                    AudioCodec = string.IsNullOrEmpty(importAudiofile.Name) == false ? _fileInputManager.GetAudioCodec(importAudiofile.Name) : null
                 };
                 tracks = importAudiofile.Tracks;
             }
@@ -264,7 +264,7 @@ public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceC
             }
             TimeSpan? begin = TimeSpan.Zero;
             ushort position = 1;
-            for (int i = 0; i < sortedTracks.Count(); i++)
+            for (var i = 0; i < sortedTracks.Count(); i++)
             {
                 var track = sortedTracks.ElementAt(i);
                 ITrack? nextTrack = null;

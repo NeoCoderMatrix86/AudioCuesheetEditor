@@ -2,6 +2,6 @@
 
 public class ImportAudiofile : IAudiofile
 {
-    public String? Name { get; set;  }
+    public string? Name { get; set;  }
     public IList<ImportTrack> Tracks { get; } = [];
 }

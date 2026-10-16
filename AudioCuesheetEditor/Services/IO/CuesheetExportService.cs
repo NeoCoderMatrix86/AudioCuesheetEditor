@@ -62,34 +62,34 @@ public class CuesheetExportService(ISessionStateContainer sessionStateContainer,
         var builder = new StringBuilder();
         if (string.IsNullOrEmpty(_sessionStateContainer.Cuesheet.Cataloguenumber) == false)
         {
-            builder.AppendLine(string.Format("{0} {1}", CuesheetConstants.CuesheetCatalogueNumber, _sessionStateContainer.Cuesheet.Cataloguenumber));
+            _ = builder.AppendLine(string.Format("{0} {1}", CuesheetConstants.CuesheetCatalogueNumber, _sessionStateContainer.Cuesheet.Cataloguenumber));
         }
         if (_sessionStateContainer.Cuesheet.CDTextfile != null)
         {
-            builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetCDTextfile, _sessionStateContainer.Cuesheet.CDTextfile.Name));
+            _ = builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetCDTextfile, _sessionStateContainer.Cuesheet.CDTextfile.Name));
         }
-        builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, _sessionStateContainer.Cuesheet.Title));
-        builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, _sessionStateContainer.Cuesheet.Artist));
+        _ = builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, _sessionStateContainer.Cuesheet.Title));
+        _ = builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, _sessionStateContainer.Cuesheet.Artist));
         foreach (var audiofile in _sessionStateContainer.Cuesheet.Audiofiles)
         {
-            builder.AppendLine(string.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, audiofile.Name, audiofile.AudioCodec?.FileExtension.Replace(".",string.Empty).ToUpper()));
+            _ = builder.AppendLine(string.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, audiofile.Name, audiofile.AudioCodec?.FileExtension.Replace(".", string.Empty).ToUpper()));
             foreach(var track in audiofile.Tracks)
             {
-                builder.AppendLine(string.Format("{0}{1} {2:00} {3}", CuesheetConstants.Tab, CuesheetConstants.CuesheetTrack, track.Position, CuesheetConstants.CuesheetTrackAudio));
-                builder.AppendLine(string.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackTitle, track.Title));
-                builder.AppendLine(string.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackArtist, track.Artist));
+                _ = builder.AppendLine(string.Format("{0}{1} {2:00} {3}", CuesheetConstants.Tab, CuesheetConstants.CuesheetTrack, track.Position, CuesheetConstants.CuesheetTrackAudio));
+                _ = builder.AppendLine(string.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackTitle, track.Title));
+                _ = builder.AppendLine(string.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackArtist, track.Artist));
                 if (track.Flags.Any())
                 {
-                    builder.AppendLine(string.Format("{0}{1}{2} {3}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackFlags, string.Join(" ", track.Flags.Select(x => x.CuesheetLabel))));
+                    _ = builder.AppendLine(string.Format("{0}{1}{2} {3}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackFlags, string.Join(" ", track.Flags.Select(x => x.CuesheetLabel))));
                 }
                 if (track.PreGap.HasValue)
                 {
-                    builder.AppendLine(string.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackPreGap, Math.Floor(track.PreGap.Value.TotalMinutes), track.PreGap.Value.Seconds, track.PreGap.Value.Milliseconds * 75 / 1000));
+                    _ = builder.AppendLine(string.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackPreGap, Math.Floor(track.PreGap.Value.TotalMinutes), track.PreGap.Value.Seconds, track.PreGap.Value.Milliseconds * 75 / 1000));
                 }
                 if (track.Begin.HasValue)
                 {
                     var begin = track.Begin.Value;
-                    builder.AppendLine(string.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(begin.TotalMinutes), begin.Seconds, begin.Milliseconds * 75 / 1000));
+                    _ = builder.AppendLine(string.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(begin.TotalMinutes), begin.Seconds, begin.Milliseconds * 75 / 1000));
                 }
                 else
                 {
@@ -97,7 +97,7 @@ public class CuesheetExportService(ISessionStateContainer sessionStateContainer,
                 }
                 if (track.PostGap.HasValue)
                 {
-                    builder.AppendLine(string.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackPostGap, Math.Floor(track.PostGap.Value.TotalMinutes), track.PostGap.Value.Seconds, track.PostGap.Value.Milliseconds * 75 / 1000));
+                    _ = builder.AppendLine(string.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackPostGap, Math.Floor(track.PostGap.Value.TotalMinutes), track.PostGap.Value.Seconds, track.PostGap.Value.Milliseconds * 75 / 1000));
                 }
             }
         }

@@ -47,11 +47,11 @@ public class AudioImportServiceTests
         // Arrange
         var cuesheet = new Cuesheet();
         var importAudiofileMapping = new Dictionary<Audiofile, Audiofile?>();
-        _dialogManager.Setup(x => x.ShowImportAudiofilesDialogAsync()).ReturnsAsync(true);
-        _sessionStateContainer.SetupGet(x => x.ImportAudiofileMapping).Returns(importAudiofileMapping);
-        _sessionStateContainer.SetupSet(x => x.ImportAudiofileMapping = It.IsAny<Dictionary<Audiofile, Audiofile?>>()).Callback<Dictionary<Audiofile, Audiofile?>>(cs => importAudiofileMapping = cs);
-        _sessionStateContainer.SetupGet(x => x.ImportAudiofiles).Returns([]);
-        _sessionStateContainer.SetupGet(x => x.ActiveCuesheet).Returns(cuesheet);
+        _ = _dialogManager.Setup(x => x.ShowImportAudiofilesDialogAsync()).ReturnsAsync(true);
+        _ = _sessionStateContainer.SetupGet(x => x.ImportAudiofileMapping).Returns(importAudiofileMapping);
+        _ = _sessionStateContainer.SetupSet(x => x.ImportAudiofileMapping = It.IsAny<Dictionary<Audiofile, Audiofile?>>()).Callback<Dictionary<Audiofile, Audiofile?>>(cs => importAudiofileMapping = cs);
+        _ = _sessionStateContainer.SetupGet(x => x.ImportAudiofiles).Returns([]);
+        _ = _sessionStateContainer.SetupGet(x => x.ActiveCuesheet).Returns(cuesheet);
         // Act
         var result = await _service.MapAudioImportAsync();
         // Assert
@@ -76,11 +76,11 @@ public class AudioImportServiceTests
         {
             new()
         };
-        _dialogManager.Setup(x => x.ShowImportAudiofilesDialogAsync()).ReturnsAsync(true);
-        _sessionStateContainer.SetupGet(x => x.ImportAudiofileMapping).Returns(importAudiofileMapping);
-        _sessionStateContainer.SetupSet(x => x.ImportAudiofileMapping = It.IsAny<Dictionary<Audiofile, Audiofile?>>()).Callback<Dictionary<Audiofile, Audiofile?>>(cs => importAudiofileMapping = cs);
-        _sessionStateContainer.SetupGet(x => x.ImportAudiofiles).Returns(importAudioFiles);
-        _sessionStateContainer.SetupGet(x => x.ActiveCuesheet).Returns(cuesheet);
+        _ = _dialogManager.Setup(x => x.ShowImportAudiofilesDialogAsync()).ReturnsAsync(true);
+        _ = _sessionStateContainer.SetupGet(x => x.ImportAudiofileMapping).Returns(importAudiofileMapping);
+        _ = _sessionStateContainer.SetupSet(x => x.ImportAudiofileMapping = It.IsAny<Dictionary<Audiofile, Audiofile?>>()).Callback<Dictionary<Audiofile, Audiofile?>>(cs => importAudiofileMapping = cs);
+        _ = _sessionStateContainer.SetupGet(x => x.ImportAudiofiles).Returns(importAudioFiles);
+        _ = _sessionStateContainer.SetupGet(x => x.ActiveCuesheet).Returns(cuesheet);
         // Act
         var result = await _service.MapAudioImportAsync();
         // Assert
@@ -106,11 +106,11 @@ public class AudioImportServiceTests
             new(), new()
         };
         var dialogResultAborted = true;
-        _dialogManager.Setup(x => x.ShowImportAudiofilesDialogAsync()).ReturnsAsync(dialogResultAborted);
-        _sessionStateContainer.SetupGet(x => x.ImportAudiofileMapping).Returns(importAudiofileMapping);
-        _sessionStateContainer.SetupSet(x => x.ImportAudiofileMapping = It.IsAny<Dictionary<Audiofile, Audiofile?>>()).Callback<Dictionary<Audiofile, Audiofile?>>(cs => importAudiofileMapping = cs);
-        _sessionStateContainer.SetupGet(x => x.ImportAudiofiles).Returns(importAudioFiles);
-        _sessionStateContainer.SetupGet(x => x.ActiveCuesheet).Returns(cuesheet);
+        _ = _dialogManager.Setup(x => x.ShowImportAudiofilesDialogAsync()).ReturnsAsync(dialogResultAborted);
+        _ = _sessionStateContainer.SetupGet(x => x.ImportAudiofileMapping).Returns(importAudiofileMapping);
+        _ = _sessionStateContainer.SetupSet(x => x.ImportAudiofileMapping = It.IsAny<Dictionary<Audiofile, Audiofile?>>()).Callback<Dictionary<Audiofile, Audiofile?>>(cs => importAudiofileMapping = cs);
+        _ = _sessionStateContainer.SetupGet(x => x.ImportAudiofiles).Returns(importAudioFiles);
+        _ = _sessionStateContainer.SetupGet(x => x.ActiveCuesheet).Returns(cuesheet);
         // Act
         var result = await _service.MapAudioImportAsync();
         // Assert

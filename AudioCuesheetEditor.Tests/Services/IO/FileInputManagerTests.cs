@@ -237,7 +237,7 @@ public class FileInputManagerTests
             secondFile
         ];
         var objectUrl = "Some object url!";
-        _jsRuntimeMock.Setup(js => js.InvokeAsync<String>(It.IsAny<string>(), It.IsAny<object[]>())).ReturnsAsync(objectUrl);
+        _ = _jsRuntimeMock.Setup(js => js.InvokeAsync<string>(It.IsAny<string>(), It.IsAny<object[]>())).ReturnsAsync(objectUrl);
         // Act
         var result = await _service.CreateFileUploadsAsync(browserfiles);
         // Assert
@@ -270,11 +270,11 @@ public class FileInputManagerTests
     static IBrowserFile CreateBrowserFile(string name, string contentType, string? content = null)
     {
         var fileMock = new Mock<IBrowserFile>();
-        fileMock.Setup(f => f.Name).Returns(name);
-        fileMock.Setup(f => f.ContentType).Returns(contentType);
+        _ = fileMock.Setup(f => f.Name).Returns(name);
+        _ = fileMock.Setup(f => f.ContentType).Returns(contentType);
         if (content != null)
-        { 
-            fileMock.Setup(f => f.OpenReadStream()).Returns(new MemoryStream(Encoding.UTF8.GetBytes(content)));
+        {
+            _ = fileMock.Setup(f => f.OpenReadStream()).Returns(new MemoryStream(Encoding.UTF8.GetBytes(content)));
         }
         return fileMock.Object;
     }

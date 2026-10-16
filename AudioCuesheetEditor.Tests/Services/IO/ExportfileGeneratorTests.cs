@@ -91,7 +91,7 @@ public class ExportfileGeneratorTests
         track2.Cuesheet = cuesheet;
         track1.Audiofile = cuesheet.Audiofiles.First();
         track2.Audiofile = cuesheet.Audiofiles.Last();
-        _mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
+        _ = _mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
 
         // Act
         var result = _exportfileGenerator.GenerateExportfile(exportProfile);
@@ -147,7 +147,7 @@ Test audiofile 2.wav
         track2.Cuesheet = cuesheet;
         track1.Audiofile = cuesheet.Audiofiles.First();
         track2.Audiofile = cuesheet.Audiofiles.First();
-        _mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
+        _ = _mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
 
         // Act
         var result = _exportfileGenerator.GenerateExportfile(exportProfile);
@@ -199,7 +199,7 @@ Test audiofile 2.wav
         track2.Cuesheet = cuesheet;
         track1.Audiofile = cuesheet.Audiofiles.First();
         track2.Audiofile = cuesheet.Audiofiles.First();
-        _mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
+        _ = _mockSessionStateContainer.SetupProperty(x => x.Cuesheet, cuesheet);
 
         // Act
         var result = _exportfileGenerator.GenerateExportfile(exportProfile);

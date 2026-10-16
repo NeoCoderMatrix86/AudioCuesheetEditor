@@ -39,18 +39,12 @@ partial class AppBar(IPage page)
         await _page.GetByRole(AriaRole.Button, new() { Name = "Change language" }).ClickAsync();
         await _page.GetByText(language).ClickAsync();
         await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
+        _ = await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
     }
 
-    internal async Task UndoAsync()
-    {
-        await UndoButton.ClickAsync();
-    }
+    internal async Task UndoAsync() => await UndoButton.ClickAsync();
 
-    internal async Task RedoAsync()
-    {
-        await RedoButton.ClickAsync();
-    }
+    internal async Task RedoAsync() => await RedoButton.ClickAsync();
 
     internal async Task OpenFileAsync(string file)
     {

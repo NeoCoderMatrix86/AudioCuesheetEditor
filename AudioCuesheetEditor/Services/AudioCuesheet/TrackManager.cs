@@ -27,15 +27,12 @@ public class TrackManager(ITraceChangeManager traceChangeManager) : ITrackManage
     readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
 
     /// <inheritdoc/>
-    public void SetProperty<TProperty>(Track track, Expression<Func<Track, TProperty>> propertyExpression, TProperty value)
-    {
-        SetValue(track, propertyExpression, value);
-    }
+    public void SetProperty<TProperty>(Track track, Expression<Func<Track, TProperty>> propertyExpression, TProperty value) => SetValue(track, propertyExpression, value);
 
     /// <inheritdoc/>
     public Track Clone(ITrack track)
     {
-        Boolean setLength = true;
+        var setLength = true;
         if (track.Begin.HasValue && track.End.HasValue)
         {
             setLength = false;

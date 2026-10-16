@@ -56,7 +56,7 @@ public class ProjectfileTests
             var rand = new Random();
             var flagsToAdd = rand.Next(1, 3);
             var flags = new List<Flag>();
-            for (int x = 0; x < flagsToAdd; x++)
+            for (var x = 0; x < flagsToAdd; x++)
             {
                 flags.Add(Flag.AvailableFlags.ElementAt(x));
             }

@@ -65,12 +65,12 @@ public class ExportfileGenerator(ISessionStateContainer sessionStateContainer, I
                 .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
                 .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString())
                 .Replace(Exportprofile.SchemeTime, DateTime.Now.ToLongTimeString());
-            builder.AppendLine(header);
+            _ = builder.AppendLine(header);
             foreach (var audiofile in _sessionStateContainer.Cuesheet.Audiofiles)
             {
                 var audiofileLine = exportprofile.SchemeAudiofiles
                     .Replace(Exportprofile.SchemeAudiofileName, audiofile.Name);
-                builder.AppendLine(audiofileLine);
+                _ = builder.AppendLine(audiofileLine);
                 IEnumerable<Track> tracks = audiofile.Tracks.OrderBy(x => x.Position);
                 if (tracks.Any())
                 {
@@ -89,7 +89,7 @@ public class ExportfileGenerator(ISessionStateContainer sessionStateContainer, I
                             .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
                             .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString())
                             .Replace(Exportprofile.SchemeTime, DateTime.Now.ToLongTimeString());
-                        builder.AppendLine(trackLine);
+                        _ = builder.AppendLine(trackLine);
                     }
                 }
             }
@@ -102,7 +102,7 @@ public class ExportfileGenerator(ISessionStateContainer sessionStateContainer, I
                 .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
                 .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString())
                 .Replace(Exportprofile.SchemeTime, DateTime.Now.ToLongTimeString());
-            builder.AppendLine(footer);
+            _ = builder.AppendLine(footer);
         }
         return builder.ToString();
     }

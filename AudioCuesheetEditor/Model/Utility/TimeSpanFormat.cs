@@ -20,13 +20,13 @@ namespace AudioCuesheetEditor.Model.Utility;
 
 public class TimeSpanFormat : Validateable
 {
-    public const String Days = "Days";
-    public const String Hours = "Hours";
-    public const String Minutes = "Minutes";
-    public const String Seconds = "Seconds";
-    public const String Milliseconds = "Milliseconds";
+    public const string Days = "Days";
+    public const string Hours = "Hours";
+    public const string Minutes = "Minutes";
+    public const string Seconds = "Seconds";
+    public const string Milliseconds = "Milliseconds";
 
-    public static readonly IEnumerable<String> AvailableTimespanScheme;
+    public static readonly IEnumerable<string> AvailableTimespanScheme;
 
     static TimeSpanFormat()
     {
@@ -37,7 +37,7 @@ public class TimeSpanFormat : Validateable
 
     string? scheme;
 
-    public String? Scheme
+    public string? Scheme
     {
         get => scheme;
         set
@@ -48,10 +48,10 @@ public class TimeSpanFormat : Validateable
         }
     }
 
-    public TimeSpan? ParseTimeSpan(String input)
+    public TimeSpan? ParseTimeSpan(string input)
     {
         TimeSpan? timespan = null;
-        if ((String.IsNullOrEmpty(Scheme) == false) && (String.IsNullOrEmpty(input) == false))
+        if ((string.IsNullOrEmpty(Scheme) == false) && (string.IsNullOrEmpty(input) == false))
         {
             var pattern = CreateFlexibleRegexPattern(Scheme);
             var match = Regex.Match(input, pattern);
@@ -87,13 +87,13 @@ public class TimeSpanFormat : Validateable
 
     public override ValidationResult Validate(string property)
     {
-        ValidationStatus validationStatus = ValidationStatus.NoValidation;
+        var validationStatus = ValidationStatus.NoValidation;
         List<ValidationMessage>? validationMessages = null;
         switch (property)
         {
             case nameof(Scheme):
                 validationStatus = ValidationStatus.Success;
-                if (String.IsNullOrEmpty(Scheme) == false)
+                if (string.IsNullOrEmpty(Scheme) == false)
                 {
                     if ((Scheme.Contains(Days) == false)
                         && (Scheme.Contains(Hours) == false)

@@ -71,7 +71,7 @@ public class SessionStateContainer : ISessionStateContainer, IDisposable
     public IList<Audiofile> ImportAudiofiles { get; set; } = [];
     public Dictionary<Audiofile, Audiofile?> ImportAudiofileMapping { get; set; } = [];
     public IImportfile? Importfile { get; set; }
-    public Boolean ImportIsAnalyzed { get; set; } = false;
+    public bool ImportIsAnalyzed { get; set; } = false;
 
     /// <inheritdoc/>
     public async Task InitializeAsync()
@@ -80,7 +80,7 @@ public class SessionStateContainer : ISessionStateContainer, IDisposable
         SetActiveCuesheet();
     }
 
-    public async Task ResetImportAsync(Boolean revokeObjectURLs)
+    public async Task ResetImportAsync(bool revokeObjectURLs)
     {
         Importfile = null;
         await ResetAudioImportAsync(revokeObjectURLs);

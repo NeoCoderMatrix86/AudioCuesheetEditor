@@ -60,12 +60,12 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         {
             SelectedImportProfile = ImportOptions.DefaultSelectedImportprofile
         };
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(importOptions);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(importOptions);
         var applicationOptions = new ApplicationOptions()
         {
             DefaultIsLinkedToPreviousTrack = true
         };
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
         // Act
         var importFile = await _textImportService.AnalyseAsync(fileContent);
         // Assert
@@ -100,12 +100,12 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         {
             SelectedImportProfile = ImportOptions.DefaultSelectedImportprofile
         };
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(importOptions);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(importOptions);
         var applicationOptions = new ApplicationOptions()
         {
             DefaultIsLinkedToPreviousTrack = true
         };
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
         // Act
         var importFile = await _textImportService.AnalyseAsync(fileContent);
         // Assert
@@ -144,7 +144,7 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         {
             SelectedImportProfile = profile
         };
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
         // Act
         var importfile = await _textImportService.AnalyseAsync(fileContent);
         // Assert
@@ -174,9 +174,9 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         {
             SelectedImportProfile = profile
         };
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
         var applicationOptions = new ApplicationOptions();
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
         // Act
         var importfile = await _textImportService.AnalyseAsync(fileContent);
         // Assert
@@ -215,9 +215,9 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         {
             SelectedImportProfile = profile
         };
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
         var applicationOptions = new ApplicationOptions();
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
         // Act
         var importFile = await _textImportService.AnalyseAsync(fileContent);
         // Assert
@@ -266,9 +266,9 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         {
             SelectedImportProfile = profile
         };
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
         var applicationOptions = new ApplicationOptions();
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
         // Act
         var importFile = await _textImportService.AnalyseAsync(fileContent);
         // Assert
@@ -307,9 +307,9 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         {
             SelectedImportProfile = profile
         };
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
         var applicationOptions = new ApplicationOptions();
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
         // Act
         var importFile = await _textImportService.AnalyseAsync(fileContent);
         // Assert
@@ -348,9 +348,9 @@ Sample Artist 9 - Sample Title 9				";
         {
             SelectedImportProfile = profile
         };
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
         var applicationOptions = new ApplicationOptions();
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
         // Act
         var importFile = await _textImportService.AnalyseAsync(fileContent);
         // Assert
@@ -377,9 +377,9 @@ Sample Artist 9 - Sample Title 9				";
         {
             SelectedImportProfile = profile
         };
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
         var applicationOptions = new ApplicationOptions();
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
         // Act
         var importFile = await _textImportService.AnalyseAsync(fileContent);
         // Assert
@@ -411,9 +411,9 @@ Sample Artist 8 - Sample Title 8				01:15:54	PRE DCP 4CH SCMS";
         {
             SelectedImportProfile = profile
         };
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
         var applicationOptions = new ApplicationOptions();
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
         // Act
         var importFile = await _textImportService.AnalyseAsync(fileContent);
         // Assert
@@ -455,9 +455,9 @@ Sample Artist 8 - Sample Title 8		00:00:02		01:15:54		00:00:00";
         {
             SelectedImportProfile = profile
         };
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
         var applicationOptions = new ApplicationOptions();
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
         // Act
         var importFile = await _textImportService.AnalyseAsync(fileContent);
         // Assert
@@ -505,9 +505,9 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         {
             SelectedImportProfile = profile
         };
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
         var applicationOptions = new ApplicationOptions();
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
         // Act
         var importFile = await _textImportService.AnalyseAsync(fileContent);
         // Assert
@@ -556,9 +556,9 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         {
             SelectedImportProfile = importProfile
         };
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
         var applicationOptions = new ApplicationOptions();
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
         // Act
         var importFile = await _textImportService.AnalyseAsync(fileContent);
         // Assert
@@ -590,9 +590,9 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         {
             SelectedImportProfile = profile
         };
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
         var applicationOptions = new ApplicationOptions();
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
         // Act
         var importFile = await _textImportService.AnalyseAsync(fileContent);
         // Assert
@@ -620,9 +620,9 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         {
             SelectedImportProfile = profile
         };
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
         var applicationOptions = new ApplicationOptions();
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
         // Act
         var importFile = await _textImportService.AnalyseAsync(fileContent);
         // Assert
@@ -640,8 +640,8 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         Assert.AreEqual("Andale (MONTA (TN) Remix)", importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.Last().Title);
         Assert.AreEqual(new DateTime(2025, 1, 29, 22, 30, 3), importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.Last().StartDateTime);
         Assert.IsNotNull(importFile.FileContentRecognized);
-        Assert.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "Sasha Fashion"), importFile.FileContentRecognized);
-        Assert.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "2025/1/29 21:48:55"), importFile.FileContentRecognized);
+        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "Sasha Fashion"), importFile.FileContentRecognized);
+        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "2025/1/29 21:48:55"), importFile.FileContentRecognized);
     }
 
     [TestMethod()]
@@ -659,9 +659,9 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         {
             SelectedImportProfile = profile
         };
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
         var applicationOptions = new ApplicationOptions();
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
         // Act
         var importFile = await _textImportService.AnalyseAsync(fileContent);
         // Assert
@@ -678,13 +678,13 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         Assert.AreEqual("Chasing the Sun (Original Mix)", importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.Last().Title);
         Assert.IsNull(importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.Last().Begin);
         Assert.IsNotNull(importFile.FileContentRecognized);
-        Assert.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "DJFreezeT"), importFile.FileContentRecognized);
-        Assert.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "Rabbit Hole Mix"), importFile.FileContentRecognized);
-        Assert.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "0123456789123"), importFile.FileContentRecognized);
-        Assert.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "Nikolay Kirov"), importFile.FileContentRecognized);
-        Assert.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "Chasing the Sun (Original Mix)"), importFile.FileContentRecognized);
-        Assert.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "SHDW & Obscure Shape"), importFile.FileContentRecognized);
-        Assert.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "Wächter der Nacht (Original Mix)"), importFile.FileContentRecognized);
+        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "DJFreezeT"), importFile.FileContentRecognized);
+        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "Rabbit Hole Mix"), importFile.FileContentRecognized);
+        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "0123456789123"), importFile.FileContentRecognized);
+        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "Nikolay Kirov"), importFile.FileContentRecognized);
+        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "Chasing the Sun (Original Mix)"), importFile.FileContentRecognized);
+        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "SHDW & Obscure Shape"), importFile.FileContentRecognized);
+        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "Wächter der Nacht (Original Mix)"), importFile.FileContentRecognized);
     }
 
     [TestMethod()]
@@ -731,9 +731,9 @@ Local Singles~Voices~{new DateTime(2024, 8, 14, 22, 25, 59)}";
         {
             SelectedImportProfile = profile
         };
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
         var applicationOptions = new ApplicationOptions();
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
         // Act
         var importFile = await _textImportService.AnalyseAsync(fileContent);
         // Assert
@@ -768,9 +768,9 @@ Local Singles~Voices~{new DateTime(2024, 8, 14, 22, 25, 59)}";
         {
             SelectedImportProfile = profile
         };
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ImportOptions>()).ReturnsAsync(options);
         var applicationOptions = new ApplicationOptions();
-        _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
+        _ = _localStorageOptionsProviderMock.Setup(x => x.GetOptionsAsync<ApplicationOptions>()).ReturnsAsync(applicationOptions);
         // Act
         var importFile = await _textImportService.AnalyseAsync(fileContent);
         // Assert
@@ -782,9 +782,9 @@ Local Singles~Voices~{new DateTime(2024, 8, 14, 22, 25, 59)}";
         Assert.AreEqual("c:\\AudioFile.mp3", importFile.AnalyzedCuesheet.Audiofiles.First().Name);
         Assert.HasCount(8, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks);
         Assert.IsNotNull(importFile.FileContentRecognized);
-        Assert.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetArtist"), importFile.FileContentRecognized);
-        Assert.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetTitle"), importFile.FileContentRecognized);
-        Assert.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "c:\\AudioFile.mp3"), importFile.FileContentRecognized);
-        Assert.Contains(String.Format(CuesheetConstants.RecognizedMarkHTML, "Sample Artist 8"), importFile.FileContentRecognized);
+        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetArtist"), importFile.FileContentRecognized);
+        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetTitle"), importFile.FileContentRecognized);
+        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "c:\\AudioFile.mp3"), importFile.FileContentRecognized);
+        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "Sample Artist 8"), importFile.FileContentRecognized);
     }
 }

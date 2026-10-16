@@ -47,7 +47,7 @@ public class LocalStorageOptionsProviderTests
     {
         // Arrange
         var options = new ExportOptions();
-        Boolean eventRaised = false;
+        var eventRaised = false;
         _service.OptionSaved += delegate
         {
             eventRaised = true;
@@ -68,7 +68,7 @@ public class LocalStorageOptionsProviderTests
             ProjectFilename = "Test.ace",
             CuesheetFilename = "Test.cue"
         };
-        Boolean eventRaised = false;
+        var eventRaised = false;
         _service.OptionSaved += delegate
         {
             eventRaised = true;
@@ -89,7 +89,7 @@ public class LocalStorageOptionsProviderTests
             CuesheetFilename = null,
             ProjectFilename = null
         };
-        Boolean eventRaised = false;
+        var eventRaised = false;
         _service.OptionSaved += delegate
         {
             eventRaised = true;

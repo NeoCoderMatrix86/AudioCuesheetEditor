@@ -36,7 +36,7 @@ public class FlagJsonConverter : JsonConverter<Flag>
 
     public override void Write(Utf8JsonWriter writer, Flag value, JsonSerializerOptions options)
     {
-        if ((value != null) && (String.IsNullOrEmpty(value.CuesheetLabel) == false))
+        if ((value != null) && (string.IsNullOrEmpty(value.CuesheetLabel) == false))
         {
             writer.WriteStringValue(value.CuesheetLabel);
         }

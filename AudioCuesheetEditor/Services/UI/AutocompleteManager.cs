@@ -21,7 +21,7 @@ public class AutocompleteManager(MusicBrainzDataProvider musicBrainzDataProvider
 {
     readonly MusicBrainzDataProvider _musicBrainzDataProvider = musicBrainzDataProvider;
 
-    public async Task<IEnumerable<MusicBrainzArtist>> SearchArtistsAsync(String? searchString, CancellationToken cancellationToken)
+    public async Task<IEnumerable<MusicBrainzArtist>> SearchArtistsAsync(string? searchString, CancellationToken cancellationToken)
     {
         try
         {
@@ -38,7 +38,7 @@ public class AutocompleteManager(MusicBrainzDataProvider musicBrainzDataProvider
         }
     }
 
-    public async Task<IEnumerable<MusicBrainzTrack>> SearchTitlesAsync(String? searchString, String? artist, CancellationToken cancellationToken)
+    public async Task<IEnumerable<MusicBrainzTrack>> SearchTitlesAsync(string? searchString, string? artist, CancellationToken cancellationToken)
     {
         try
         {

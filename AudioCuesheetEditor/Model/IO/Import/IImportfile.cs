@@ -23,11 +23,11 @@ public interface IImportfile
     /// <summary>
     /// File content
     /// </summary>
-    String? FileContent { get; set; }
+    string? FileContent { get; set; }
     /// <summary>
     /// File content with marking which passages has been recognized by scheme
     /// </summary>
-    String? FileContentRecognized { get; set; }
+    string? FileContentRecognized { get; set; }
     /// <summary>
     /// Exception that has been thrown while reading out the file
     /// </summary>

@@ -19,19 +19,19 @@ namespace AudioCuesheetEditor.Model.Entity;
 
 public class ValidationMessage
 {
-    public ValidationMessage(String message, params object[]? args)
+    public ValidationMessage(string message, params object[]? args)
     {
-        if (String.IsNullOrEmpty(message) == true)
+        if (string.IsNullOrEmpty(message) == true)
         {
             throw new ArgumentNullException(nameof(message));
         }
         Message = message;
         Parameter = args;
     }
-    public String Message { get; private set; }
+    public string Message { get; private set; }
     public object[]? Parameter { get; private set; }
 
-    public String GetMessageLocalized(IStringLocalizer<ValidationMessage> localizer)
+    public string GetMessageLocalized(IStringLocalizer<ValidationMessage> localizer)
     {
         object[]? arguments = null;
         if (Parameter != null)
@@ -41,11 +41,11 @@ public class ValidationMessage
         }
         if (arguments != null)
         {
-            for (int i = 0; i < arguments.Length; i++)
+            for (var i = 0; i < arguments.Length; i++)
             {
-                if ((arguments[i] != null) && (arguments[i].GetType() == typeof(String)))
+                if ((arguments[i] != null) && (arguments[i].GetType() == typeof(string)))
                 {
-                    arguments[i] = localizer[(String)arguments[i]];
+                    arguments[i] = localizer[(string)arguments[i]];
                 }
             }
             return localizer[Message, arguments];

@@ -3222,7 +3222,7 @@ public class ImportTest : PlaywrightTestBase
     {
         var importView = new ImportView(TestPage, DeviceName != null);
         await importView.GotoAsync();
-        var text = String.Join(Environment.NewLine, File.ReadAllLines("Sample_Inputfile.txt"));
+        var text = string.Join(Environment.NewLine, File.ReadAllLines("Sample_Inputfile.txt"));
         await importView.ImportTextAsync(text);
         await importView.Analyze();
         await importView.CompleteImportAsync();

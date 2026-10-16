@@ -307,7 +307,7 @@ public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionSta
         return Result.Success();
     }
 
-    void SetValue<TProperty>(Cuesheet cuesheet, Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value, Boolean traceChanges = true)
+    void SetValue<TProperty>(Cuesheet cuesheet, Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value, bool traceChanges = true)
     {
         if (propertyExpression.Body is not MemberExpression memberExpression)
         {
@@ -353,7 +353,7 @@ public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionSta
         var currentTrackPositionAudiofile = trackToMove.Audiofile;
         //Switch audiofiles without audiofilemanager since methods there capsulate much logic
         var currentTrackPositionAudiofileTracks = new List<Track>(currentTrackPositionAudiofile!.Tracks);
-        currentTrackPositionAudiofileTracks.Remove(trackToMove);
+        _ = currentTrackPositionAudiofileTracks.Remove(trackToMove);
         _traceChangeManager.AddChange(new(currentTrackPositionAudiofile, new(currentTrackPositionAudiofile.Tracks, nameof(Audiofile.Tracks))));
         currentTrackPositionAudiofile.Tracks = currentTrackPositionAudiofileTracks;
         var audiofileToMoveToTracks = new List<Track>(audiofileToMoveTo.Tracks)

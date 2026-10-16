@@ -51,7 +51,7 @@ public class ImportManagerTests
         _fileInputManager = new();
         _textImportService = new();
         _trackManager = new();
-        _trackManager.Setup(x => x.SetProperty(It.IsAny<Track>(), It.IsAny<Expression<Func<Track, It.IsAnyType>>>(), It.IsAny<It.IsAnyType>()))
+        _ = _trackManager.Setup(x => x.SetProperty(It.IsAny<Track>(), It.IsAny<Expression<Func<Track, It.IsAnyType>>>(), It.IsAny<It.IsAnyType>()))
             .Callback((Track track, LambdaExpression propExpr, object value) =>
             {
                 var memberExpression = propExpr.Body as MemberExpression;
@@ -60,7 +60,7 @@ public class ImportManagerTests
                     propertyInfo.SetValue(track, value);
                 }
             });
-        _trackManager.Setup(x => x.CopyValues(It.IsAny<ITrack>(), It.IsAny<Track>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
+        _ = _trackManager.Setup(x => x.CopyValues(It.IsAny<ITrack>(), It.IsAny<Track>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
             .Callback<ITrack, Track, bool, bool, bool, bool, bool, bool, bool, bool, bool, bool>((source, target, setIsLinkedToPreviousTrack, setPosition, setArtist, setTitle, setBegin, setEnd, setLength, setFlags, setPreGap, setPostGap) =>
         {
             if (setIsLinkedToPreviousTrack)
@@ -104,10 +104,10 @@ public class ImportManagerTests
                 TrackManager_SetValue(target, x => x.PostGap, source.PostGap, false);
             }
         });
-        _trackManager.Setup(x => x.Clone(It.IsAny<ITrack>())).Returns<ITrack>(track =>
+        _ = _trackManager.Setup(x => x.Clone(It.IsAny<ITrack>())).Returns<ITrack>(track =>
         {
             var clone = new Track();
-            Boolean setLength = true;
+            var setLength = true;
             if (track.Begin.HasValue && track.End.HasValue)
             {
                 setLength = false;
@@ -120,7 +120,7 @@ public class ImportManagerTests
         _service = new ImportManager(_sessionStateContainer.Object, _traceChangeManager.Object, _fileInputManager.Object, _textImportService.Object, _trackManager.Object, _audioImportService.Object, loggerMock.Object);
     }
 
-    void TrackManager_SetValue<TProperty>(Track track, Expression<Func<Track, TProperty>> propertyExpression, TProperty value, Boolean signalTraceChangeManager = true)
+    void TrackManager_SetValue<TProperty>(Track track, Expression<Func<Track, TProperty>> propertyExpression, TProperty value, bool signalTraceChangeManager = true)
     {
         if (propertyExpression.Body is not MemberExpression memberExpression)
         {
@@ -179,17 +179,17 @@ public class ImportManagerTests
             FileType = ImportFileType.Textfile,
             AnalyzedCuesheet = importCuesheet
         };
-        _textImportService.Setup(x => x.AnalyseAsync(fileContent)).ReturnsAsync(importFile);
-        _sessionStateContainer.SetupGet(x => x.Importfile).Returns(importFile);
+        _ = _textImportService.Setup(x => x.AnalyseAsync(fileContent)).ReturnsAsync(importFile);
+        _ = _sessionStateContainer.SetupGet(x => x.Importfile).Returns(importFile);
         IList<Audiofile>? sessionStateContainerImportAudiofiles = [];
-        _sessionStateContainer.SetupGet(x => x.ImportAudiofiles).Returns(() => sessionStateContainerImportAudiofiles);
+        _ = _sessionStateContainer.SetupGet(x => x.ImportAudiofiles).Returns(() => sessionStateContainerImportAudiofiles);
         Cuesheet? sessionStateContainerImportCuesheet = null;
-        _sessionStateContainer.SetupSet(x => x.ImportCuesheet = It.IsAny<Cuesheet>()).Callback<Cuesheet>(cs => sessionStateContainerImportCuesheet = cs);
-        _sessionStateContainer.SetupGet(x => x.ImportCuesheet).Returns(() => sessionStateContainerImportCuesheet);
+        _ = _sessionStateContainer.SetupSet(x => x.ImportCuesheet = It.IsAny<Cuesheet>()).Callback<Cuesheet>(cs => sessionStateContainerImportCuesheet = cs);
+        _ = _sessionStateContainer.SetupGet(x => x.ImportCuesheet).Returns(() => sessionStateContainerImportCuesheet);
         IImportfile? sessionStateContainerImportfile = null;
-        _sessionStateContainer.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
+        _ = _sessionStateContainer.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
         // Act
-        await _service.AnalyseImportfile();
+        _ = await _service.AnalyseImportfile();
         // Assert
         Assert.AreEqual(importFile, sessionStateContainerImportfile);
         Assert.IsNotNull(sessionStateContainerImportCuesheet);
@@ -220,14 +220,14 @@ public class ImportManagerTests
             FileContent = fileContent,
             FileType = ImportFileType.Textfile,
         };
-        _textImportService.Setup(x => x.AnalyseAsync(fileContent)).ReturnsAsync(importFile);
-        _sessionStateContainer.SetupGet(x => x.Importfile).Returns(importFile);
+        _ = _textImportService.Setup(x => x.AnalyseAsync(fileContent)).ReturnsAsync(importFile);
+        _ = _sessionStateContainer.SetupGet(x => x.Importfile).Returns(importFile);
         Cuesheet? sessionStateContainerImportCuesheet = null;
-        _sessionStateContainer.SetupSet(x => x.ImportCuesheet = It.IsAny<Cuesheet>()).Callback<Cuesheet>(cs => sessionStateContainerImportCuesheet = cs);
+        _ = _sessionStateContainer.SetupSet(x => x.ImportCuesheet = It.IsAny<Cuesheet>()).Callback<Cuesheet>(cs => sessionStateContainerImportCuesheet = cs);
         IImportfile? sessionStateContainerImportfile = null;
-        _sessionStateContainer.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
+        _ = _sessionStateContainer.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
         // Act
-        await _service.AnalyseImportfile();
+        _ = await _service.AnalyseImportfile();
         // Assert
         Assert.AreEqual(importFile, sessionStateContainerImportfile);
         Assert.IsNull(sessionStateContainerImportCuesheet);
@@ -279,15 +279,15 @@ TRACK 08 AUDIO
             FileType = ImportFileType.Cuesheet
         };
         IList<Audiofile>? sessionStateContainerImportAudiofiles = [];
-        _sessionStateContainer.SetupGet(x => x.ImportAudiofiles).Returns(() => sessionStateContainerImportAudiofiles);
-        _sessionStateContainer.SetupGet(x => x.Importfile).Returns(() => sessionStateContainerImportFile);
-        _sessionStateContainer.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(importfile => sessionStateContainerImportFile = importfile);
+        _ = _sessionStateContainer.SetupGet(x => x.ImportAudiofiles).Returns(() => sessionStateContainerImportAudiofiles);
+        _ = _sessionStateContainer.SetupGet(x => x.Importfile).Returns(() => sessionStateContainerImportFile);
+        _ = _sessionStateContainer.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(importfile => sessionStateContainerImportFile = importfile);
         Cuesheet? sessionStateContainerImportCuesheet = null;
-        _sessionStateContainer.SetupSet(x => x.ImportCuesheet = It.IsAny<Cuesheet>()).Callback<Cuesheet>(cuesheet => sessionStateContainerImportCuesheet = cuesheet);
-        _sessionStateContainer.SetupGet(x => x.ImportCuesheet).Returns(() => sessionStateContainerImportCuesheet);
+        _ = _sessionStateContainer.SetupSet(x => x.ImportCuesheet = It.IsAny<Cuesheet>()).Callback<Cuesheet>(cuesheet => sessionStateContainerImportCuesheet = cuesheet);
+        _ = _sessionStateContainer.SetupGet(x => x.ImportCuesheet).Returns(() => sessionStateContainerImportCuesheet);
 
         // Act
-        await _service.AnalyseImportfile();
+        _ = await _service.AnalyseImportfile();
         // Assert
         Assert.IsNotNull(sessionStateContainerImportCuesheet);
         Assert.AreEqual("Sample CD Artist", sessionStateContainerImportCuesheet.Artist);
@@ -308,12 +308,12 @@ TRACK 08 AUDIO
         // Arrange
         var fileContent = "This is the content";
         var file = new FileUpload("test.projectfile", "text/plain", fileContent);
-        _fileInputManager.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(true);
-        _fileInputManager.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(false);
-        _fileInputManager.Setup(f => f.IsValidForImportView(file.ContentType, file.Name)).Returns(false);
+        _ = _fileInputManager.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(true);
+        _ = _fileInputManager.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(false);
+        _ = _fileInputManager.Setup(f => f.IsValidForImportView(file.ContentType, file.Name)).Returns(false);
 
         IImportfile? sessionStateContainerImportfile = null;
-        _sessionStateContainer.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
+        _ = _sessionStateContainer.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
         // Act
         await _service.UploadFilesAsync([file]);
 
@@ -331,12 +331,12 @@ TRACK 08 AUDIO
         var fileContent = "Cuesheet file content";
         var file = new FileUpload("test.cue", "text/plain", fileContent);
 
-        _fileInputManager.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(false);
-        _fileInputManager.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(true);
-        _fileInputManager.Setup(f => f.IsValidForImportView(file.ContentType, file.Name)).Returns(false);
+        _ = _fileInputManager.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(false);
+        _ = _fileInputManager.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(true);
+        _ = _fileInputManager.Setup(f => f.IsValidForImportView(file.ContentType, file.Name)).Returns(false);
 
         IImportfile? sessionStateContainerImportfile = null;
-        _sessionStateContainer.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
+        _ = _sessionStateContainer.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
         // Act
         await _service.UploadFilesAsync([file]);
 
@@ -354,12 +354,12 @@ TRACK 08 AUDIO
         var fileContent = "TextFileContent";
         var file = new FileUpload("test.txt", "text/plain", fileContent);
 
-        _fileInputManager.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(false);
-        _fileInputManager.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(false);
-        _fileInputManager.Setup(f => f.IsValidForImportView(file.ContentType, file.Name)).Returns(true);
+        _ = _fileInputManager.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(false);
+        _ = _fileInputManager.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(false);
+        _ = _fileInputManager.Setup(f => f.IsValidForImportView(file.ContentType, file.Name)).Returns(true);
 
         IImportfile? sessionStateContainerImportfile = null;
-        _sessionStateContainer.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
+        _ = _sessionStateContainer.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
         // Act
         await _service.UploadFilesAsync([file]);
 
@@ -376,17 +376,17 @@ TRACK 08 AUDIO
         // Arrange
         var file = new FileUpload("test.mp3", "audio/mpeg");
 
-        _fileInputManager.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(false);
-        _fileInputManager.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(false);
-        _fileInputManager.Setup(f => f.IsValidForImportView(file.ContentType, file.Name)).Returns(false);
-        _fileInputManager.Setup(f => f.IsValidAudiofile(file.Name, file.ContentType)).Returns(true);
-        _fileInputManager.Setup(f => f.CreateAudiofileAsync(It.IsAny<FileUpload>())).ReturnsAsync(new Audiofile() { Name = file.Name });
+        _ = _fileInputManager.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Projectfile, It.IsAny<IEnumerable<string>>())).Returns(false);
+        _ = _fileInputManager.Setup(f => f.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Cuesheet, It.IsAny<IEnumerable<string>>())).Returns(false);
+        _ = _fileInputManager.Setup(f => f.IsValidForImportView(file.ContentType, file.Name)).Returns(false);
+        _ = _fileInputManager.Setup(f => f.IsValidAudiofile(file.Name, file.ContentType)).Returns(true);
+        _ = _fileInputManager.Setup(f => f.CreateAudiofileAsync(It.IsAny<FileUpload>())).ReturnsAsync(new Audiofile() { Name = file.Name });
 
         IImportfile? sessionStateContainerImportfile = null;
-        _sessionStateContainer.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
+        _ = _sessionStateContainer.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
         IList<Audiofile>? sessionStateContainerImportAudiofiles = [];
-        _sessionStateContainer.SetupGet(x => x.ImportAudiofiles).Returns(() => sessionStateContainerImportAudiofiles);
-        _sessionStateContainer.SetupSet(x => x.ImportAudiofiles = It.IsAny<IList<Audiofile>>()).Callback<IList<Audiofile>>(x => sessionStateContainerImportAudiofiles = x);
+        _ = _sessionStateContainer.SetupGet(x => x.ImportAudiofiles).Returns(() => sessionStateContainerImportAudiofiles);
+        _ = _sessionStateContainer.SetupSet(x => x.ImportAudiofiles = It.IsAny<IList<Audiofile>>()).Callback<IList<Audiofile>>(x => sessionStateContainerImportAudiofiles = x);
         // Act
         await _service.UploadFilesAsync([file]);
 
@@ -429,13 +429,13 @@ TRACK 08 AUDIO
         track2.Cuesheet = sessionStateContainerImportCuesheet;
         track1.Audiofile = sessionStateContainerImportCuesheet.Audiofiles.First();
         track2.Audiofile = sessionStateContainerImportCuesheet.Audiofiles.First();
-        _sessionStateContainer.SetupGet(x => x.ImportCuesheet).Returns(sessionStateContainerImportCuesheet);
-        _sessionStateContainer.SetupSet(x => x.ImportCuesheet = It.IsAny<Cuesheet>()).Callback<Cuesheet>(cuesheet => sessionStateContainerImportCuesheet = cuesheet);
+        _ = _sessionStateContainer.SetupGet(x => x.ImportCuesheet).Returns(sessionStateContainerImportCuesheet);
+        _ = _sessionStateContainer.SetupSet(x => x.ImportCuesheet = It.IsAny<Cuesheet>()).Callback<Cuesheet>(cuesheet => sessionStateContainerImportCuesheet = cuesheet);
         Cuesheet sessionStateContainerCuesheet = new();
-        _sessionStateContainer.SetupSet(x => x.Cuesheet = It.IsAny<Cuesheet>()).Callback<Cuesheet>(cuesheet => sessionStateContainerCuesheet = cuesheet);
-        _sessionStateContainer.SetupGet(x => x.Cuesheet).Returns(() => sessionStateContainerCuesheet);
+        _ = _sessionStateContainer.SetupSet(x => x.Cuesheet = It.IsAny<Cuesheet>()).Callback<Cuesheet>(cuesheet => sessionStateContainerCuesheet = cuesheet);
+        _ = _sessionStateContainer.SetupGet(x => x.Cuesheet).Returns(() => sessionStateContainerCuesheet);
         IList<Audiofile>? sessionStateContainerImportAudiofiles = [];
-        _sessionStateContainer.SetupGet(x => x.ImportAudiofiles).Returns(() => sessionStateContainerImportAudiofiles);
+        _ = _sessionStateContainer.SetupGet(x => x.ImportAudiofiles).Returns(() => sessionStateContainerImportAudiofiles);
         // Act
         await _service.ImportCuesheetAsync();
         // Assert
@@ -460,7 +460,7 @@ TRACK 08 AUDIO
         // Arrange
         var importData = nameof(ImportData_ValidData_SetsImportfile);
         IImportfile? sessionStateContainerImportfile = null;
-        _sessionStateContainer.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
+        _ = _sessionStateContainer.SetupSet(x => x.Importfile = It.IsAny<IImportfile>()).Callback<IImportfile>(x => sessionStateContainerImportfile = x);
         // Act
         _service.ImportData(importData);
         // Assert

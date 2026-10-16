@@ -20,13 +20,13 @@ namespace AudioCuesheetEditor.Extensions;
 
 public static class WebAssemblyHostExtension
 {
-    public async static Task SetCultureFromConfigurationAsync(this WebAssemblyHost host)
+    public static async Task SetCultureFromConfigurationAsync(this WebAssemblyHost host)
     {
         var localizationService = host.Services.GetRequiredService<LocalizationService>();
         await localizationService.SetCultureFromConfigurationAsync();
     }
 
-    public async static Task InitializeSessionStateContainer(this WebAssemblyHost host)
+    public static async Task InitializeSessionStateContainer(this WebAssemblyHost host)
     {
         var sessionStateContainer = host.Services.GetRequiredService<ISessionStateContainer>();
         await sessionStateContainer.InitializeAsync();

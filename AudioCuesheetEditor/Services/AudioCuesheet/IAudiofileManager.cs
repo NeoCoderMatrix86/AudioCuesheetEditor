@@ -38,7 +38,7 @@ public interface IAudiofileManager
     /// <param name="audiofile"></param>
     /// <param name="setTracing">Parameter controlling if tracing should be handled by this service or by calling services</param>
     /// <returns></returns>
-    Task ClearPropertiesAsync(Audiofile audiofile, Boolean setTracing = true);
+    Task ClearPropertiesAsync(Audiofile audiofile, bool setTracing = true);
     /// <summary>
     /// Set property for an audio file
     /// </summary>
@@ -53,12 +53,12 @@ public interface IAudiofileManager
     /// <param name="audiofile"></param>
     /// <param name="track"></param>
     /// <param name="setTracing">Parameter controlling if tracing should be handled by this service or by calling services</param>
-    void AddTrack(Audiofile audiofile, Track track, Boolean setTracing = true);
+    void AddTrack(Audiofile audiofile, Track track, bool setTracing = true);
     /// <summary>
     /// Remove tracks from the audiofile
     /// </summary>
     /// <param name="audiofile"></param>
     /// <param name="tracksToRemove"></param>
     /// <param name="setTracing">Parameter controlling if tracing should be handled by this service or by calling services</param>
-    void RemoveTracks(Audiofile audiofile, IEnumerable<Track> tracksToRemove, Boolean setTracing = true);
+    void RemoveTracks(Audiofile audiofile, IEnumerable<Track> tracksToRemove, bool setTracing = true);
 }

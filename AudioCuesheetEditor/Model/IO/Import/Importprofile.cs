@@ -21,28 +21,28 @@ namespace AudioCuesheetEditor.Model.IO.Import;
 
 public class Importprofile : Validateable
 {
-    public static readonly IEnumerable<String> AvailableSchemeCuesheet = [nameof(ImportCuesheet.Artist), nameof(ImportCuesheet.Title), nameof(ImportCuesheet.CDTextfile), nameof(ImportCuesheet.Cataloguenumber)];
+    public static readonly IEnumerable<string> AvailableSchemeCuesheet = [nameof(ImportCuesheet.Artist), nameof(ImportCuesheet.Title), nameof(ImportCuesheet.CDTextfile), nameof(ImportCuesheet.Cataloguenumber)];
 
-    public static readonly IEnumerable<String> AvailableSchemeAudiofiles = [nameof(ImportAudiofile.Name)];
+    public static readonly IEnumerable<string> AvailableSchemeAudiofiles = [nameof(ImportAudiofile.Name)];
 
-    public static readonly IEnumerable<String> AvailableSchemesTrack = [nameof(ImportTrack.Artist), nameof(ImportTrack.Title), nameof(ImportTrack.Begin), nameof(ImportTrack.End), nameof(ImportTrack.Length), nameof(ImportTrack.Position), nameof(ImportTrack.Flags), nameof(ImportTrack.PreGap), nameof(ImportTrack.PostGap), nameof(ImportTrack.StartDateTime)];
+    public static readonly IEnumerable<string> AvailableSchemesTrack = [nameof(ImportTrack.Artist), nameof(ImportTrack.Title), nameof(ImportTrack.Begin), nameof(ImportTrack.End), nameof(ImportTrack.Length), nameof(ImportTrack.Position), nameof(ImportTrack.Flags), nameof(ImportTrack.PreGap), nameof(ImportTrack.PostGap), nameof(ImportTrack.StartDateTime)];
 
     public Guid Id { get; init; } = Guid.NewGuid();
-    public String? Name { get; set; }
-    public Boolean UseRegularExpression { get; set; }
-    public String? SchemeCuesheet { get; set; }
-    public String? SchemeAudiofiles { get; set; }
-    public String? SchemeTracks { get; set; }
+    public string? Name { get; set; }
+    public bool UseRegularExpression { get; set; }
+    public string? SchemeCuesheet { get; set; }
+    public string? SchemeAudiofiles { get; set; }
+    public string? SchemeTracks { get; set; }
     public TimeSpanFormat? TimeSpanFormat { get; set; }
     public override ValidationResult Validate(string property)
     {
-        ValidationStatus validationStatus = ValidationStatus.NoValidation;
+        var validationStatus = ValidationStatus.NoValidation;
         List<ValidationMessage>? validationMessages = null;
         switch (property)
         {
             case nameof(SchemeCuesheet):
                 validationStatus = ValidationStatus.Success;
-                if (String.IsNullOrEmpty(SchemeCuesheet) == false)
+                if (string.IsNullOrEmpty(SchemeCuesheet) == false)
                 {
                     var containsPlaceHolder = false;
                     var enumerator = AvailableSchemeCuesheet.GetEnumerator();
@@ -62,7 +62,7 @@ public class Importprofile : Validateable
                 break;
             case nameof(SchemeAudiofiles):
                 validationStatus = ValidationStatus.Success;
-                if (String.IsNullOrEmpty(SchemeAudiofiles) == false)
+                if (string.IsNullOrEmpty(SchemeAudiofiles) == false)
                 {
                     var containsPlaceHolder = false;
                     var enumerator = AvailableSchemeAudiofiles.GetEnumerator();
@@ -82,7 +82,7 @@ public class Importprofile : Validateable
                 break;
             case nameof(SchemeTracks):
                 validationStatus = ValidationStatus.Success;
-                if (String.IsNullOrEmpty(SchemeTracks) == false)
+                if (string.IsNullOrEmpty(SchemeTracks) == false)
                 {
                     var containsPlaceHolder = false;
                     var enumerator = AvailableSchemesTrack.GetEnumerator();

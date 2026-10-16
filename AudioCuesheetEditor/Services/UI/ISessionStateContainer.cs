@@ -28,9 +28,9 @@ public interface ISessionStateContainer
     IList<Audiofile> ImportAudiofiles { get; set; }
     Dictionary<Audiofile, Audiofile?> ImportAudiofileMapping { get; set; }
     IImportfile? Importfile { get; set; }
-    Boolean ImportIsAnalyzed { get; set; }
-    Task ResetImportAsync(Boolean revokeObjectURLs);
-    Task ResetAudioImportAsync(Boolean revokeObjectURLs);
+    bool ImportIsAnalyzed { get; set; }
+    Task ResetImportAsync(bool revokeObjectURLs);
+    Task ResetAudioImportAsync(bool revokeObjectURLs);
     /// <summary>
     /// Initialize this class
     /// </summary>

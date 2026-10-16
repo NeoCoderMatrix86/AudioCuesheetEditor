@@ -38,20 +38,11 @@ public abstract class BaseLocalizedComponent : ComponentBase, IDisposable
         TraceChangeManager.RedoDone += TraceChangeManager_RedoDone;
     }
 
-    void TraceChangeManager_RedoDone(object? sender, EventArgs e)
-    {
-        StateHasChanged();
-    }
+    void TraceChangeManager_RedoDone(object? sender, EventArgs e) => StateHasChanged();
 
-    void TraceChangeManager_UndoDone(object? sender, EventArgs e)
-    {
-        StateHasChanged();
-    }
+    void TraceChangeManager_UndoDone(object? sender, EventArgs e) => StateHasChanged();
 
-    void TraceChangeManager_TracedObjectHistoryChanged(object? sender, EventArgs e)
-    {
-        StateHasChanged();
-    }
+    void TraceChangeManager_TracedObjectHistoryChanged(object? sender, EventArgs e) => StateHasChanged();
 
     protected virtual void Dispose(bool disposing)
     {

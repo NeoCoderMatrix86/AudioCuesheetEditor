@@ -23,32 +23,32 @@ namespace AudioCuesheetEditor.Services.Provider;
 public class MusicBrainzArtist
 {
     public Guid? Id { get; init; }
-    public String? Name { get; init; }
-    public String? Disambiguation { get; init; }
+    public string? Name { get; init; }
+    public string? Disambiguation { get; init; }
 }
 public class MusicBrainzTrack
 {
     public Guid? Id { get; init; }
-    public String? Artist { get; init; }
-    public String? Title { get; init; }
+    public string? Artist { get; init; }
+    public string? Title { get; init; }
     public TimeSpan? Length { get; init; }
-    public String? Disambiguation { get; init; }
+    public string? Disambiguation { get; init; }
 }
 public class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> logger)
 {
     readonly ILogger<MusicBrainzDataProvider> _logger = logger;
 
-    public const String Application = "AudioCuesheetEditor";
-    public const String ProjectUrl = "https://github.com/NeoCoderMatrix86/AudioCuesheetEditor";
+    public const string Application = "AudioCuesheetEditor";
+    public const string ProjectUrl = "https://github.com/NeoCoderMatrix86/AudioCuesheetEditor";
 
-    String? applicationVersion = null;
+    string? applicationVersion = null;
 
-    public async Task<IReadOnlyCollection<MusicBrainzArtist>> SearchArtistAsync(String? searchString, CancellationToken token)
+    public async Task<IReadOnlyCollection<MusicBrainzArtist>> SearchArtistAsync(string? searchString, CancellationToken token)
     {
         List<MusicBrainzArtist> artistSearchResult = [];
         try
         {
-            if (String.IsNullOrEmpty(searchString) == false)
+            if (string.IsNullOrEmpty(searchString) == false)
             {
                 using var query = new Query(Application, ApplicationVersion, ProjectUrl);
                 var findArtistsResult = await query.FindArtistsAsync(searchString, simple: true, cancellationToken: token);
@@ -62,32 +62,32 @@ public class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> logger)
         return artistSearchResult.AsReadOnly();
     }
 
-    public async Task<IReadOnlyCollection<MusicBrainzTrack>> SearchTitleAsync(String? searchString, String? artist, CancellationToken token)
+    public async Task<IReadOnlyCollection<MusicBrainzTrack>> SearchTitleAsync(string? searchString, string? artist, CancellationToken token)
     {
         List<MusicBrainzTrack> titleSearchResult = [];
         try
         {
-            if (String.IsNullOrEmpty(searchString) == false)
+            if (string.IsNullOrEmpty(searchString) == false)
             {
                 using var query = new Query(Application, ApplicationVersion, ProjectUrl);
                 ISearchResults<ISearchResult<IRecording>> findRecordingsResult;
-                if (String.IsNullOrEmpty(artist))
+                if (string.IsNullOrEmpty(artist))
                 {
                     findRecordingsResult = await query.FindRecordingsAsync(searchString, simple: true, cancellationToken: token);
                 }
                 else
                 {
-                    findRecordingsResult = await query.FindRecordingsAsync(String.Format("{0} AND artistname:{1}", searchString, artist), cancellationToken: token);
+                    findRecordingsResult = await query.FindRecordingsAsync(string.Format("{0} AND artistname:{1}", searchString, artist), cancellationToken: token);
                 }
                 foreach (var result in findRecordingsResult.Results)
                 {
-                    String artistString = String.Empty;
+                    var artistString = string.Empty;
                     if (result.Item.ArtistCredit != null)
                     {
                         foreach (var artistCredit in result.Item.ArtistCredit)
                         {
                             artistString += artistCredit.Name;
-                            if (String.IsNullOrEmpty(artistCredit.JoinPhrase) == false)
+                            if (string.IsNullOrEmpty(artistCredit.JoinPhrase) == false)
                             {
                                 artistString += artistCredit.JoinPhrase;
                             }
@@ -111,7 +111,7 @@ public class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> logger)
         return titleSearchResult.AsReadOnly();
     }
 
-    String? ApplicationVersion
+    string? ApplicationVersion
     {
         get
         {

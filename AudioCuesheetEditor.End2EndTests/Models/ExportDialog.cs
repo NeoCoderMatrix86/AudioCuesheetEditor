@@ -22,8 +22,5 @@ class ExportDialog(IPage page)
 {
     readonly IPage _page = page;
 
-    internal async Task OpenSchemeMenuAsync(string schemeHeadMenuName = "Scheme head")
-    {
-        await _page.Locator("div").Filter(new() { HasTextRegex = new Regex($"^{schemeHeadMenuName}$") }).GetByRole(AriaRole.Button).Nth(1).ClickAsync();
-    }
+    internal async Task OpenSchemeMenuAsync(string schemeHeadMenuName = "Scheme head") => await _page.Locator("div").Filter(new() { HasTextRegex = new Regex($"^{schemeHeadMenuName}$") }).GetByRole(AriaRole.Button).Nth(1).ClickAsync();
 }

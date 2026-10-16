@@ -27,7 +27,7 @@ public class LocalizationService(ILocalStorageOptionsProvider localStorageOption
     readonly NavigationManager _navigationManager = navigationManager;
     readonly IJSRuntime _jsRuntime = jsRuntime;
 
-    public const String DefaultCulture = "en-US";
+    public const string DefaultCulture = "en-US";
 
     public static IReadOnlyCollection<CultureInfo> AvailableCultures
     {
@@ -48,20 +48,20 @@ public class LocalizationService(ILocalStorageOptionsProvider localStorageOption
     {
         var options = await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
 
-        ChangeLanguage(options.Culture);
+        _ = ChangeLanguage(options.Culture);
     }
 
     public async Task ChangeLanguageAsync(CultureInfo culture)
     {
         if (ChangeLanguage(culture))
         {
-            await _localStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.CultureName!, culture.Name);
+            _ = await _localStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.CultureName!, culture.Name);
             await _jsRuntime.InvokeVoidAsync("removeBeforeunload");
             _navigationManager.NavigateTo(_navigationManager.Uri, true);
         }
     }
 
-    static Boolean ChangeLanguage(CultureInfo newCulture)
+    static bool ChangeLanguage(CultureInfo newCulture)
     {
         var contains = AvailableCultures.Contains(newCulture);
         if (contains)

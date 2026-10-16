@@ -18,5 +18,5 @@ namespace AudioCuesheetEditor.Model.UI;
 public class TracedChanges(IEnumerable<TracedChange> changes)
 {
     public List<TracedChange> Changes { get; } = [.. changes];
-    public bool HasTraceableObject { get { return Changes.Any(x => x.TraceableObject != null); } }
+    public bool HasTraceableObject => Changes.Any(x => x.TraceableObject != null);
 }

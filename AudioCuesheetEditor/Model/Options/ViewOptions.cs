@@ -27,7 +27,7 @@ public class ViewOptions : IOptions
 {
     [JsonIgnore]
     public ViewMode ActiveTab { get; set; }
-    public String? ActiveTabName
+    public string? ActiveTabName
     {
         get => Enum.GetName(ActiveTab);
         set

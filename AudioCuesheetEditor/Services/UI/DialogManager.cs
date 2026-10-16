@@ -62,15 +62,15 @@ public class DialogManager(IDialogService dialogService, ITraceChangeManager tra
                     var length = editMultipleTracksModalResult.EditedTrack.Length;
                     var preGap = editMultipleTracksModalResult.EditedTrack.PreGap;
                     var postGap = editMultipleTracksModalResult.EditedTrack.PostGap;
-                    Boolean copyIsLinkedToPreviousTrack = editMultipleTracksModalResult.IsLinkedToPreviousTrackEditMode == DynamicEditValue.EnteredValueEquals;
-                    Boolean copyTrackArtist = editMultipleTracksModalResult.ArtistEditMode == DynamicEditValue.EnteredValueEquals;
-                    Boolean copyTrackTitle = editMultipleTracksModalResult.TitleEditMode == DynamicEditValue.EnteredValueEquals;
-                    Boolean copyTrackBegin = true;
-                    Boolean copyTrackEnd = true;
-                    Boolean copyTrackLength = true;
-                    Boolean copyTrackFlags = editMultipleTracksModalResult.FlagsEditMode == DynamicEditValue.EnteredValueEquals;
-                    Boolean copyTrackPreGap = true;
-                    Boolean copyTrackPostGap = true;
+                    var copyIsLinkedToPreviousTrack = editMultipleTracksModalResult.IsLinkedToPreviousTrackEditMode == DynamicEditValue.EnteredValueEquals;
+                    var copyTrackArtist = editMultipleTracksModalResult.ArtistEditMode == DynamicEditValue.EnteredValueEquals;
+                    var copyTrackTitle = editMultipleTracksModalResult.TitleEditMode == DynamicEditValue.EnteredValueEquals;
+                    var copyTrackBegin = true;
+                    var copyTrackEnd = true;
+                    var copyTrackLength = true;
+                    var copyTrackFlags = editMultipleTracksModalResult.FlagsEditMode == DynamicEditValue.EnteredValueEquals;
+                    var copyTrackPreGap = true;
+                    var copyTrackPostGap = true;
                     //First process dynamic edit, because we need to increase each value separately
                     switch (editMultipleTracksModalResult.BeginEditMode)
                     {
@@ -207,7 +207,7 @@ public class DialogManager(IDialogService dialogService, ITraceChangeManager tra
         _loadingDialog = null;
     }
 
-    public async Task<Boolean> ShowImportAudiofilesDialogAsync()
+    public async Task<bool> ShowImportAudiofilesDialogAsync()
     {
         var parameters = new DialogParameters<ImportAudiofilesDialog>
         {

@@ -25,22 +25,16 @@ class RecordView(IPage page)
 
     internal async Task GotoAsync()
     {
-        await _page.GotoAsync(BaseUrl);
+        _ = await _page.GotoAsync(BaseUrl);
         await _page.WaitForURLAsync(BaseUrl);
         await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
+        _ = await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
         await _page.GetByText("Record view").ClickAsync();
     }
 
-    internal async Task StartRecordingAsync()
-    {
-        await _page.GetByRole(AriaRole.Button, new() { Name = "Start recording" }).ClickAsync();
-    }
+    internal async Task StartRecordingAsync() => await _page.GetByRole(AriaRole.Button, new() { Name = "Start recording" }).ClickAsync();
 
-    internal async Task StopRecordingAsync()
-    {
-        await _page.GetByRole(AriaRole.Button, new() { Name = "Stop recording" }).ClickAsync();
-    }
+    internal async Task StopRecordingAsync() => await _page.GetByRole(AriaRole.Button, new() { Name = "Stop recording" }).ClickAsync();
 
     internal async Task AddRecordingTrackAsync(string artist, string title)
     {

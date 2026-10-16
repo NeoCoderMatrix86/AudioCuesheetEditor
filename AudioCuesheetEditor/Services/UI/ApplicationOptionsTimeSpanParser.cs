@@ -36,14 +36,14 @@ public class ApplicationOptionsTimeSpanParser
         _initTask = InitAsync();
     }
 
-    public async Task TimespanTextChanged<T, TProperty>(T entity, Expression<Func<T, TProperty>> expression, String value)
+    public async Task TimespanTextChanged<T, TProperty>(T entity, Expression<Func<T, TProperty>> expression, string value)
     {
         if (expression.Body is not MemberExpression memberExpression)
         {
             throw new ArgumentException("'expression' should be a member expression");
         }
         await EnsureInitializedAsync();
-        TimeSpan? result = TimeSpanUtility.ParseTimeSpan(value, applicationOptions?.TimeSpanFormat);
+        var result = TimeSpanUtility.ParseTimeSpan(value, applicationOptions?.TimeSpanFormat);
         switch (memberExpression.Member.MemberType)
         {
             case MemberTypes.Property:
@@ -54,10 +54,10 @@ public class ApplicationOptionsTimeSpanParser
         }
     }
 
-    public async Task<TimeSpan?> GetTimespanAsync(String value)
+    public async Task<TimeSpan?> GetTimespanAsync(string value)
     {
         await EnsureInitializedAsync();
-        TimeSpan? result = TimeSpanUtility.ParseTimeSpan(value, applicationOptions?.TimeSpanFormat);
+        var result = TimeSpanUtility.ParseTimeSpan(value, applicationOptions?.TimeSpanFormat);
         return result;
     }
 
@@ -93,10 +93,7 @@ public class ApplicationOptionsTimeSpanParser
         }
     }
 
-    async Task InitAsync()
-    {
-        applicationOptions ??= await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
-    }
+    async Task InitAsync() => applicationOptions ??= await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
 
     async Task EnsureInitializedAsync()
     {

@@ -27,9 +27,9 @@ class About(IPage page)
 
     internal async Task GotoAsync()
     {
-        await _page.GotoAsync(BaseUrl);
+        _ = await _page.GotoAsync(BaseUrl);
         await _page.WaitForURLAsync(BaseUrl);
         await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
+        _ = await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
     }
 }

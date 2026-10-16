@@ -17,12 +17,12 @@ namespace AudioCuesheetEditor.Model.Utility;
 
 public class TimeSpanUtility
 {
-    public static TimeSpan? ParseTimeSpan(String input, TimeSpanFormat? timeSpanFormat = null)
+    public static TimeSpan? ParseTimeSpan(string input, TimeSpanFormat? timeSpanFormat = null)
     {
         TimeSpan? result = null;
-        if (String.IsNullOrEmpty(input) == false)
+        if (string.IsNullOrEmpty(input) == false)
         {
-            if (String.IsNullOrEmpty(timeSpanFormat?.Scheme))
+            if (string.IsNullOrEmpty(timeSpanFormat?.Scheme))
             {
                 if (TimeSpan.TryParse(input, out var parsed))
                 {

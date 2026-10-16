@@ -55,25 +55,25 @@ public interface ICuesheetManager
     /// </summary>
     /// <param name="selectedTracks"></param>
     /// <returns></returns>
-    Boolean IsMoveUpPossible(HashSet<Track> selectedTracks);
+    bool IsMoveUpPossible(HashSet<Track> selectedTracks);
     /// <summary>
     /// Determines if moving audiofiles up is possible
     /// </summary>
     /// <param name="selectedAudiofiles"></param>
     /// <returns></returns>
-    Boolean IsMoveUpPossible(HashSet<Audiofile> selectedAudiofiles);
+    bool IsMoveUpPossible(HashSet<Audiofile> selectedAudiofiles);
     /// <summary>
     /// Determines if moving tracks down is possible
     /// </summary>
     /// <param name="selectedTracks"></param>
     /// <returns></returns>
-    Boolean IsMoveDownPossible(HashSet<Track> selectedTracks);
+    bool IsMoveDownPossible(HashSet<Track> selectedTracks);
     /// <summary>
     /// Determines if moving audiofiles down is possible
     /// </summary>
     /// <param name="selectedTracks"></param>
     /// <returns></returns>
-    Boolean IsMoveDownPossible(HashSet<Audiofile> selectedAudiofiles);
+    bool IsMoveDownPossible(HashSet<Audiofile> selectedAudiofiles);
     /// <summary>
     /// Moves selected tracks up
     /// </summary>

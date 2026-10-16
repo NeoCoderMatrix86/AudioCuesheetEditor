@@ -51,15 +51,15 @@ public class Flag
         AvailableFlags = list.AsReadOnly();
     }
 
-    public String Name { get; private set; }
-    public String CuesheetLabel { get; private set; }
-    Flag(String name, String cuesheetLabel)
+    public string Name { get; private set; }
+    public string CuesheetLabel { get; private set; }
+    Flag(string name, string cuesheetLabel)
     {
-        if (String.IsNullOrEmpty(name) == true)
+        if (string.IsNullOrEmpty(name) == true)
         {
             throw new ArgumentNullException(nameof(name));
         }
-        if (String.IsNullOrEmpty(cuesheetLabel) == true)
+        if (string.IsNullOrEmpty(cuesheetLabel) == true)
         {
             throw new ArgumentNullException(nameof(cuesheetLabel));
         }

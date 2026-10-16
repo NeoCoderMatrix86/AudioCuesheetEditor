@@ -19,13 +19,13 @@ namespace AudioCuesheetEditor.Model.Entity;
 
 public abstract class Validateable : IValidateable
 {
-    public event EventHandler<String>? ValidateablePropertyChanged;
+    public event EventHandler<string>? ValidateablePropertyChanged;
 
     public ValidationResult Validate()
     {
         ValidationResult validationResult = new() { Status = ValidationStatus.NoValidation };
         List<ValidationMessage> validationMessages = [];
-        foreach (var property in this.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
+        foreach (var property in GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
         {
             var result = Validate(property.Name);
             validationMessages.AddRange(result.ValidationMessages);
@@ -50,10 +50,7 @@ public abstract class Validateable : IValidateable
         return validationResult;
     }
 
-    public abstract ValidationResult Validate(String property);
+    public abstract ValidationResult Validate(string property);
 
-    protected void OnValidateablePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
-    {
-        ValidateablePropertyChanged?.Invoke(this, propertyName);
-    }
+    protected void OnValidateablePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "") => ValidateablePropertyChanged?.Invoke(this, propertyName);
 }

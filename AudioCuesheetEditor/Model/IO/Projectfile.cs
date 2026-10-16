@@ -22,7 +22,7 @@ namespace AudioCuesheetEditor.Model.IO;
 
 public class Projectfile(Cuesheet cuesheet)
 {
-    public static readonly String DefaultFilename = "Project.ace";
+    public static readonly string DefaultFilename = "Project.ace";
 
     public static readonly JsonSerializerOptions Options = new()
     {

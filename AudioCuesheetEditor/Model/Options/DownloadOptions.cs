@@ -23,12 +23,12 @@ public class DownloadOptions : Validateable, IOptions
 {
     string? projectFilename = Projectfile.DefaultFilename;
     string? cuesheetFilename = Exportfile.DefaultCuesheetFilename;
-    public String? CuesheetFilename
+    public string? CuesheetFilename
     {
         get => cuesheetFilename;
         set
         {
-            if (String.IsNullOrEmpty(value) == false)
+            if (string.IsNullOrEmpty(value) == false)
             {
                 var extension = Path.GetExtension(value);
                 if (extension?.Equals(FileExtensions.Cuesheet, StringComparison.OrdinalIgnoreCase) == false)
@@ -39,12 +39,12 @@ public class DownloadOptions : Validateable, IOptions
             cuesheetFilename = value;
         }
     }
-    public String? ProjectFilename
+    public string? ProjectFilename
     {
         get => projectFilename;
         set
         {
-            if (String.IsNullOrEmpty(value) == false)
+            if (string.IsNullOrEmpty(value) == false)
             {
                 var extension = Path.GetExtension(value);
                 if (extension?.Equals(FileExtensions.Projectfile, StringComparison.OrdinalIgnoreCase) == false)
@@ -57,7 +57,7 @@ public class DownloadOptions : Validateable, IOptions
     }
     public override ValidationResult Validate(string property)
     {
-        ValidationStatus validationStatus = ValidationStatus.NoValidation;
+        var validationStatus = ValidationStatus.NoValidation;
         List<ValidationMessage>? validationMessages = null;
         switch (property)
         {
@@ -86,7 +86,7 @@ public class DownloadOptions : Validateable, IOptions
                 break;
             case nameof(ProjectFilename):
                 validationStatus = ValidationStatus.Success;
-                if (String.IsNullOrEmpty(ProjectFilename))
+                if (string.IsNullOrEmpty(ProjectFilename))
                 {
                     validationMessages ??= [];
                     validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(ProjectFilename)));
@@ -100,7 +100,7 @@ public class DownloadOptions : Validateable, IOptions
                         validationMessages.Add(new ValidationMessage("{0} must end with '{1}'!", nameof(ProjectFilename), FileExtensions.Projectfile));
                     }
                     var filename = Path.GetFileNameWithoutExtension(ProjectFilename);
-                    if (String.IsNullOrEmpty(filename))
+                    if (string.IsNullOrEmpty(filename))
                     {
                         validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} must have a filename!", nameof(ProjectFilename)));

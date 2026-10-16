@@ -19,7 +19,7 @@ public class TraceableChange
 {
     public TraceableChange(object? previousValue, string propertyName)
     {
-        if (String.IsNullOrEmpty(propertyName))
+        if (string.IsNullOrEmpty(propertyName))
         {
             throw new ArgumentNullException(nameof(propertyName));
         }

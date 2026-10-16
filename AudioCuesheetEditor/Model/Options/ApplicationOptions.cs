@@ -23,13 +23,13 @@ namespace AudioCuesheetEditor.Model.Options;
 public class ApplicationOptions : IOptions
 {
     public const LogLevel DefaultLogLevel = LogLevel.Information;
-    public String? CultureName { get; set; } = LocalizationService.DefaultCulture;
+    public string? CultureName { get; set; } = LocalizationService.DefaultCulture;
     [JsonIgnore]
     public CultureInfo Culture
     {
         get
         {
-            if (String.IsNullOrEmpty(CultureName) == false)
+            if (string.IsNullOrEmpty(CultureName) == false)
             {
                 return new CultureInfo(CultureName);
             }
@@ -40,7 +40,7 @@ public class ApplicationOptions : IOptions
         }
     }
     public TimeSpanFormat? TimeSpanFormat { get; set; }
-    public Boolean DefaultIsLinkedToPreviousTrack { get; set; } = true;
-    public String? DisplayTimeSpanFormat { get; set; }
+    public bool DefaultIsLinkedToPreviousTrack { get; set; } = true;
+    public string? DisplayTimeSpanFormat { get; set; }
     public LogLevel MinimumLogLevel { get; set; } = DefaultLogLevel;
 }

@@ -21,15 +21,15 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet;
 
 public class Cuesheet() : Validateable, ICuesheet
 {
-    public String? Artist { get; set; }
+    public string? Artist { get; set; }
     
-    public String? Title { get; set; }
+    public string? Title { get; set; }
 
     public IList<Audiofile> Audiofiles { get; set; } = [];
 
     public CDTextfile? CDTextfile { get; set; }
 
-    public String? Cataloguenumber { get; set; }
+    public string? Cataloguenumber { get; set; }
 
     [JsonIgnore]
     public bool IsRecording => RecordingStart.HasValue;
@@ -39,7 +39,7 @@ public class Cuesheet() : Validateable, ICuesheet
 
     public override ValidationResult Validate(string property)
     {
-        ValidationStatus validationStatus = ValidationStatus.NoValidation;
+        var validationStatus = ValidationStatus.NoValidation;
         List<ValidationMessage>? validationMessages = null;
         switch (property)
         {
@@ -53,7 +53,7 @@ public class Cuesheet() : Validateable, ICuesheet
                 break;
             case nameof(Artist):
                 validationStatus = ValidationStatus.Success;
-                if (String.IsNullOrEmpty(Artist))
+                if (string.IsNullOrEmpty(Artist))
                 {
                     validationMessages ??= [];
                     validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Artist)));
@@ -61,7 +61,7 @@ public class Cuesheet() : Validateable, ICuesheet
                 break;
             case nameof(Title):
                 validationStatus = ValidationStatus.Success;
-                if (String.IsNullOrEmpty(Title))
+                if (string.IsNullOrEmpty(Title))
                 {
                     validationMessages ??= [];
                     validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Title)));
@@ -69,9 +69,9 @@ public class Cuesheet() : Validateable, ICuesheet
                 break;
             case nameof(Cataloguenumber):
                 validationStatus = ValidationStatus.Success;
-                if (String.IsNullOrEmpty(Cataloguenumber) == false)
+                if (string.IsNullOrEmpty(Cataloguenumber) == false)
                 {
-                    if (Cataloguenumber.All(Char.IsDigit) == false)
+                    if (Cataloguenumber.All(char.IsDigit) == false)
                     {
                         validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} must only contain numbers!", nameof(Cataloguenumber)));

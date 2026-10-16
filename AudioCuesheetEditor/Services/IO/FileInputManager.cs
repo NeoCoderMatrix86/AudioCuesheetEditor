@@ -46,15 +46,9 @@ public class FileInputManager(IJSRuntime jsRuntime, ILogger<FileInputManager> lo
     }
 
     /// <inheritdoc/>
-    public async Task<String> GetObjectUrlAsync(IBrowserFile browserFile)
-    {
-        return await _jsRuntime.InvokeAsync<String>("getObjectURLFromMudFileUpload", browserFile.Name, browserFile.Size, browserFile.ContentType, browserFile.LastModified.ToUnixTimeMilliseconds());
-    }
+    public async Task<string> GetObjectUrlAsync(IBrowserFile browserFile) => await _jsRuntime.InvokeAsync<string>("getObjectURLFromMudFileUpload", browserFile.Name, browserFile.Size, browserFile.ContentType, browserFile.LastModified.ToUnixTimeMilliseconds());
 
-    public bool IsValidAudiofile(string fileName, string? fileContentType = null)
-    {
-        return GetAudioCodec(fileName, fileContentType) != null;
-    }
+    public bool IsValidAudiofile(string fileName, string? fileContentType = null) => GetAudioCodec(fileName, fileContentType) != null;
 
     public bool CheckFileMimeType(string? fileContentType, string fileName, string mimeType, IEnumerable<string> fileExtensions)
     {
@@ -62,10 +56,10 @@ public class FileInputManager(IJSRuntime jsRuntime, ILogger<FileInputManager> lo
         {
             _logger.LogDebug("CheckFileMimeType called with file: file.Name: '{FileName}', file.ContentType: '{ContentType}', mimeType: '{MimeType}', fileExtensions: '{fileExtensions}'", fileName, fileContentType, mimeType, fileExtensions);
         }
-        Boolean fileMimeTypeMatches = false;
-        if (String.IsNullOrEmpty(mimeType) == false)
+        var fileMimeTypeMatches = false;
+        if (string.IsNullOrEmpty(mimeType) == false)
         {
-            if (String.IsNullOrEmpty(fileContentType) == false)
+            if (string.IsNullOrEmpty(fileContentType) == false)
             {
                 if (mimeType.EndsWith("/*"))
                 {
@@ -95,7 +89,7 @@ public class FileInputManager(IJSRuntime jsRuntime, ILogger<FileInputManager> lo
         if (codec != null)
         {
             TimeSpan? duration = null;
-            if (String.IsNullOrEmpty(fileUpload.ObjectUrl) == false)
+            if (string.IsNullOrEmpty(fileUpload.ObjectUrl) == false)
             {
                 var durationSeconds = await _jsRuntime.InvokeAsync<double>("getAudioDurationFromFile", fileUpload.ObjectUrl);
                 duration = TimeSpan.FromSeconds(durationSeconds);
@@ -124,10 +118,7 @@ public class FileInputManager(IJSRuntime jsRuntime, ILogger<FileInputManager> lo
     }
 
     /// <inheritdoc/>
-    public bool IsValidForImportView(string? fileContentType, string fileName)
-    {
-        return CheckFileMimeType(fileContentType, fileName, FileMimeTypes.Text, [FileExtensions.Text, FileExtensions.HTML]);
-    }
+    public bool IsValidForImportView(string? fileContentType, string fileName) => CheckFileMimeType(fileContentType, fileName, FileMimeTypes.Text, [FileExtensions.Text, FileExtensions.HTML]);
 
     /// <inheritdoc/>
     public async Task<string> ReadFileContentAsync(IBrowserFile browserFile)

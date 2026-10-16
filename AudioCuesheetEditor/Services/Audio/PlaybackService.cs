@@ -61,11 +61,11 @@ public class PlaybackService(IJSRuntime jsRuntime, ISessionStateContainer sessio
             return null;
         }
     }
-    public Boolean IsPaused { get; private set; } = false;
-    public Boolean IsPlaybackPossible => _sessionStateContainer.Cuesheet.Audiofiles.Any(x => string.IsNullOrEmpty(x.ObjectURL) == false);
-    public Boolean IsPreviousPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin) != null;
-    public Boolean IsNextPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End) != null;
-    public Boolean IsPlaying => _currentlyPlayingAudiofile != null;
+    public bool IsPaused { get; private set; } = false;
+    public bool IsPlaybackPossible => _sessionStateContainer.Cuesheet.Audiofiles.Any(x => string.IsNullOrEmpty(x.ObjectURL) == false);
+    public bool IsPreviousPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin) != null;
+    public bool IsNextPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End) != null;
+    public bool IsPlaying => _currentlyPlayingAudiofile != null;
 
     public async Task InitializeAsync()
     {
@@ -158,9 +158,9 @@ public class PlaybackService(IJSRuntime jsRuntime, ISessionStateContainer sessio
 
     public async Task SeekAsync(TimeSpan time)
     {
-        TimeSpan cumulativeDuration = TimeSpan.Zero;
+        var cumulativeDuration = TimeSpan.Zero;
         Audiofile? targetAudiofile = null;
-        TimeSpan targetPositionInAudiofile = TimeSpan.Zero;
+        var targetPositionInAudiofile = TimeSpan.Zero;
 
         foreach (var audiofile in _sessionStateContainer.Cuesheet.Audiofiles)
         {
@@ -171,7 +171,7 @@ public class PlaybackService(IJSRuntime jsRuntime, ISessionStateContainer sessio
 
             if (audiofile.Duration.HasValue)
             {
-                TimeSpan nextCumulativeDuration = cumulativeDuration + audiofile.Duration.Value;
+                var nextCumulativeDuration = cumulativeDuration + audiofile.Duration.Value;
 
                 if (time >= cumulativeDuration && time < nextCumulativeDuration)
                 {
@@ -273,10 +273,7 @@ public class PlaybackService(IJSRuntime jsRuntime, ISessionStateContainer sessio
         IsPaused = false;
     }
 
-    void StartTimer()
-    {
-        _updateTimer ??= new Timer(UpdateCurrentPosition, null, 0, 500);
-    }
+    void StartTimer() => _updateTimer ??= new Timer(UpdateCurrentPosition, null, 0, 500);
 
     void StopTimer()
     {
@@ -313,7 +310,7 @@ public class PlaybackService(IJSRuntime jsRuntime, ISessionStateContainer sessio
         }
         _durationBeforeCurrentlyPlayingAudiofile = TimeSpan.Zero;
         var index = _sessionStateContainer.Cuesheet.Audiofiles.IndexOf(_currentlyPlayingAudiofile);
-        for (int i = 0; i < index; i++)
+        for (var i = 0; i < index; i++)
         {
             var audiofile = _sessionStateContainer.Cuesheet.Audiofiles[i];
             if (audiofile.Duration.HasValue)

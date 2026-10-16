@@ -31,26 +31,17 @@ class DetailView(IPage page)
 
     internal async Task GotoAsync()
     {
-        await _page.GotoAsync(BaseUrl);
+        _ = await _page.GotoAsync(BaseUrl);
         await _page.WaitForURLAsync(BaseUrl);
         await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-        await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
+        _ = await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
     }
 
-    internal async Task AddAudiofileAsync()
-    {
-        await _page.GetByRole(AriaRole.Button, new() { Name = "Add file" }).ClickAsync();
-    }
+    internal async Task AddAudiofileAsync() => await _page.GetByRole(AriaRole.Button, new() { Name = "Add file" }).ClickAsync();
 
-    internal async Task SetAudiofileInputFileAsync(int audiofileIndex, string file)
-    {
-        await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "No file uploaded!" }).Nth(audiofileIndex).Locator("input[type=\"file\"]").SetInputFilesAsync(file);
-    }
+    internal async Task SetAudiofileInputFileAsync(int audiofileIndex, string file) => await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "No file uploaded!" }).Nth(audiofileIndex).Locator("input[type=\"file\"]").SetInputFilesAsync(file);
 
-    internal async Task AddTrackAsync(int audiofileIndex)
-    {
-        await _page.GetByRole(AriaRole.Button, new() { Name = "Add new track" }).Nth(audiofileIndex).ClickAsync();
-    }
+    internal async Task AddTrackAsync(int audiofileIndex) => await _page.GetByRole(AriaRole.Button, new() { Name = "Add new track" }).Nth(audiofileIndex).ClickAsync();
 
     internal async Task EditTrackAsync(string? artist = null, string? title = null, TimeSpan? begin = null, TimeSpan? end = null, int trackPosition = 1)
     {
@@ -72,7 +63,7 @@ class DetailView(IPage page)
         }
     }
 
-    internal async Task SelectTracksAsync(IEnumerable<int> trackTablePositions, Boolean uncheck = false)
+    internal async Task SelectTracksAsync(IEnumerable<int> trackTablePositions, bool uncheck = false)
     {
         foreach (var trackTablePosition in trackTablePositions)
         {
@@ -87,10 +78,7 @@ class DetailView(IPage page)
         }
     }
 
-    internal async Task EditSelectedTracksModalAsync()
-    {
-        await _page.GetByRole(AriaRole.Button, new() { Name = "Edit selected tracks" }).ClickAsync();
-    }
+    internal async Task EditSelectedTracksModalAsync() => await _page.GetByRole(AriaRole.Button, new() { Name = "Edit selected tracks" }).ClickAsync();
 
     internal async Task EditTracksModalAsync(string artist, string title, string end, IEnumerable<string> flagsToSelect)
     {
@@ -114,10 +102,7 @@ class DetailView(IPage page)
         await _page.GetByRole(AriaRole.Button, new() { Name = "Ok" }).ClickAsync();
     }
 
-    internal async Task OpenRenameAudiofileDialogAsync(int audiofileIndex)
-    {
-        await _page.GetByRole(AriaRole.Button, new() { Name = "Rename file" }).Nth(audiofileIndex).ClickAsync();
-    }
+    internal async Task OpenRenameAudiofileDialogAsync(int audiofileIndex) => await _page.GetByRole(AriaRole.Button, new() { Name = "Rename file" }).Nth(audiofileIndex).ClickAsync();
 
     async Task EditTrackFieldAsync(int trackPosition, string dataLabel, string value)
     {

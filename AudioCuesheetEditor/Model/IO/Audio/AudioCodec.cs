@@ -18,21 +18,21 @@ namespace AudioCuesheetEditor.Model.IO.Audio;
 
 public class AudioCodec
 {
-    public String MimeType { get; private set; }
-    public String FileExtension { get; private set; }
-    public String Name { get; private set; }
+    public string MimeType { get; private set; }
+    public string FileExtension { get; private set; }
+    public string Name { get; private set; }
     
-    public AudioCodec(String mimeType, String fileExtension, String name)
+    public AudioCodec(string mimeType, string fileExtension, string name)
     {
-        if (String.IsNullOrEmpty(mimeType))
+        if (string.IsNullOrEmpty(mimeType))
         {
             throw new ArgumentNullException(nameof(mimeType));
         }
-        if (String.IsNullOrEmpty(fileExtension))
+        if (string.IsNullOrEmpty(fileExtension))
         {
             throw new ArgumentNullException(nameof(fileExtension));
         }
-        if (String.IsNullOrEmpty(name))
+        if (string.IsNullOrEmpty(name))
         {
             throw new ArgumentNullException(nameof(name));
         }

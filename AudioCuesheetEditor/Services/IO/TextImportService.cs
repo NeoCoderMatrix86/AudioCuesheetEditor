@@ -63,9 +63,9 @@ public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsP
     {
         return regex.Replace(input, match =>
         {
-            string result = match.Value;
+            var result = match.Value;
             var groupInfos = new List<(int RelIndex, int Length, string Value, string Key)>();
-            for (int matchCounter = 1; matchCounter < match.Groups.Count; matchCounter++)
+            for (var matchCounter = 1; matchCounter < match.Groups.Count; matchCounter++)
             {
                 var group = match.Groups[matchCounter];
                 var key = regex.GroupNameFromNumber(matchCounter);
@@ -76,7 +76,7 @@ public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsP
                     {
                         SetValue(entity, property, group.Value, timeSpanFormat);
                     }
-                    int relIndex = group.Index - match.Index;
+                    var relIndex = group.Index - match.Index;
                     groupInfos.Add((relIndex, group.Length, group.Value, key));
                 }
             }
@@ -88,8 +88,8 @@ public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsP
             var sb = new StringBuilder(result);
             foreach (var (RelIndex, Length, Value, Key) in groupInfos)
             {
-                sb.Remove(RelIndex, Length);
-                sb.Insert(RelIndex, string.Format(CuesheetConstants.RecognizedMarkHTML, Value));
+                _ = sb.Remove(RelIndex, Length);
+                _ = sb.Insert(RelIndex, string.Format(CuesheetConstants.RecognizedMarkHTML, Value));
             }
             return sb.ToString();
         });
@@ -107,7 +107,7 @@ public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsP
                 importFile.FileContentRecognized = regex.Replace(importFile.FileContentRecognized,
                     match =>
                     {
-                        string marked = ApplyRegexAndMarkGroups(cuesheet, regex, match.Value, importProfile.TimeSpanFormat);
+                        var marked = ApplyRegexAndMarkGroups(cuesheet, regex, match.Value, importProfile.TimeSpanFormat);
                         return marked;
                     }
                 );
@@ -145,7 +145,7 @@ public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsP
                     match =>
                     {
                         var audiofile = new ImportAudiofile();
-                        string marked = ApplyRegexAndMarkGroups(audiofile, regex, match.Value, importProfile.TimeSpanFormat);
+                        var marked = ApplyRegexAndMarkGroups(audiofile, regex, match.Value, importProfile.TimeSpanFormat);
                         cuesheet!.Audiofiles.Add(audiofile);
                         _audiofileStartIndices.Add(audiofile, match.Index);
                         return marked;
@@ -238,10 +238,10 @@ public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsP
         using (var reader = new StringReader(fileContent))
         {
             string? line;
-            int pos = 0;
+            var pos = 0;
             while ((line = reader.ReadLine()) != null)
             {
-                Boolean stopSearch = false;
+                var stopSearch = false;
                 // Check if this line is already analyzed
                 if (line.Contains(CuesheetConstants.MarkHTMLStart) == false)
                 {
@@ -251,16 +251,16 @@ public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsP
                     {
                         stopSearch = ifEntityFound.Invoke(pos, entity);
                     }
-                    sb.AppendLine(markedLine);
+                    _ = sb.AppendLine(markedLine);
                     if (stopSearch)
                     {
-                        sb.Append(reader.ReadToEnd());
+                        _ = sb.Append(reader.ReadToEnd());
                         break;
                     }
                 }
                 else
                 {
-                    sb.AppendLine(line);
+                    _ = sb.AppendLine(line);
                 }
                 pos += line.Length + Environment.NewLine.Length;
             }
@@ -278,7 +278,7 @@ public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsP
         {
             property.SetValue(entity, Convert.ToUInt16(value));
         }
-        if (property.PropertyType == typeof(String))
+        if (property.PropertyType == typeof(string))
         {
             property.SetValue(entity, value);
         }
@@ -302,7 +302,7 @@ public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsP
     static Regex CreateRegexPattern(string scheme, string[] fieldNames)
     {
         var parts = new List<string>();
-        int idx = 0;
+        var idx = 0;
         while (idx < scheme.Length)
         {
             var field = fieldNames.FirstOrDefault(fn => scheme.IndexOf(fn, idx, StringComparison.Ordinal) == idx);
@@ -313,44 +313,44 @@ public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsP
             }
             else
             {
-                int nextFieldIdx = scheme.Length;
+                var nextFieldIdx = scheme.Length;
                 foreach (var fn in fieldNames)
                 {
-                    int pos = scheme.IndexOf(fn, idx, StringComparison.Ordinal);
+                    var pos = scheme.IndexOf(fn, idx, StringComparison.Ordinal);
                     if (pos >= 0 && pos < nextFieldIdx)
                     {
                         nextFieldIdx = pos;
                     }
                 }
-                string separator = scheme[idx..nextFieldIdx];
+                var separator = scheme[idx..nextFieldIdx];
                 parts.Add(separator);
                 idx = nextFieldIdx;
             }
         }
 
         var regexBuilder = new StringBuilder("^");
-        for (int i = 0; i < parts.Count; i++)
+        for (var i = 0; i < parts.Count; i++)
         {
             var part = parts[i];
             if (fieldNames.Contains(part))
             {
-                bool isLast = i == parts.Count - 1 || parts.Skip(i + 1).All(p => !fieldNames.Contains(p));
+                var isLast = i == parts.Count - 1 || parts.Skip(i + 1).All(p => !fieldNames.Contains(p));
                 if (isLast)
                 {
-                    regexBuilder.Append($@"(?<{part}>.+)");
+                    _ = regexBuilder.Append($@"(?<{part}>.+)");
                 }
                 else
                 {
-                    regexBuilder.Append($@"(?<{part}>.+?)");
+                    _ = regexBuilder.Append($@"(?<{part}>.+?)");
                 }
             }
             else
             {
-                string sep = Regex.Escape(part).Replace("\\t", @"\t{1,}");
-                regexBuilder.Append(sep);
+                var sep = Regex.Escape(part).Replace("\\t", @"\t{1,}");
+                _ = regexBuilder.Append(sep);
             }
         }
-        regexBuilder.Append('$');
+        _ = regexBuilder.Append('$');
 
         return new Regex(regexBuilder.ToString());
     }

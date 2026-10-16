@@ -28,7 +28,7 @@ public class AudioImportService(IDialogManager dialogManager, ISessionStateConta
     readonly ICuesheetManager _cuesheetManager = cuesheetManager;
 
     /// <inheritdoc/>
-    public async Task<Boolean> MapAudioImportAsync()
+    public async Task<bool> MapAudioImportAsync()
     {
         // Just run an import if there are audiofiles to import, otherwise this service has nothing to do
         if (_sessionStateContainer.ImportAudiofiles.Count == 0)
@@ -66,7 +66,7 @@ public class AudioImportService(IDialogManager dialogManager, ISessionStateConta
         return cancel == false;
     }
 
-    Boolean MapImportfiles()
+    bool MapImportfiles()
     {
         _sessionStateContainer.ImportAudiofileMapping.Clear();
         foreach (var audiofile in _sessionStateContainer.ActiveCuesheet!.Audiofiles)
@@ -76,7 +76,7 @@ public class AudioImportService(IDialogManager dialogManager, ISessionStateConta
             {
                 if (importAudiofile != null)
                 {
-                    _sessionStateContainer.ImportAudiofiles.Remove(importAudiofile);
+                    _ = _sessionStateContainer.ImportAudiofiles.Remove(importAudiofile);
                     _sessionStateContainer.ImportAudiofileMapping.Add(audiofile, importAudiofile);
                 }
             }

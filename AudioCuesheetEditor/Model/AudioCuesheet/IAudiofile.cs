@@ -17,5 +17,5 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet;
 
 public interface IAudiofile
 {
-    String? Name { get; set; }
+    string? Name { get; set; }
 }

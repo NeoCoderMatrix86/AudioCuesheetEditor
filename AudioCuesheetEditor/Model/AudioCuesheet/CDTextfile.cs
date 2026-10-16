@@ -20,20 +20,20 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet;
 public class CDTextfile
 {
     string name;
-    public CDTextfile(String name)
+    public CDTextfile(string name)
     {
-        if (String.IsNullOrEmpty(name))
+        if (string.IsNullOrEmpty(name))
         {
             throw new ArgumentNullException(nameof(name));
         }
         this.name = name;
     }
-    public String Name 
+    public string Name 
     {
         get => name;
         set
         {
-            if (String.IsNullOrEmpty(value))
+            if (string.IsNullOrEmpty(value))
             {
                 throw new ArgumentNullException(nameof(value));
             }

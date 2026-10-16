@@ -37,9 +37,9 @@ public class LocalStorageOptionsProvider(IJSRuntime jsRuntime, IStringLocalizer<
     public async Task<T> GetOptionsAsync<T>() where T : IOptions
     {
         var type = typeof(T);
-        IOptions? options = (IOptions?)Activator.CreateInstance(type);
-        String optionsJson = await _jsRuntime.InvokeAsync<String>("AppSettings.get", type.Name);
-        if (String.IsNullOrEmpty(optionsJson) == false)
+        var options = (IOptions?)Activator.CreateInstance(type);
+        var optionsJson = await _jsRuntime.InvokeAsync<string>("AppSettings.get", type.Name);
+        if (string.IsNullOrEmpty(optionsJson) == false)
         {
             try
             {
@@ -116,7 +116,7 @@ public class LocalStorageOptionsProvider(IJSRuntime jsRuntime, IStringLocalizer<
         var valueProperty = ResolveNestedProperty(valuePropertyExpression.Body as MemberExpression, ref nestedInstance) ?? throw new ArgumentException("The provided value property expression does not reference a valid property.");
         valueProperty.SetValue(nestedInstance, Convert.ChangeType(value, valueProperty.PropertyType));
 
-        await SaveOptionsAsync(options);
+        _ = await SaveOptionsAsync(options);
     }
 
     static PropertyInfo? ResolveNestedProperty(MemberExpression? memberExpression, ref object? targetObject)

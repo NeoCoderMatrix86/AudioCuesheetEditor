@@ -39,14 +39,14 @@ public class AudiofileManager(IFileInputManager fileInputManager, ITraceChangeMa
     public async Task SetPropertiesAsync(Audiofile audiofile, IBrowserFile browserFile)
     {
         _traceChangeManager.BulkEdit = true;
-        if (String.IsNullOrEmpty(audiofile.ObjectURL) == false)
+        if (string.IsNullOrEmpty(audiofile.ObjectURL) == false)
         {
             await ClearPropertiesAsync(audiofile, false);
         }
         var codec = _fileInputManager.GetAudioCodec(browserFile.Name, browserFile.ContentType);
         var objectUrl = await _fileInputManager.GetObjectUrlAsync(browserFile);
         TimeSpan? duration = null;
-        if (String.IsNullOrEmpty(objectUrl) == false)
+        if (string.IsNullOrEmpty(objectUrl) == false)
         {
             var durationSeconds = await _jsRuntime.InvokeAsync<double>("getAudioDurationFromFile", objectUrl);
             duration = TimeSpan.FromSeconds(durationSeconds);
@@ -64,7 +64,7 @@ public class AudiofileManager(IFileInputManager fileInputManager, ITraceChangeMa
     }
 
     /// <inheritdoc/>
-    public async Task ClearPropertiesAsync(Audiofile audiofile, Boolean setTracing = true)
+    public async Task ClearPropertiesAsync(Audiofile audiofile, bool setTracing = true)
     {
         if (setTracing)
         {
@@ -100,7 +100,7 @@ public class AudiofileManager(IFileInputManager fileInputManager, ITraceChangeMa
     }
 
     /// <inheritdoc/>
-    public void AddTrack(Audiofile audiofile, Track track, Boolean setTracing = true)
+    public void AddTrack(Audiofile audiofile, Track track, bool setTracing = true)
     {
         if (setTracing)
         {
@@ -135,7 +135,7 @@ public class AudiofileManager(IFileInputManager fileInputManager, ITraceChangeMa
     }
 
     /// <inheritdoc/>
-    public void RemoveTracks(Audiofile audiofile, IEnumerable<Track> tracksToRemove, Boolean setTracing = true)
+    public void RemoveTracks(Audiofile audiofile, IEnumerable<Track> tracksToRemove, bool setTracing = true)
     {
         var cuesheet = _sessionStateContainer.ActiveCuesheet;
         var intersection = audiofile.Tracks.Intersect(tracksToRemove);
@@ -160,7 +160,7 @@ public class AudiofileManager(IFileInputManager fileInputManager, ITraceChangeMa
         }
     }
 
-    Boolean SetValue<TProperty>(Audiofile audiofile, Expression<Func<Audiofile, TProperty>> propertyExpression, TProperty value)
+    bool SetValue<TProperty>(Audiofile audiofile, Expression<Func<Audiofile, TProperty>> propertyExpression, TProperty value)
     {
         if (propertyExpression.Body is not MemberExpression memberExpression)
         {

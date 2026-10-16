@@ -65,10 +65,10 @@ public class SessionStateContainerTests : IDisposable
         // Arrange
         var newCuesheet = new Cuesheet();
         var viewOptions = new ViewOptions();
-        _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+        _ = _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
         await _sessionStateContainer.InitializeAsync();
-        bool activeCuesheetChangedEvent = false;
-        bool cuesheetChangedEvent = false;
+        var activeCuesheetChangedEvent = false;
+        var cuesheetChangedEvent = false;
         _sessionStateContainer.ActiveCuesheetChanged += (sender, args) => activeCuesheetChangedEvent = true;
         _sessionStateContainer.CuesheetChanged += (sender, args) => cuesheetChangedEvent = true;
 
@@ -89,10 +89,10 @@ public class SessionStateContainerTests : IDisposable
         {
             ActiveTab = ViewMode.ImportView
         };
-        _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+        _ = _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
         await _sessionStateContainer.InitializeAsync();
-        bool eventTriggered = false;
-        bool cuesheetChangedEvent = false;
+        var eventTriggered = false;
+        var cuesheetChangedEvent = false;
         _sessionStateContainer.ActiveCuesheetChanged += (sender, args) => eventTriggered = true;
         _sessionStateContainer.CuesheetChanged += (sender, args) => cuesheetChangedEvent = true;
         // Act
@@ -112,9 +112,9 @@ public class SessionStateContainerTests : IDisposable
         {
             ActiveTab = ViewMode.ImportView
         };
-        _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+        _ = _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
         await _sessionStateContainer.InitializeAsync();
-        bool eventTriggered = false;
+        var eventTriggered = false;
         _sessionStateContainer.ActiveCuesheetChanged += (sender, args) => eventTriggered = true;
 
         // Act
@@ -130,9 +130,9 @@ public class SessionStateContainerTests : IDisposable
         // Arrange
         var newImportCuesheet = new Cuesheet();
         var viewOptions = new ViewOptions();
-        _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+        _ = _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
         await _sessionStateContainer.InitializeAsync();
-        bool eventTriggered = false;
+        var eventTriggered = false;
         _sessionStateContainer.ActiveCuesheetChanged += (sender, args) => eventTriggered = true;
 
         // Act
@@ -147,7 +147,7 @@ public class SessionStateContainerTests : IDisposable
     {
         // Arrange
         var viewOptions = new ViewOptions();
-        _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+        _ = _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
         await _sessionStateContainer.InitializeAsync();
         _sessionStateContainer.Importfile = Mock.Of<IImportfile>();
         _sessionStateContainer.ImportCuesheet = new Cuesheet();
@@ -193,7 +193,7 @@ public class SessionStateContainerTests : IDisposable
     {
         // Arrange
         var viewOptions = new ViewOptions();
-        _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+        _ = _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
         await _sessionStateContainer.InitializeAsync();
         _sessionStateContainer.Importfile = Mock.Of<IImportfile>();
         _sessionStateContainer.ImportCuesheet = new Cuesheet();
@@ -239,7 +239,7 @@ public class SessionStateContainerTests : IDisposable
     {
         // Arrange
         var viewOptions = new ViewOptions();
-        _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+        _ = _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
         // Act
         await _sessionStateContainer.InitializeAsync();
         // Assert
@@ -251,7 +251,7 @@ public class SessionStateContainerTests : IDisposable
     {
         // Arrange
         var viewOptions = new ViewOptions();
-        _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+        _ = _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
         await _sessionStateContainer.InitializeAsync();
         // Act
         await _sessionStateContainer.InitializeAsync();
@@ -264,7 +264,7 @@ public class SessionStateContainerTests : IDisposable
     {
         // Arrange
         var viewOptions = new ViewOptions();
-        _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+        _ = _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
         await _sessionStateContainer.InitializeAsync();
         // Act
         var cuesheet = _sessionStateContainer.ActiveCuesheet;
@@ -277,16 +277,13 @@ public class SessionStateContainerTests : IDisposable
     {
         // Arrange
         var viewOptions = new ViewOptions();
-        _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+        _ = _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
         await _sessionStateContainer.InitializeAsync();
         viewOptions.ActiveTab = ViewMode.ImportView;
 
-        _localStorageOptionsProvider.Setup(x => x.SaveOptionsAsync(viewOptions)).Callback(() =>
-        {
-            _localStorageOptionsProvider.Raise(x => x.OptionSaved += null, _localStorageOptionsProvider.Object, viewOptions);
-        });
-        
-        Boolean activeCuesheetChangedEventTriggered = false;
+        _ = _localStorageOptionsProvider.Setup(x => x.SaveOptionsAsync(viewOptions)).Callback(() => _localStorageOptionsProvider.Raise(x => x.OptionSaved += null, _localStorageOptionsProvider.Object, viewOptions));
+
+        var activeCuesheetChangedEventTriggered = false;
         _sessionStateContainer.ActiveCuesheetChanged += delegate
         {
             activeCuesheetChangedEventTriggered = true;
@@ -296,7 +293,7 @@ public class SessionStateContainerTests : IDisposable
         {
             Title = "ImportCuesheet"
         };
-        await _localStorageOptionsProvider.Object.SaveOptionsAsync(viewOptions);
+        _ = await _localStorageOptionsProvider.Object.SaveOptionsAsync(viewOptions);
         // Act
         var cuesheet = _sessionStateContainer.ActiveCuesheet;
         // Assert
@@ -309,25 +306,22 @@ public class SessionStateContainerTests : IDisposable
     {
         // Arrange
         var viewOptions = new ViewOptions();
-        _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+        _ = _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
         await _sessionStateContainer.InitializeAsync();
-        _localStorageOptionsProvider.Setup(x => x.SaveOptionsAsync(viewOptions)).Callback(() =>
-        {
-            _localStorageOptionsProvider.Raise(x => x.OptionSaved += null, _localStorageOptionsProvider.Object, viewOptions);
-        });
+        _ = _localStorageOptionsProvider.Setup(x => x.SaveOptionsAsync(viewOptions)).Callback(() => _localStorageOptionsProvider.Raise(x => x.OptionSaved += null, _localStorageOptionsProvider.Object, viewOptions));
         _sessionStateContainer.Cuesheet.Title = "Cuesheet";
         _sessionStateContainer.ImportCuesheet = new()
         {
             Title = "ImportCuesheet"
         };
         viewOptions.ActiveTab = ViewMode.ImportView;
-        await _localStorageOptionsProvider.Object.SaveOptionsAsync(viewOptions);
-        Boolean activeCuesheetChangedEventTriggered = false;
+        _ = await _localStorageOptionsProvider.Object.SaveOptionsAsync(viewOptions);
+        var activeCuesheetChangedEventTriggered = false;
         _sessionStateContainer.ActiveCuesheetChanged += delegate
         {
             activeCuesheetChangedEventTriggered = true;
         };
-        await _localStorageOptionsProvider.Object.SaveOptionsAsync(viewOptions);
+        _ = await _localStorageOptionsProvider.Object.SaveOptionsAsync(viewOptions);
         // Act
         var cuesheet = _sessionStateContainer.ActiveCuesheet;
         // Assert
@@ -343,7 +337,7 @@ public class SessionStateContainerTests : IDisposable
         {
             ActiveTab = ViewMode.ImportView
         };
-        _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
+        _ = _localStorageOptionsProvider.Setup(x => x.GetOptionsAsync<ViewOptions>()).ReturnsAsync(viewOptions);
         await _sessionStateContainer.InitializeAsync();
         // Act
         var result = _sessionStateContainer.ActiveCuesheet;

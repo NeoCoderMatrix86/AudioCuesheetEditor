@@ -44,9 +44,9 @@ public class CuesheetExportServiceTests
     public void CanGenerateExportfile_InvalidExtension_ReturnsValidationMessage()
     {
         // Arrange
-        string invalidFilename = "test.txt";
-        _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, new Cuesheet());
-        _localizerMock.Setup(x => x["File extension is not '{0}'", It.IsAny<object[]>()]).Returns(new LocalizedString("File extension is not '{0}'", "File extension is not '{0}'"));
+        var invalidFilename = "test.txt";
+        _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, new Cuesheet());
+        _ = _localizerMock.Setup(x => x["File extension is not '{0}'", It.IsAny<object[]>()]).Returns(new LocalizedString("File extension is not '{0}'", "File extension is not '{0}'"));
 
         // Act
         var result = _cuesheetExportService.CanGenerateExportfile(invalidFilename);
@@ -60,12 +60,12 @@ public class CuesheetExportServiceTests
     public void CanGenerateExportfile_InvalidAudiofileName_ReturnsValidationMessage()
     {
         // Arrange
-        _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, new Cuesheet()
+        _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, new Cuesheet()
         {
             Audiofiles = [new()]
         });
-        _localizerMock.Setup(x => x["{0} has no value!", It.IsAny<object[]>()]).Returns((string format, object[] args) => new LocalizedString(format, string.Format(format, args)));
-        _localizerMock.Setup(x => x[nameof(Audiofile.Name)]).Returns(new LocalizedString(nameof(Audiofile.Name), nameof(Audiofile.Name)));
+        _ = _localizerMock.Setup(x => x["{0} has no value!", It.IsAny<object[]>()]).Returns((string format, object[] args) => new LocalizedString(format, string.Format(format, args)));
+        _ = _localizerMock.Setup(x => x[nameof(Audiofile.Name)]).Returns(new LocalizedString(nameof(Audiofile.Name), nameof(Audiofile.Name)));
 
         // Act
         var result = _cuesheetExportService.CanGenerateExportfile("test.cue");
@@ -79,9 +79,9 @@ public class CuesheetExportServiceTests
     public void CanGenerateExportfile_InvalidCuesheeetTitle_ReturnsValidationMessage()
     {
         // Arrange
-        _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, new Cuesheet());
-        _localizerMock.Setup(x => x["{0} has no value!", It.IsAny<object[]>()]).Returns((string format, object[] args) => new LocalizedString(format, string.Format(format, args)));
-        _localizerMock.Setup(x => x[nameof(Cuesheet.Title)]).Returns(new LocalizedString(nameof(Cuesheet.Title), nameof(Cuesheet.Title)));
+        _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, new Cuesheet());
+        _ = _localizerMock.Setup(x => x["{0} has no value!", It.IsAny<object[]>()]).Returns((string format, object[] args) => new LocalizedString(format, string.Format(format, args)));
+        _ = _localizerMock.Setup(x => x[nameof(Cuesheet.Title)]).Returns(new LocalizedString(nameof(Cuesheet.Title), nameof(Cuesheet.Title)));
 
         // Act
         var result = _cuesheetExportService.CanGenerateExportfile("test.cue");
@@ -116,9 +116,9 @@ public class CuesheetExportServiceTests
             ],
 
         };
-        _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
-        _localizerMock.Setup(x => x["{0} has no value!", It.IsAny<object[]>()]).Returns((string format, object[] args) => new LocalizedString(format, string.Format(format, args)));
-        _localizerMock.Setup(x => x[nameof(Track.End)]).Returns(new LocalizedString(nameof(Track.End), nameof(Track.End)));
+        _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
+        _ = _localizerMock.Setup(x => x["{0} has no value!", It.IsAny<object[]>()]).Returns((string format, object[] args) => new LocalizedString(format, string.Format(format, args)));
+        _ = _localizerMock.Setup(x => x[nameof(Track.End)]).Returns(new LocalizedString(nameof(Track.End), nameof(Track.End)));
 
         // Act
         var result = _cuesheetExportService.CanGenerateExportfile("test.cue");
@@ -155,7 +155,7 @@ public class CuesheetExportServiceTests
             ],
 
         };
-        _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
+        _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
 
         // Act
         var result = _cuesheetExportService.CanGenerateExportfile("test.cue");
@@ -201,7 +201,7 @@ public class CuesheetExportServiceTests
         };
         track1.Cuesheet = cuesheet;
         track2.Cuesheet = cuesheet;
-        _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
+        _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
 
         // Act
         var result = _cuesheetExportService.GenerateExportfile(filename);
@@ -286,7 +286,7 @@ FILE ""Test audiofile.mp3"" MP3
         track2.Cuesheet = cuesheet;
         track3.Cuesheet = cuesheet;
         track4.Cuesheet = cuesheet;
-        _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
+        _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
 
         // Act
         var result = _cuesheetExportService.GenerateExportfile(filename);
@@ -347,7 +347,7 @@ FILE ""Test audiofile2.wav"" WAV
                 }
             ]
         };
-        _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
+        _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
 
         // Act
         var result = _cuesheetExportService.GenerateExportfile("test.cue");

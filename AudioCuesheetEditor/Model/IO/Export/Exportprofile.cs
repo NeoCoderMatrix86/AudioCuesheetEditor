@@ -21,27 +21,27 @@ namespace AudioCuesheetEditor.Model.IO.Export;
 
 public class Exportprofile : Validateable
 {
-    public static readonly String DefaultFileName = "Export.txt";
+    public static readonly string DefaultFileName = "Export.txt";
 
-    public static readonly String SchemeCuesheetArtist = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Artist), SchemeCharacter);
-    public static readonly String SchemeCuesheetTitle = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Title), SchemeCharacter);
-    public static readonly String SchemeAudiofileName = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Audiofile), nameof(Audiofile.Name), SchemeCharacter);
-    public static readonly String SchemeCuesheetCDTextfile = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.CDTextfile), SchemeCharacter);
-    public static readonly String SchemeCuesheetCatalogueNumber = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Cataloguenumber), SchemeCharacter);
-    public static readonly String SchemeTrackArtist = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Artist), SchemeCharacter);
-    public static readonly String SchemeTrackTitle = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Title), SchemeCharacter);
-    public static readonly String SchemeTrackBegin = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Begin), SchemeCharacter);
-    public static readonly String SchemeTrackEnd = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.End), SchemeCharacter);
-    public static readonly String SchemeTrackLength = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Length), SchemeCharacter);
-    public static readonly String SchemeTrackPosition = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Position), SchemeCharacter);
-    public static readonly String SchemeTrackFlags = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Flags), SchemeCharacter);
-    public static readonly String SchemeTrackPreGap = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.PreGap), SchemeCharacter);
-    public static readonly String SchemeTrackPostGap = String.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.PostGap), SchemeCharacter);
-    public static readonly String SchemeDate = String.Format("{0}Date{1}", SchemeCharacter, SchemeCharacter);
-    public static readonly String SchemeDateTime = String.Format("{0}DateTime{1}", SchemeCharacter, SchemeCharacter);
-    public static readonly String SchemeTime = String.Format("{0}Time{1}", SchemeCharacter, SchemeCharacter);
+    public static readonly string SchemeCuesheetArtist = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Artist), SchemeCharacter);
+    public static readonly string SchemeCuesheetTitle = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Title), SchemeCharacter);
+    public static readonly string SchemeAudiofileName = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Audiofile), nameof(Audiofile.Name), SchemeCharacter);
+    public static readonly string SchemeCuesheetCDTextfile = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.CDTextfile), SchemeCharacter);
+    public static readonly string SchemeCuesheetCatalogueNumber = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Cataloguenumber), SchemeCharacter);
+    public static readonly string SchemeTrackArtist = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Artist), SchemeCharacter);
+    public static readonly string SchemeTrackTitle = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Title), SchemeCharacter);
+    public static readonly string SchemeTrackBegin = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Begin), SchemeCharacter);
+    public static readonly string SchemeTrackEnd = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.End), SchemeCharacter);
+    public static readonly string SchemeTrackLength = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Length), SchemeCharacter);
+    public static readonly string SchemeTrackPosition = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Position), SchemeCharacter);
+    public static readonly string SchemeTrackFlags = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Flags), SchemeCharacter);
+    public static readonly string SchemeTrackPreGap = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.PreGap), SchemeCharacter);
+    public static readonly string SchemeTrackPostGap = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.PostGap), SchemeCharacter);
+    public static readonly string SchemeDate = string.Format("{0}Date{1}", SchemeCharacter, SchemeCharacter);
+    public static readonly string SchemeDateTime = string.Format("{0}DateTime{1}", SchemeCharacter, SchemeCharacter);
+    public static readonly string SchemeTime = string.Format("{0}Time{1}", SchemeCharacter, SchemeCharacter);
 
-    public static readonly Dictionary<String, String> AvailableCuesheetSchemes = new()
+    public static readonly Dictionary<string, string> AvailableCuesheetSchemes = new()
     {
         { nameof(Cuesheet.Artist), SchemeCuesheetArtist },
         { nameof(Cuesheet.Title), SchemeCuesheetTitle },
@@ -51,11 +51,11 @@ public class Exportprofile : Validateable
         { "DateTime", SchemeDateTime },
         { "Time", SchemeTime }
     };
-    public static readonly Dictionary<String, String> AvailableAudiofileSchemes = new()
+    public static readonly Dictionary<string, string> AvailableAudiofileSchemes = new()
     {
         { nameof(Audiofile.Name), SchemeAudiofileName }
     };
-    public static readonly Dictionary<String, String> AvailableTrackSchemes = new()
+    public static readonly Dictionary<string, string> AvailableTrackSchemes = new()
     {
         { nameof(Track.Position), SchemeTrackPosition },
         { nameof(Track.Artist), SchemeTrackArtist },
@@ -68,53 +68,53 @@ public class Exportprofile : Validateable
         { nameof(Track.PostGap), SchemeTrackPostGap }
     };
 
-    public const String SchemeCharacter = "%";
+    public const string SchemeCharacter = "%";
 
-    String _schemeHead;
-    String _schemeAudiofiles;
-    String _schemeTracks;
-    String _schemeFooter;
-    String _filename;
-    String _name;
+    string _schemeHead;
+    string _schemeAudiofiles;
+    string _schemeTracks;
+    string _schemeFooter;
+    string _filename;
+    string _name;
 
     public Exportprofile()
     {
         Id = Guid.NewGuid();
-        _schemeHead = String.Empty;
-        _schemeTracks = String.Empty;
-        _schemeAudiofiles = String.Empty;
-        _schemeFooter = String.Empty;
+        _schemeHead = string.Empty;
+        _schemeTracks = string.Empty;
+        _schemeAudiofiles = string.Empty;
+        _schemeFooter = string.Empty;
         _filename = DefaultFileName;
         var random = new Random();
-        _name = String.Format("{0}_{1}", nameof(Exportprofile), random.Next(1, 100));
+        _name = string.Format("{0}_{1}", nameof(Exportprofile), random.Next(1, 100));
     }
     public Guid Id { get; init; }
-    public String Name 
+    public string Name 
     {
         get => _name;
         set { _name = value; OnValidateablePropertyChanged(); }
     }
-    public String SchemeHead 
+    public string SchemeHead 
     {
         get => _schemeHead;
         set { _schemeHead = value; OnValidateablePropertyChanged(); }
     }
-    public String SchemeTracks 
+    public string SchemeTracks 
     {
         get => _schemeTracks;
         set { _schemeTracks = value; OnValidateablePropertyChanged(); }
     }
-    public String SchemeAudiofiles
+    public string SchemeAudiofiles
     {
         get => _schemeAudiofiles;
         set { _schemeAudiofiles = value; OnValidateablePropertyChanged(); }
     }
-    public String SchemeFooter 
+    public string SchemeFooter 
     {
         get => _schemeFooter;
         set { _schemeFooter = value; OnValidateablePropertyChanged(); }
     }
-    public String Filename 
+    public string Filename 
     {
         get => _filename;
         set { _filename = value; OnValidateablePropertyChanged(); }
@@ -122,7 +122,7 @@ public class Exportprofile : Validateable
 
     public override ValidationResult Validate(string property)
     {
-        ValidationStatus validationStatus = ValidationStatus.NoValidation;
+        var validationStatus = ValidationStatus.NoValidation;
         List<ValidationMessage>? validationMessages = null;
         switch (property)
         {
@@ -144,7 +144,7 @@ public class Exportprofile : Validateable
                 break;
             case nameof(Filename):
                 validationStatus = ValidationStatus.Success;
-                if (String.IsNullOrEmpty(Filename))
+                if (string.IsNullOrEmpty(Filename))
                 {
                     validationMessages ??= [];
                     validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Filename)));
@@ -152,7 +152,7 @@ public class Exportprofile : Validateable
                 break;
             case nameof(Name):
                 validationStatus = ValidationStatus.Success;
-                if (String.IsNullOrEmpty(Name))
+                if (string.IsNullOrEmpty(Name))
                 {
                     validationMessages ??= [];
                     validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Name)));
@@ -162,7 +162,7 @@ public class Exportprofile : Validateable
         return ValidationResult.Create(validationStatus, validationMessages);
     }
 
-    static List<ValidationMessage>? CheckForUnresolvablePlaceholders(String scheme, string schemeName, List<Dictionary<String, String>> schemesToCheck)
+    static List<ValidationMessage>? CheckForUnresolvablePlaceholders(string scheme, string schemeName, List<Dictionary<string, string>> schemesToCheck)
     {
         List<ValidationMessage>? validationMessages = null;
         foreach (var schemeToCheck in schemesToCheck)

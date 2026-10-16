@@ -27,7 +27,7 @@ public interface IValidateable
     /// </summary>
     /// <param name="property"></param>
     /// <returns></returns>
-    ValidationResult Validate(String property);
+    ValidationResult Validate(string property);
 }
 public enum ValidationStatus
 {

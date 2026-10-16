@@ -35,10 +35,11 @@ public class Audiofile() : Validateable, IAudiofile
         new AudioCodec("audio/flac", ".flac", "AudioCodec FLAC")
     ];
 
+    //TODO
     AudioCodec? _audioCodec;
-    String? _name;
+    string? _name;
     
-    public Audiofile(String? name, String? objectURL, AudioCodec? audioCodec, TimeSpan? duration = null) : this()
+    public Audiofile(string? name, string? objectURL, AudioCodec? audioCodec, TimeSpan? duration = null) : this()
     {
         Name = name;
         ObjectURL = objectURL;
@@ -46,7 +47,7 @@ public class Audiofile() : Validateable, IAudiofile
         Duration = duration;
     }
 
-    public String? Name
+    public string? Name
     {
         get => _name;
         set
@@ -61,7 +62,7 @@ public class Audiofile() : Validateable, IAudiofile
     }
 
     [JsonIgnore]
-    public String? ObjectURL { get; set; }
+    public string? ObjectURL { get; set; }
 
     /// <summary>
     /// Duration of the audio file
@@ -70,14 +71,14 @@ public class Audiofile() : Validateable, IAudiofile
 
     public AudioCodec? AudioCodec
     {
-        get { return _audioCodec; }
+        get => _audioCodec;
         set
         {
             _audioCodec = value;
             if ((_audioCodec != null) && (Name?.EndsWith(_audioCodec.FileExtension) == false))
             {
                 //Replace file ending
-                Name = String.Format("{0}{1}", Path.GetFileNameWithoutExtension(Name), _audioCodec.FileExtension);
+                Name = string.Format("{0}{1}", Path.GetFileNameWithoutExtension(Name), _audioCodec.FileExtension);
             }
         }
     }
@@ -86,7 +87,7 @@ public class Audiofile() : Validateable, IAudiofile
 
     public override ValidationResult Validate(string property)
     {
-        ValidationStatus validationStatus = ValidationStatus.NoValidation;
+        var validationStatus = ValidationStatus.NoValidation;
         List<ValidationMessage>? validationMessages = null;
         switch (property)
         {
@@ -110,7 +111,7 @@ public class Audiofile() : Validateable, IAudiofile
                         {
                             foreach (var trackWithSamePosition in track)
                             {
-                                validationMessages.Add(new ValidationMessage("{0} {1} '{2}' is used also by {3}({4},{5},{6},{7},{8}). Positions must be unique!", nameof(Track), nameof(Track.Position), track.Key != null ? track.Key : String.Empty, nameof(Track), trackWithSamePosition.Position != null ? trackWithSamePosition.Position : String.Empty, trackWithSamePosition.Artist ?? String.Empty, trackWithSamePosition.Title ?? String.Empty, trackWithSamePosition.Begin != null ? trackWithSamePosition.Begin : String.Empty, trackWithSamePosition.End != null ? trackWithSamePosition.End : String.Empty));
+                                validationMessages.Add(new ValidationMessage("{0} {1} '{2}' is used also by {3}({4},{5},{6},{7},{8}). Positions must be unique!", nameof(Track), nameof(Track.Position), track.Key != null ? track.Key : string.Empty, nameof(Track), trackWithSamePosition.Position != null ? trackWithSamePosition.Position : string.Empty, trackWithSamePosition.Artist ?? string.Empty, trackWithSamePosition.Title ?? string.Empty, trackWithSamePosition.Begin != null ? trackWithSamePosition.Begin : string.Empty, trackWithSamePosition.End != null ? trackWithSamePosition.End : string.Empty));
                             }
                         }
                     }
@@ -124,7 +125,7 @@ public class Audiofile() : Validateable, IAudiofile
                             validationMessages ??= [];
                             foreach (var trackBetween in tracksBetween)
                             {
-                                validationMessages.Add(new ValidationMessage("{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!", nameof(Track), track.Position != null ? track.Position : String.Empty, track.Artist ?? String.Empty, track.Title ?? String.Empty, track.Begin != null ? track.Begin : String.Empty, track.End != null ? track.End : String.Empty, trackBetween.Position != null ? trackBetween.Position : String.Empty, trackBetween.Artist ?? String.Empty, trackBetween.Title ?? String.Empty, trackBetween.Begin != null ? trackBetween.Begin : String.Empty, trackBetween.End != null ? trackBetween.End : String.Empty));
+                                validationMessages.Add(new ValidationMessage("{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!", nameof(Track), track.Position != null ? track.Position : string.Empty, track.Artist ?? string.Empty, track.Title ?? string.Empty, track.Begin != null ? track.Begin : string.Empty, track.End != null ? track.End : string.Empty, trackBetween.Position != null ? trackBetween.Position : string.Empty, trackBetween.Artist ?? string.Empty, trackBetween.Title ?? string.Empty, trackBetween.Begin != null ? trackBetween.Begin : string.Empty, trackBetween.End != null ? trackBetween.End : string.Empty));
                             }
                         }
                     }
@@ -132,7 +133,7 @@ public class Audiofile() : Validateable, IAudiofile
                 break;
             case nameof(Name):
                 validationStatus = ValidationStatus.Success;
-                if (String.IsNullOrEmpty(Name))
+                if (string.IsNullOrEmpty(Name))
                 {
                     validationMessages ??= [];
                     validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Name)));

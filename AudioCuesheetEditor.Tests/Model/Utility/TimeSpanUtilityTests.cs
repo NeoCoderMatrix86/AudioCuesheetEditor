@@ -26,7 +26,7 @@ public class TimeSpanUtilityTests
     public void ParseTimeSpan_Valid_HoursMinutesSeconds()
     {
         // Arrange
-        string input = "01:23:45";
+        var input = "01:23:45";
 
         // Act
         var timespan = TimeSpanUtility.ParseTimeSpan(input);
@@ -40,7 +40,7 @@ public class TimeSpanUtilityTests
     public void ParseTimeSpan_Valid_MinutesSeconds()
     {
         // Arrange
-        string input = "3:12";
+        var input = "3:12";
         var format = new TimeSpanFormat() { Scheme = $"{TimeSpanFormat.Minutes}:{TimeSpanFormat.Seconds}" };
 
         // Act
@@ -55,7 +55,7 @@ public class TimeSpanUtilityTests
     public void ParseTimeSpan_Valid_OverflowMinutes()
     {
         // Arrange
-        string input = "63:12";
+        var input = "63:12";
         var format = new TimeSpanFormat() { Scheme = $"{TimeSpanFormat.Minutes}:{TimeSpanFormat.Seconds}" };
 
         // Act
@@ -70,7 +70,7 @@ public class TimeSpanUtilityTests
     public void ParseTimeSpan_Valid_HoursMinutes()
     {
         // Arrange
-        string input = "23:12";
+        var input = "23:12";
         var format = new TimeSpanFormat() { Scheme = $"{TimeSpanFormat.Hours}:{TimeSpanFormat.Minutes}" };
 
         // Act
@@ -85,7 +85,7 @@ public class TimeSpanUtilityTests
     public void ParseTimeSpan_Valid_FullFormat()
     {
         // Arrange
-        string input = "23:45:56";
+        var input = "23:45:56";
         var format = new TimeSpanFormat() { Scheme = $"{TimeSpanFormat.Hours}:{TimeSpanFormat.Minutes}:{TimeSpanFormat.Seconds}" };
 
         // Act
@@ -100,7 +100,7 @@ public class TimeSpanUtilityTests
     public void ParseTimeSpan_Valid_WithDays()
     {
         // Arrange
-        string input = "2.23:45:56";
+        var input = "2.23:45:56";
         var format = new TimeSpanFormat() { Scheme = $"{TimeSpanFormat.Days}.{TimeSpanFormat.Hours}:{TimeSpanFormat.Minutes}:{TimeSpanFormat.Seconds}" };
 
         // Act
@@ -115,7 +115,7 @@ public class TimeSpanUtilityTests
     public void ParseTimeSpan_Valid_WithMilliseconds()
     {
         // Arrange
-        string input = "23:45:56.599";
+        var input = "23:45:56.599";
         var format = new TimeSpanFormat() { Scheme = $"{TimeSpanFormat.Hours}:{TimeSpanFormat.Minutes}:{TimeSpanFormat.Seconds}.{TimeSpanFormat.Milliseconds}" };
 
         // Act
@@ -130,7 +130,7 @@ public class TimeSpanUtilityTests
     public void ParseTimeSpan_Invalid_Format()
     {
         // Arrange
-        string input = "1.2e:45:87.h3a";
+        var input = "1.2e:45:87.h3a";
 
         var format = new TimeSpanFormat() { Scheme = $"{TimeSpanFormat.Hours}:{TimeSpanFormat.Minutes}:{TimeSpanFormat.Seconds}.{TimeSpanFormat.Milliseconds}" };
 
@@ -145,7 +145,7 @@ public class TimeSpanUtilityTests
     public void ParseTimeSpan_Invalid_Text()
     {
         // Arrange
-        string input = "Test";
+        var input = "Test";
         var format = new TimeSpanFormat() { Scheme = $"{TimeSpanFormat.Hours}:{TimeSpanFormat.Minutes}:{TimeSpanFormat.Seconds}.{TimeSpanFormat.Milliseconds}" };
 
         // Act
@@ -159,7 +159,7 @@ public class TimeSpanUtilityTests
     public void ParseTimeSpan_Invalid_Scheme()
     {
         // Arrange
-        string input = "Test";
+        var input = "Test";
         var format = new TimeSpanFormat() { Scheme = "this is a test" };
 
         // Act
