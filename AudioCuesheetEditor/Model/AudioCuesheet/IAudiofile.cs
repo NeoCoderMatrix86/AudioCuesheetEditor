@@ -13,10 +13,9 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-namespace AudioCuesheetEditor.Model.AudioCuesheet
+namespace AudioCuesheetEditor.Model.AudioCuesheet;
+
+public interface IAudiofile
 {
-    public interface IAudiofile
-    {
-        String? Name { get; set; }
-    }
+    String? Name { get; set; }
 }

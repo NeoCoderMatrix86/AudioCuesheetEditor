@@ -14,31 +14,30 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 
-namespace AudioCuesheetEditor.Model.IO.Audio
+namespace AudioCuesheetEditor.Model.IO.Audio;
+
+public class AudioCodec
 {
-    public class AudioCodec
+    public String MimeType { get; private set; }
+    public String FileExtension { get; private set; }
+    public String Name { get; private set; }
+    
+    public AudioCodec(String mimeType, String fileExtension, String name)
     {
-        public String MimeType { get; private set; }
-        public String FileExtension { get; private set; }
-        public String Name { get; private set; }
-        
-        public AudioCodec(String mimeType, String fileExtension, String name)
+        if (String.IsNullOrEmpty(mimeType))
         {
-            if (String.IsNullOrEmpty(mimeType))
-            {
-                throw new ArgumentNullException(nameof(mimeType));
-            }
-            if (String.IsNullOrEmpty(fileExtension))
-            {
-                throw new ArgumentNullException(nameof(fileExtension));
-            }
-            if (String.IsNullOrEmpty(name))
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-            MimeType = mimeType;
-            FileExtension = fileExtension;
-            Name = name;
+            throw new ArgumentNullException(nameof(mimeType));
         }
+        if (String.IsNullOrEmpty(fileExtension))
+        {
+            throw new ArgumentNullException(nameof(fileExtension));
+        }
+        if (String.IsNullOrEmpty(name))
+        {
+            throw new ArgumentNullException(nameof(name));
+        }
+        MimeType = mimeType;
+        FileExtension = fileExtension;
+        Name = name;
     }
 }

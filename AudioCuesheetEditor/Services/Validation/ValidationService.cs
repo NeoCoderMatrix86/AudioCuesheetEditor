@@ -16,42 +16,41 @@
 using AudioCuesheetEditor.Model.Entity;
 using Microsoft.Extensions.Localization;
 
-namespace AudioCuesheetEditor.Services.Validation
+namespace AudioCuesheetEditor.Services.Validation;
+
+public class ValidationService(IStringLocalizer<ValidationMessage> localizer)
 {
-    public class ValidationService(IStringLocalizer<ValidationMessage> localizer)
+    readonly IStringLocalizer<ValidationMessage> _localizer = localizer;
+    public Func<object, string, Task<IEnumerable<string>>> ValidateProperty => (model, propertyName) => Task.FromResult(Validate(model, propertyName));
+
+    public IEnumerable<string> Validate(object? model, string propertyName)
     {
-        private readonly IStringLocalizer<ValidationMessage> _localizer = localizer;
-        public Func<object, string, Task<IEnumerable<string>>> ValidateProperty => (model, propertyName) => Task.FromResult(Validate(model, propertyName));
-
-        public IEnumerable<string> Validate(object? model, string propertyName)
+        IEnumerable<string> errors = [];
+        if (model != null)
         {
-            IEnumerable<string> errors = [];
-            if (model != null)
+            if (model is IValidateable validateable)
             {
-                if (model is IValidateable validateable)
+                var validationResult = validateable.Validate(propertyName);
+                switch (validationResult?.Status)
                 {
-                    var validationResult = validateable.Validate(propertyName);
-                    switch (validationResult?.Status)
-                    {
-                        case ValidationStatus.NoValidation:
-                        case ValidationStatus.Success:
-                            // Nothing to do
-                            break;
+                    case ValidationStatus.NoValidation:
+                    case ValidationStatus.Success:
+                        // Nothing to do
+                        break;
 
-                        case ValidationStatus.Error:
-                            errors = [.. validationResult.ValidationMessages.Select(x => x.GetMessageLocalized(_localizer))];
-                            break;
+                    case ValidationStatus.Error:
+                        errors = [.. validationResult.ValidationMessages.Select(x => x.GetMessageLocalized(_localizer))];
+                        break;
 
-                        default:
-                            throw new InvalidOperationException("Unknown validation status.");
-                    }
-                }
-                else
-                {
-                    throw new NotSupportedException(string.Format("Model was not of supposed type '{0}'", nameof(IValidateable)));
+                    default:
+                        throw new InvalidOperationException("Unknown validation status.");
                 }
             }
-            return errors;
+            else
+            {
+                throw new NotSupportedException(string.Format("Model was not of supposed type '{0}'", nameof(IValidateable)));
+            }
         }
+        return errors;
     }
 }

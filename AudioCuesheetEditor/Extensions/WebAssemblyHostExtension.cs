@@ -16,20 +16,19 @@
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
-namespace AudioCuesheetEditor.Extensions
-{
-    public static class WebAssemblyHostExtension
-    {
-        public async static Task SetCultureFromConfigurationAsync(this WebAssemblyHost host)
-        {
-            var localizationService = host.Services.GetRequiredService<LocalizationService>();
-            await localizationService.SetCultureFromConfigurationAsync();
-        }
+namespace AudioCuesheetEditor.Extensions;
 
-        public async static Task InitializeSessionStateContainer(this WebAssemblyHost host)
-        {
-            var sessionStateContainer = host.Services.GetRequiredService<ISessionStateContainer>();
-            await sessionStateContainer.InitializeAsync();
-        }
+public static class WebAssemblyHostExtension
+{
+    public async static Task SetCultureFromConfigurationAsync(this WebAssemblyHost host)
+    {
+        var localizationService = host.Services.GetRequiredService<LocalizationService>();
+        await localizationService.SetCultureFromConfigurationAsync();
+    }
+
+    public async static Task InitializeSessionStateContainer(this WebAssemblyHost host)
+    {
+        var sessionStateContainer = host.Services.GetRequiredService<ISessionStateContainer>();
+        await sessionStateContainer.InitializeAsync();
     }
 }

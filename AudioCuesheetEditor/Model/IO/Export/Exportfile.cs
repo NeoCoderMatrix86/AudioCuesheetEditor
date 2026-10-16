@@ -14,12 +14,11 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 
-namespace AudioCuesheetEditor.Model.IO.Export
+namespace AudioCuesheetEditor.Model.IO.Export;
+
+public class Exportfile
 {
-    public class Exportfile
-    {
-        public static readonly string DefaultCuesheetFilename = "Cuesheet.cue";
-        public string Name { get; set; } = String.Empty;
-        public string? Content { get; set; }
-    }
+    public static readonly string DefaultCuesheetFilename = "Cuesheet.cue";
+    public string Name { get; set; } = String.Empty;
+    public string? Content { get; set; }
 }

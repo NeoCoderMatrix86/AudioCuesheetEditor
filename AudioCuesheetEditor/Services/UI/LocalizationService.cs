@@ -19,57 +19,56 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
 using System.Globalization;
 
-namespace AudioCuesheetEditor.Services.UI
+namespace AudioCuesheetEditor.Services.UI;
+
+public class LocalizationService(ILocalStorageOptionsProvider localStorageOptionsProvider, NavigationManager navigationManager, IJSRuntime jsRuntime)
 {
-    public class LocalizationService(ILocalStorageOptionsProvider localStorageOptionsProvider, NavigationManager navigationManager, IJSRuntime jsRuntime)
+    readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
+    readonly NavigationManager _navigationManager = navigationManager;
+    readonly IJSRuntime _jsRuntime = jsRuntime;
+
+    public const String DefaultCulture = "en-US";
+
+    public static IReadOnlyCollection<CultureInfo> AvailableCultures
     {
-        private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
-        private readonly NavigationManager _navigationManager = navigationManager;
-        private readonly IJSRuntime _jsRuntime = jsRuntime;
-
-        public const String DefaultCulture = "en-US";
-
-        public static IReadOnlyCollection<CultureInfo> AvailableCultures
+        get
         {
-            get
+            var cultures = new List<CultureInfo>
             {
-                var cultures = new List<CultureInfo>
-                {
-                    new(DefaultCulture),
-                    new("de-DE")
-                };
-                return cultures.AsReadOnly();
-            }
+                new(DefaultCulture),
+                new("de-DE")
+            };
+            return cultures.AsReadOnly();
         }
+    }
 
-        public static CultureInfo SelectedCulture => CultureInfo.DefaultThreadCurrentUICulture ?? CultureInfo.CurrentUICulture;
+    public static CultureInfo SelectedCulture => CultureInfo.DefaultThreadCurrentUICulture ?? CultureInfo.CurrentUICulture;
 
-        public async Task SetCultureFromConfigurationAsync()
+    public async Task SetCultureFromConfigurationAsync()
+    {
+        var options = await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
+
+        ChangeLanguage(options.Culture);
+    }
+
+    public async Task ChangeLanguageAsync(CultureInfo culture)
+    {
+        if (ChangeLanguage(culture))
         {
-            var options = await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
-
-            ChangeLanguage(options.Culture);
+            await _localStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.CultureName!, culture.Name);
+            await _jsRuntime.InvokeVoidAsync("removeBeforeunload");
+            _navigationManager.NavigateTo(_navigationManager.Uri, true);
         }
+    }
 
-        public async Task ChangeLanguageAsync(CultureInfo culture)
+    static Boolean ChangeLanguage(CultureInfo newCulture)
+    {
+        var contains = AvailableCultures.Contains(newCulture);
+        if (contains)
         {
-            if (ChangeLanguage(culture))
-            {
-                await _localStorageOptionsProvider.SaveOptionsValueAsync<ApplicationOptions>(x => x.CultureName!, culture.Name);
-                await _jsRuntime.InvokeVoidAsync("removeBeforeunload");
-                _navigationManager.NavigateTo(_navigationManager.Uri, true);
-            }
+            CultureInfo.DefaultThreadCurrentUICulture = newCulture;
+            CultureInfo.DefaultThreadCurrentCulture = newCulture;
         }
-
-        private static Boolean ChangeLanguage(CultureInfo newCulture)
-        {
-            var contains = AvailableCultures.Contains(newCulture);
-            if (contains)
-            {
-                CultureInfo.DefaultThreadCurrentUICulture = newCulture;
-                CultureInfo.DefaultThreadCurrentCulture = newCulture;
-            }
-            return contains;
-        }
+        return contains;
     }
 }

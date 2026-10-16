@@ -19,99 +19,98 @@ using AudioCuesheetEditor.Services.Options;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace AudioCuesheetEditor.Services.UI
+namespace AudioCuesheetEditor.Services.UI;
+
+public class ApplicationOptionsTimeSpanParser
 {
-    public class ApplicationOptionsTimeSpanParser
+    readonly ILocalStorageOptionsProvider _localStorageOptionsProvider;
+
+    ApplicationOptions? applicationOptions;
+    readonly Task? _initTask;
+    bool disposedValue;
+
+    public ApplicationOptionsTimeSpanParser(ILocalStorageOptionsProvider localStorageOptionsProvider)
     {
-        private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider;
+        _localStorageOptionsProvider = localStorageOptionsProvider;
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+        _initTask = InitAsync();
+    }
 
-        private ApplicationOptions? applicationOptions;
-        private readonly Task? _initTask;
-        private bool disposedValue;
-
-        public ApplicationOptionsTimeSpanParser(ILocalStorageOptionsProvider localStorageOptionsProvider)
+    public async Task TimespanTextChanged<T, TProperty>(T entity, Expression<Func<T, TProperty>> expression, String value)
+    {
+        if (expression.Body is not MemberExpression memberExpression)
         {
-            _localStorageOptionsProvider = localStorageOptionsProvider;
-            _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
-            _initTask = InitAsync();
+            throw new ArgumentException("'expression' should be a member expression");
         }
-
-        public async Task TimespanTextChanged<T, TProperty>(T entity, Expression<Func<T, TProperty>> expression, String value)
+        await EnsureInitializedAsync();
+        TimeSpan? result = TimeSpanUtility.ParseTimeSpan(value, applicationOptions?.TimeSpanFormat);
+        switch (memberExpression.Member.MemberType)
         {
-            if (expression.Body is not MemberExpression memberExpression)
+            case MemberTypes.Property:
+                ((PropertyInfo)memberExpression.Member).SetValue(entity, result);
+                break;
+            default:
+                throw new NotImplementedException();
+        }
+    }
+
+    public async Task<TimeSpan?> GetTimespanAsync(String value)
+    {
+        await EnsureInitializedAsync();
+        TimeSpan? result = TimeSpanUtility.ParseTimeSpan(value, applicationOptions?.TimeSpanFormat);
+        return result;
+    }
+
+    public string? GetTimespanFormatted(TimeSpan? timeSpan)
+    {
+        string? formatted = null;
+        EnsureInitializedAsync().GetAwaiter().GetResult();
+        if (timeSpan.HasValue)
+        {
+            try
             {
-                throw new ArgumentException("'expression' should be a member expression");
+                formatted = timeSpan.Value.ToString(applicationOptions?.DisplayTimeSpanFormat);
             }
-            await EnsureInitializedAsync();
-            TimeSpan? result = TimeSpanUtility.ParseTimeSpan(value, applicationOptions?.TimeSpanFormat);
-            switch (memberExpression.Member.MemberType)
+            catch (FormatException)
             {
-                case MemberTypes.Property:
-                    ((PropertyInfo)memberExpression.Member).SetValue(entity, result);
-                    break;
-                default:
-                    throw new NotImplementedException();
-            }
-        }
-
-        public async Task<TimeSpan?> GetTimespanAsync(String value)
-        {
-            await EnsureInitializedAsync();
-            TimeSpan? result = TimeSpanUtility.ParseTimeSpan(value, applicationOptions?.TimeSpanFormat);
-            return result;
-        }
-
-        public string? GetTimespanFormatted(TimeSpan? timeSpan)
-        {
-            string? formatted = null;
-            EnsureInitializedAsync().GetAwaiter().GetResult();
-            if (timeSpan.HasValue)
-            {
-                try
-                {
-                    formatted = timeSpan.Value.ToString(applicationOptions?.DisplayTimeSpanFormat);
-                }
-                catch (FormatException)
-                {
-                    formatted = timeSpan.Value.ToString();
-                }
-            }
-            return formatted;
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    // Verwalteten Zustand (verwaltete Objekte) bereinigen
-                    _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
-                }
-
-                disposedValue = true;
+                formatted = timeSpan.Value.ToString();
             }
         }
+        return formatted;
+    }
 
-        private async Task InitAsync()
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposedValue)
         {
-            applicationOptions ??= await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
-        }
-
-        private async Task EnsureInitializedAsync()
-        {
-            if (_initTask != null)
+            if (disposing)
             {
-                await _initTask;
+                // Verwalteten Zustand (verwaltete Objekte) bereinigen
+                _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
             }
-        }
 
-        private void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
+            disposedValue = true;
+        }
+    }
+
+    async Task InitAsync()
+    {
+        applicationOptions ??= await _localStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
+    }
+
+    async Task EnsureInitializedAsync()
+    {
+        if (_initTask != null)
         {
-            if (options is ApplicationOptions applicationOption)
-            {
-                applicationOptions = applicationOption;
-            }
+            await _initTask;
+        }
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
+    {
+        if (options is ApplicationOptions applicationOption)
+        {
+            applicationOptions = applicationOption;
         }
     }
 }

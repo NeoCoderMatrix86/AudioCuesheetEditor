@@ -13,53 +13,52 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-namespace AudioCuesheetEditor.Model.Entity
+namespace AudioCuesheetEditor.Model.Entity;
+
+public interface IValidateable
 {
-    public interface IValidateable
-    {
-        /// <summary>
-        /// Validate all properties and return the result of validation.
-        /// </summary>
-        /// <returns>Validation result.</returns>
-        ValidationResult Validate();
-        /// <summary>
-        /// Validates the property and return the result of validation.
-        /// </summary>
-        /// <param name="property"></param>
-        /// <returns></returns>
-        ValidationResult Validate(String property);
-    }
-    public enum ValidationStatus
-    {
-        NoValidation,
-        Success,
-        Error
-    }
-    public class ValidationResult
-    {
-        private List<ValidationMessage> validationMessages = [];
+    /// <summary>
+    /// Validate all properties and return the result of validation.
+    /// </summary>
+    /// <returns>Validation result.</returns>
+    ValidationResult Validate();
+    /// <summary>
+    /// Validates the property and return the result of validation.
+    /// </summary>
+    /// <param name="property"></param>
+    /// <returns></returns>
+    ValidationResult Validate(String property);
+}
+public enum ValidationStatus
+{
+    NoValidation,
+    Success,
+    Error
+}
+public class ValidationResult
+{
+    List<ValidationMessage> validationMessages = [];
 
-        public static ValidationResult Create(ValidationStatus validationStatus, IEnumerable<ValidationMessage>? validationMessages = null)
+    public static ValidationResult Create(ValidationStatus validationStatus, IEnumerable<ValidationMessage>? validationMessages = null)
+    {
+        var result = new ValidationResult() { Status = validationStatus };
+        if (validationMessages != null) 
         {
-            var result = new ValidationResult() { Status = validationStatus };
-            if (validationMessages != null) 
-            {
-                result.ValidationMessages = [.. validationMessages];
-            }
-            return result;
+            result.ValidationMessages = [.. validationMessages];
         }
+        return result;
+    }
 
-        public ValidationStatus Status { get; set; }
-        public ICollection<ValidationMessage> ValidationMessages 
+    public ValidationStatus Status { get; set; }
+    public ICollection<ValidationMessage> ValidationMessages 
+    {
+        get => validationMessages;
+        set
         {
-            get => validationMessages;
-            set
+            validationMessages = [.. value];
+            if (validationMessages.Count > 0)
             {
-                validationMessages = [.. value];
-                if (validationMessages.Count > 0)
-                {
-                    Status = ValidationStatus.Error;
-                }
+                Status = ValidationStatus.Error;
             }
         }
     }

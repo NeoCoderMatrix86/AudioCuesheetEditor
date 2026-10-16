@@ -13,19 +13,18 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-namespace AudioCuesheetEditor.Model.AudioCuesheet
+namespace AudioCuesheetEditor.Model.AudioCuesheet;
+
+public interface ITrack
 {
-    public interface ITrack
-    {
-        string? Artist { get; set; }
-        string? Title { get; set; }
-        ushort? Position { get; set; }
-        TimeSpan? Begin { get; set; }
-        TimeSpan? End { get; set; }
-        TimeSpan? Length { get; set; }
-        IEnumerable<Flag> Flags { get; set; }
-        TimeSpan? PreGap { get; set; }
-        TimeSpan? PostGap { get; set; }
-        bool IsLinkedToPreviousTrack { get; set; }
-    }
+    string? Artist { get; set; }
+    string? Title { get; set; }
+    ushort? Position { get; set; }
+    TimeSpan? Begin { get; set; }
+    TimeSpan? End { get; set; }
+    TimeSpan? Length { get; set; }
+    IEnumerable<Flag> Flags { get; set; }
+    TimeSpan? PreGap { get; set; }
+    TimeSpan? PostGap { get; set; }
+    bool IsLinkedToPreviousTrack { get; set; }
 }

@@ -18,48 +18,47 @@ using AudioCuesheetEditor.Model.IO.Audio;
 using Microsoft.AspNetCore.Components.Forms;
 using System.Linq.Expressions;
 
-namespace AudioCuesheetEditor.Services.AudioCuesheet
+namespace AudioCuesheetEditor.Services.AudioCuesheet;
+
+public interface IAudiofileManager
 {
-    public interface IAudiofileManager
-    {
-        /// <summary>
-        /// Event triggered when an audiofile is changed
-        /// </summary>
-        public event EventHandler<Audiofile>? AudiofileChanged;
-        /// <summary>
-        /// Set properties from a file upload
-        /// </summary>
-        /// <param name="audiofile"></param>
-        /// <param name="browserFile"></param>
-        Task SetPropertiesAsync(Audiofile audiofile, IBrowserFile browserFile);
-        /// <summary>
-        /// Clear properties of an audiofile
-        /// </summary>
-        /// <param name="audiofile"></param>
-        /// <param name="setTracing">Parameter controlling if tracing should be handled by this service or by calling services</param>
-        /// <returns></returns>
-        Task ClearPropertiesAsync(Audiofile audiofile, Boolean setTracing = true);
-        /// <summary>
-        /// Set property for an audio file
-        /// </summary>
-        /// <typeparam name="TProperty"></typeparam>
-        /// <param name="audiofile"></param>
-        /// <param name="propertyExpression"></param>
-        /// <param name="value"></param>
-        void SetProperty<TProperty>(Audiofile audiofile, Expression<Func<Audiofile, TProperty>> propertyExpression, TProperty value);
-        /// <summary>
-        /// Adds a track to the audiofile
-        /// </summary>
-        /// <param name="audiofile"></param>
-        /// <param name="track"></param>
-        /// <param name="setTracing">Parameter controlling if tracing should be handled by this service or by calling services</param>
-        void AddTrack(Audiofile audiofile, Track track, Boolean setTracing = true);
-        /// <summary>
-        /// Remove tracks from the audiofile
-        /// </summary>
-        /// <param name="audiofile"></param>
-        /// <param name="tracksToRemove"></param>
-        /// <param name="setTracing">Parameter controlling if tracing should be handled by this service or by calling services</param>
-        void RemoveTracks(Audiofile audiofile, IEnumerable<Track> tracksToRemove, Boolean setTracing = true);
-    }
+    /// <summary>
+    /// Event triggered when an audiofile is changed
+    /// </summary>
+    event EventHandler<Audiofile>? AudiofileChanged;
+    /// <summary>
+    /// Set properties from a file upload
+    /// </summary>
+    /// <param name="audiofile"></param>
+    /// <param name="browserFile"></param>
+    Task SetPropertiesAsync(Audiofile audiofile, IBrowserFile browserFile);
+    /// <summary>
+    /// Clear properties of an audiofile
+    /// </summary>
+    /// <param name="audiofile"></param>
+    /// <param name="setTracing">Parameter controlling if tracing should be handled by this service or by calling services</param>
+    /// <returns></returns>
+    Task ClearPropertiesAsync(Audiofile audiofile, Boolean setTracing = true);
+    /// <summary>
+    /// Set property for an audio file
+    /// </summary>
+    /// <typeparam name="TProperty"></typeparam>
+    /// <param name="audiofile"></param>
+    /// <param name="propertyExpression"></param>
+    /// <param name="value"></param>
+    void SetProperty<TProperty>(Audiofile audiofile, Expression<Func<Audiofile, TProperty>> propertyExpression, TProperty value);
+    /// <summary>
+    /// Adds a track to the audiofile
+    /// </summary>
+    /// <param name="audiofile"></param>
+    /// <param name="track"></param>
+    /// <param name="setTracing">Parameter controlling if tracing should be handled by this service or by calling services</param>
+    void AddTrack(Audiofile audiofile, Track track, Boolean setTracing = true);
+    /// <summary>
+    /// Remove tracks from the audiofile
+    /// </summary>
+    /// <param name="audiofile"></param>
+    /// <param name="tracksToRemove"></param>
+    /// <param name="setTracing">Parameter controlling if tracing should be handled by this service or by calling services</param>
+    void RemoveTracks(Audiofile audiofile, IEnumerable<Track> tracksToRemove, Boolean setTracing = true);
 }

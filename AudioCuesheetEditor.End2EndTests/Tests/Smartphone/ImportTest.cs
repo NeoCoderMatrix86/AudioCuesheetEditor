@@ -16,22 +16,22 @@
 using AudioCuesheetEditor.End2EndTests.Models;
 using Microsoft.Playwright;
 
-namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
-{
-    [TestClass]
-    public class ImportTest : PlaywrightTestBase
-    {
-        protected override string? DeviceName => "iPhone 13";
+namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone;
 
-        [TestMethod]
-        public async Task Import_ShouldImportTracks_WhenUsingSampleInputfile()
-        {
-            var importView = new ImportView(TestPage, DeviceName != null);
-            await importView.GotoAsync();
-            await importView.ImportFileAsync("Sample_Inputfile.txt");
-            await importView.Analyze();
-            await importView.CompleteImportAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+[TestClass]
+public class ImportTest : PlaywrightTestBase
+{
+    protected override string? DeviceName => "iPhone 13";
+
+    [TestMethod]
+    public async Task Import_ShouldImportTracks_WhenUsingSampleInputfile()
+    {
+        var importView = new ImportView(TestPage, DeviceName != null);
+        await importView.GotoAsync();
+        await importView.ImportFileAsync("Sample_Inputfile.txt");
+        await importView.Analyze();
+        await importView.CompleteImportAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
     - 'row ""Select row # 1 Artist Sample Artist 1 Clear Title Sample Title 1 Clear Begin 00:00:00 End 00:05:00 Length 00:05:00 Status""':
@@ -248,22 +248,22 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button");
-            await Expect(TestPage.GetByRole(AriaRole.Group).Filter(new() { HasText = "c:\\AudioFile.mp3" })).ToMatchAriaSnapshotAsync("- group:\r\n  - checkbox\r\n  - heading \"c:\\\\AudioFile.mp3\" [level=6]\r\n  - button \"Upload file\"\r\n  - button \"Rename file\"\r\n  - button \"Clear file\"");
-            await importView.GotoAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Button, new() { Name = "Analyze" })).ToBeVisibleAsync();
-        }
+        await Expect(TestPage.GetByRole(AriaRole.Group).Filter(new() { HasText = "c:\\AudioFile.mp3" })).ToMatchAriaSnapshotAsync("- group:\r\n  - checkbox\r\n  - heading \"c:\\\\AudioFile.mp3\" [level=6]\r\n  - button \"Upload file\"\r\n  - button \"Rename file\"\r\n  - button \"Clear file\"");
+        await importView.GotoAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Button, new() { Name = "Analyze" })).ToBeVisibleAsync();
+    }
 
-        [TestMethod]
-        public async Task Import_ShouldBeEditable_WhenEditingTrack()
-        {
-            var importView = new ImportView(TestPage, DeviceName != null);
-            await importView.GotoAsync();
-            await importView.ImportFileAsync("Sample_Inputfile.txt");
-            await importView.Analyze();
-            await importView.SelectTracksAsync([5]);
-            await importView.EditTracksModalAsync("Sample Title Edited 5");
-            await importView.CompleteImportAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+    [TestMethod]
+    public async Task Import_ShouldBeEditable_WhenEditingTrack()
+    {
+        var importView = new ImportView(TestPage, DeviceName != null);
+        await importView.GotoAsync();
+        await importView.ImportFileAsync("Sample_Inputfile.txt");
+        await importView.Analyze();
+        await importView.SelectTracksAsync([5]);
+        await importView.EditTracksModalAsync("Sample Title Edited 5");
+        await importView.CompleteImportAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
     - 'row ""Select row # 1 Artist Sample Artist 1 Clear Title Sample Title 1 Clear Begin 00:00:00 End 00:05:00 Length 00:05:00 Status""':
@@ -480,17 +480,17 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button");
-        }
+    }
 
-        [TestMethod]
-        public async Task Import_ShouldImportTracks_WithSpecialTextfile()
-        {
-            var importView = new ImportView(TestPage, DeviceName != null);
-            await importView.GotoAsync();
-            await importView.ImportFileAsync("Textimport-Bug-#54.txt");
-            await importView.SwitchImportProfileAsync("Textfile (just track data)");
-            await importView.Analyze();
-            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+    [TestMethod]
+    public async Task Import_ShouldImportTracks_WithSpecialTextfile()
+    {
+        var importView = new ImportView(TestPage, DeviceName != null);
+        await importView.GotoAsync();
+        await importView.ImportFileAsync("Textimport-Bug-#54.txt");
+        await importView.SwitchImportProfileAsync("Textfile (just track data)");
+        await importView.Analyze();
+        await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
     - 'row ""Select row # 1 Artist Adriatique Clear Title X. Clear Begin 00:00:00 End 00:05:24 Length 00:05:24""':
@@ -1429,20 +1429,20 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Length"":
         - text: Length
         - textbox");
-        }
+    }
 
-        [TestMethod]
-        public async Task Import_ShouldImportTracks_WhenUsingSampleInputfile2()
-        {
-            var importView = new ImportView(TestPage, DeviceName != null);
-            await importView.GotoAsync();
-            await importView.ImportFileAsync("Sample_Inputfile2.txt");
-            await importView.ClearSchemeCommonDataAsync();
-            await importView.ClearSchemeAudiofilesAsync();
-            await importView.Analyze();
-            await Expect(importView.CuesheetArtistInput).ToBeEmptyAsync();
-            await Expect(importView.CuesheetTitleInput).ToBeEmptyAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+    [TestMethod]
+    public async Task Import_ShouldImportTracks_WhenUsingSampleInputfile2()
+    {
+        var importView = new ImportView(TestPage, DeviceName != null);
+        await importView.GotoAsync();
+        await importView.ImportFileAsync("Sample_Inputfile2.txt");
+        await importView.ClearSchemeCommonDataAsync();
+        await importView.ClearSchemeAudiofilesAsync();
+        await importView.Analyze();
+        await Expect(importView.CuesheetArtistInput).ToBeEmptyAsync();
+        await Expect(importView.CuesheetTitleInput).ToBeEmptyAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
     - 'row ""Select row # 1 Artist Sample Artist 1 Clear Title Sample Title 1 Clear Begin 00:00:00 End 00:05:00 Length 00:05:00""':
@@ -1637,18 +1637,18 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Length 00:30:00"":
         - text: Length
         - textbox: 00:30:00");
-        }
+    }
 
-        [TestMethod]
-        public async Task Import_ShouldImportTracks_WithTraktorOutput()
-        {
-            var importView = new ImportView(TestPage, DeviceName != null);
-            await importView.GotoAsync();
-            await importView.ImportFileAsync("Traktor Export.html");
-            await importView.SwitchImportProfileAsync("Traktor history");
-            await importView.Analyze();
-            await importView.CompleteImportAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+    [TestMethod]
+    public async Task Import_ShouldImportTracks_WithTraktorOutput()
+    {
+        var importView = new ImportView(TestPage, DeviceName != null);
+        await importView.GotoAsync();
+        await importView.ImportFileAsync("Traktor Export.html");
+        await importView.SwitchImportProfileAsync("Traktor history");
+        await importView.Analyze();
+        await importView.CompleteImportAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
     - 'row ""Select row # 1 Artist Nachap Clear Title Glass Clear Begin 00:00:00 End 00:11:56 Length 00:11:56 Status""':
@@ -2755,18 +2755,18 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button");
-        }
+    }
 
-        [TestMethod]
-        public async Task Open_ShouldImportProject_WhenUsingProjectfile()
-        {
-            var detailView = new DetailView(TestPage);
-            var appBar = new AppBar(TestPage);
-            await detailView.GotoAsync();
-            await appBar.OpenFileAsync("Sample_Project.ace");
-            await Expect(detailView.CuesheetArtistInput).ToHaveValueAsync("Sample CD Artist");
-            await Expect(detailView.CuesheetTitleInput).ToHaveValueAsync("Sample CD Title");
-            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+    [TestMethod]
+    public async Task Open_ShouldImportProject_WhenUsingProjectfile()
+    {
+        var detailView = new DetailView(TestPage);
+        var appBar = new AppBar(TestPage);
+        await detailView.GotoAsync();
+        await appBar.OpenFileAsync("Sample_Project.ace");
+        await Expect(detailView.CuesheetArtistInput).ToHaveValueAsync("Sample CD Artist");
+        await Expect(detailView.CuesheetTitleInput).ToHaveValueAsync("Sample CD Title");
+        await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
     - 'row ""Select row # 1 Artist Sample Artist 1 Clear Title Sample Title 1 Clear Begin 00:00:00 End 00:05:00 Length 00:05:00 Status""':
@@ -2983,20 +2983,20 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button");
-            await appBar.UndoAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Tabpanel, new() { Name = "Detail view" })).ToMatchAriaSnapshotAsync("- text: Audiofiles has invalid count (0)!");
-        }
+        await appBar.UndoAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Tabpanel, new() { Name = "Detail view" })).ToMatchAriaSnapshotAsync("- text: Audiofiles has invalid count (0)!");
+    }
 
-        [TestMethod]
-        public async Task Open_ShouldImportCuesheet_WhenUsingCuesheetfile()
-        {
-            var detailView = new DetailView(TestPage);
-            var appBar = new AppBar(TestPage);
-            await detailView.GotoAsync();
-            await appBar.OpenFileAsync("Sample_Cuesheet.cue");
-            await Expect(detailView.CuesheetArtistInput).ToHaveValueAsync("Sample CD Artist");
-            await Expect(detailView.CuesheetTitleInput).ToHaveValueAsync("Sample CD Title");
-            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+    [TestMethod]
+    public async Task Open_ShouldImportCuesheet_WhenUsingCuesheetfile()
+    {
+        var detailView = new DetailView(TestPage);
+        var appBar = new AppBar(TestPage);
+        await detailView.GotoAsync();
+        await appBar.OpenFileAsync("Sample_Cuesheet.cue");
+        await Expect(detailView.CuesheetArtistInput).ToHaveValueAsync("Sample CD Artist");
+        await Expect(detailView.CuesheetTitleInput).ToHaveValueAsync("Sample CD Title");
+        await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
     - 'row ""Select row # 1 Artist Sample Artist 1 Clear Title Sample Title 1 Clear Begin 00:00:00 End 00:05:00 Length 00:05:00 Status""':
@@ -3213,20 +3213,20 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button");
-            await appBar.UndoAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Tabpanel, new() { Name = "Detail view" })).ToMatchAriaSnapshotAsync("- text: Audiofiles has invalid count (0)!");
-        }
+        await appBar.UndoAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Tabpanel, new() { Name = "Detail view" })).ToMatchAriaSnapshotAsync("- text: Audiofiles has invalid count (0)!");
+    }
 
-        [TestMethod]
-        public async Task Import_ShouldImportTracks_WhenUsingText()
-        {
-            var importView = new ImportView(TestPage, DeviceName != null);
-            await importView.GotoAsync();
-            var text = String.Join(Environment.NewLine, File.ReadAllLines("Sample_Inputfile.txt"));
-            await importView.ImportTextAsync(text);
-            await importView.Analyze();
-            await importView.CompleteImportAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+    [TestMethod]
+    public async Task Import_ShouldImportTracks_WhenUsingText()
+    {
+        var importView = new ImportView(TestPage, DeviceName != null);
+        await importView.GotoAsync();
+        var text = String.Join(Environment.NewLine, File.ReadAllLines("Sample_Inputfile.txt"));
+        await importView.ImportTextAsync(text);
+        await importView.Analyze();
+        await importView.CompleteImportAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup
   - rowgroup:
     - 'row ""Select row # 1 Artist Sample Artist 1 Clear Title Sample Title 1 Clear Begin 00:00:00 End 00:05:00 Length 00:05:00 Status""':
@@ -3443,6 +3443,5 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
       - cell ""Status"":
         - text: Status
         - button");
-        }
     }
 }

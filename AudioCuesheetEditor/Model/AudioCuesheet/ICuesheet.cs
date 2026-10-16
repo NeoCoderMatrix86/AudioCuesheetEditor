@@ -14,12 +14,11 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 
-namespace AudioCuesheetEditor.Model.AudioCuesheet
+namespace AudioCuesheetEditor.Model.AudioCuesheet;
+
+public interface ICuesheet
 {
-    public interface ICuesheet
-    {
-        string? Artist { get; set; }
-        string? Title { get; set; }
-        string? Cataloguenumber { get; set; }
-    }
+    string? Artist { get; set; }
+    string? Title { get; set; }
+    string? Cataloguenumber { get; set; }
 }

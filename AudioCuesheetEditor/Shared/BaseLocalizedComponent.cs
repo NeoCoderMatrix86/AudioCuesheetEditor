@@ -17,62 +17,61 @@ using AudioCuesheetEditor.Services.Options;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.AspNetCore.Components;
 
-namespace AudioCuesheetEditor.Shared
+namespace AudioCuesheetEditor.Shared;
+
+public abstract class BaseLocalizedComponent : ComponentBase, IDisposable
 {
-    public abstract class BaseLocalizedComponent : ComponentBase, IDisposable
+    bool disposedValue;
+
+    [Inject]
+    protected LocalizationService LocalizationService { get; set; } = default!;
+    [Inject]
+    protected ITraceChangeManager TraceChangeManager { get; set; } = default!;
+    [Inject]
+    protected ILocalStorageOptionsProvider LocalStorageOptionsProvider { get; set; } = default!;
+
+    protected override void OnInitialized()
     {
-        private bool disposedValue;
+        base.OnInitialized();
+        TraceChangeManager.TracedObjectHistoryChanged += TraceChangeManager_TracedObjectHistoryChanged;
+        TraceChangeManager.UndoDone += TraceChangeManager_UndoDone;
+        TraceChangeManager.RedoDone += TraceChangeManager_RedoDone;
+    }
 
-        [Inject]
-        protected LocalizationService LocalizationService { get; set; } = default!;
-        [Inject]
-        protected ITraceChangeManager TraceChangeManager { get; set; } = default!;
-        [Inject]
-        protected ILocalStorageOptionsProvider LocalStorageOptionsProvider { get; set; } = default!;
+    void TraceChangeManager_RedoDone(object? sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
 
-        protected override void OnInitialized()
+    void TraceChangeManager_UndoDone(object? sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    void TraceChangeManager_TracedObjectHistoryChanged(object? sender, EventArgs e)
+    {
+        StateHasChanged();
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!disposedValue)
         {
-            base.OnInitialized();
-            TraceChangeManager.TracedObjectHistoryChanged += TraceChangeManager_TracedObjectHistoryChanged;
-            TraceChangeManager.UndoDone += TraceChangeManager_UndoDone;
-            TraceChangeManager.RedoDone += TraceChangeManager_RedoDone;
-        }
-
-        void TraceChangeManager_RedoDone(object? sender, EventArgs e)
-        {
-            StateHasChanged();
-        }
-
-        void TraceChangeManager_UndoDone(object? sender, EventArgs e)
-        {
-            StateHasChanged();
-        }
-
-        void TraceChangeManager_TracedObjectHistoryChanged(object? sender, EventArgs e)
-        {
-            StateHasChanged();
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
+            if (disposing)
             {
-                if (disposing)
-                {
-                    TraceChangeManager.TracedObjectHistoryChanged -= TraceChangeManager_TracedObjectHistoryChanged;
-                    TraceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
-                    TraceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
-                }
-
-                disposedValue = true;
+                TraceChangeManager.TracedObjectHistoryChanged -= TraceChangeManager_TracedObjectHistoryChanged;
+                TraceChangeManager.UndoDone -= TraceChangeManager_UndoDone;
+                TraceChangeManager.RedoDone -= TraceChangeManager_RedoDone;
             }
-        }
 
-        public void Dispose()
-        {
-            // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
+            disposedValue = true;
         }
+    }
+
+    public void Dispose()
+    {
+        // Ändern Sie diesen Code nicht. Fügen Sie Bereinigungscode in der Methode "Dispose(bool disposing)" ein.
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

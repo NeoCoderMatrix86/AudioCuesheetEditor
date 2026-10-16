@@ -18,113 +18,112 @@ using MetaBrainz.MusicBrainz.Interfaces.Entities;
 using MetaBrainz.MusicBrainz.Interfaces.Searches;
 using System.Reflection;
 
-namespace AudioCuesheetEditor.Services.Provider
+namespace AudioCuesheetEditor.Services.Provider;
+
+public class MusicBrainzArtist
 {
-    public class MusicBrainzArtist
-    {
-        public Guid? Id { get; init; }
-        public String? Name { get; init; }
-        public String? Disambiguation { get; init; }
-    }
-    public class MusicBrainzTrack
-    {
-        public Guid? Id { get; init; }
-        public String? Artist { get; init; }
-        public String? Title { get; init; }
-        public TimeSpan? Length { get; init; }
-        public String? Disambiguation { get; init; }
-    }
-    public class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> logger)
-    {
-        private readonly ILogger<MusicBrainzDataProvider> _logger = logger;
+    public Guid? Id { get; init; }
+    public String? Name { get; init; }
+    public String? Disambiguation { get; init; }
+}
+public class MusicBrainzTrack
+{
+    public Guid? Id { get; init; }
+    public String? Artist { get; init; }
+    public String? Title { get; init; }
+    public TimeSpan? Length { get; init; }
+    public String? Disambiguation { get; init; }
+}
+public class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> logger)
+{
+    readonly ILogger<MusicBrainzDataProvider> _logger = logger;
 
-        public const String Application = "AudioCuesheetEditor";
-        public const String ProjectUrl = "https://github.com/NeoCoderMatrix86/AudioCuesheetEditor";
+    public const String Application = "AudioCuesheetEditor";
+    public const String ProjectUrl = "https://github.com/NeoCoderMatrix86/AudioCuesheetEditor";
 
-        private String? applicationVersion = null;
+    String? applicationVersion = null;
 
-        public async Task<IReadOnlyCollection<MusicBrainzArtist>> SearchArtistAsync(String? searchString, CancellationToken token)
+    public async Task<IReadOnlyCollection<MusicBrainzArtist>> SearchArtistAsync(String? searchString, CancellationToken token)
+    {
+        List<MusicBrainzArtist> artistSearchResult = [];
+        try
         {
-            List<MusicBrainzArtist> artistSearchResult = [];
-            try
+            if (String.IsNullOrEmpty(searchString) == false)
             {
-                if (String.IsNullOrEmpty(searchString) == false)
-                {
-                    using var query = new Query(Application, ApplicationVersion, ProjectUrl);
-                    var findArtistsResult = await query.FindArtistsAsync(searchString, simple: true, cancellationToken: token);
-                    artistSearchResult = findArtistsResult.Results.ToList().ConvertAll(x => new MusicBrainzArtist() { Id = x.Item.Id, Name = x.Item.Name, Disambiguation = x.Item.Disambiguation });
-                }
+                using var query = new Query(Application, ApplicationVersion, ProjectUrl);
+                var findArtistsResult = await query.FindArtistsAsync(searchString, simple: true, cancellationToken: token);
+                artistSearchResult = findArtistsResult.Results.ToList().ConvertAll(x => new MusicBrainzArtist() { Id = x.Item.Id, Name = x.Item.Name, Disambiguation = x.Item.Disambiguation });
             }
-            catch (HttpRequestException hre)
-            {
-                _logger.LogError(hre, "Error getting response from MusicBrainz");
-            }
-            return artistSearchResult.AsReadOnly();
         }
-
-        public async Task<IReadOnlyCollection<MusicBrainzTrack>> SearchTitleAsync(String? searchString, String? artist, CancellationToken token)
+        catch (HttpRequestException hre)
         {
-            List<MusicBrainzTrack> titleSearchResult = [];
-            try
+            _logger.LogError(hre, "Error getting response from MusicBrainz");
+        }
+        return artistSearchResult.AsReadOnly();
+    }
+
+    public async Task<IReadOnlyCollection<MusicBrainzTrack>> SearchTitleAsync(String? searchString, String? artist, CancellationToken token)
+    {
+        List<MusicBrainzTrack> titleSearchResult = [];
+        try
+        {
+            if (String.IsNullOrEmpty(searchString) == false)
             {
-                if (String.IsNullOrEmpty(searchString) == false)
+                using var query = new Query(Application, ApplicationVersion, ProjectUrl);
+                ISearchResults<ISearchResult<IRecording>> findRecordingsResult;
+                if (String.IsNullOrEmpty(artist))
                 {
-                    using var query = new Query(Application, ApplicationVersion, ProjectUrl);
-                    ISearchResults<ISearchResult<IRecording>> findRecordingsResult;
-                    if (String.IsNullOrEmpty(artist))
+                    findRecordingsResult = await query.FindRecordingsAsync(searchString, simple: true, cancellationToken: token);
+                }
+                else
+                {
+                    findRecordingsResult = await query.FindRecordingsAsync(String.Format("{0} AND artistname:{1}", searchString, artist), cancellationToken: token);
+                }
+                foreach (var result in findRecordingsResult.Results)
+                {
+                    String artistString = String.Empty;
+                    if (result.Item.ArtistCredit != null)
                     {
-                        findRecordingsResult = await query.FindRecordingsAsync(searchString, simple: true, cancellationToken: token);
-                    }
-                    else
-                    {
-                        findRecordingsResult = await query.FindRecordingsAsync(String.Format("{0} AND artistname:{1}", searchString, artist), cancellationToken: token);
-                    }
-                    foreach (var result in findRecordingsResult.Results)
-                    {
-                        String artistString = String.Empty;
-                        if (result.Item.ArtistCredit != null)
+                        foreach (var artistCredit in result.Item.ArtistCredit)
                         {
-                            foreach (var artistCredit in result.Item.ArtistCredit)
+                            artistString += artistCredit.Name;
+                            if (String.IsNullOrEmpty(artistCredit.JoinPhrase) == false)
                             {
-                                artistString += artistCredit.Name;
-                                if (String.IsNullOrEmpty(artistCredit.JoinPhrase) == false)
-                                {
-                                    artistString += artistCredit.JoinPhrase;
-                                }
+                                artistString += artistCredit.JoinPhrase;
                             }
                         }
-                        titleSearchResult.Add(new MusicBrainzTrack()
-                        {
-                            Id = result.Item.Id,
-                            Artist = artistString,
-                            Title = result.Item.Title,
-                            Length = result.Item.Length,
-                            Disambiguation = result.Item.Disambiguation
-                        });
                     }
-                }
-            }
-            catch (HttpRequestException hre)
-            {
-                _logger.LogError(hre, "Error getting response from MusicBrainz");
-            }
-            return titleSearchResult.AsReadOnly();
-        }
-
-        private String? ApplicationVersion
-        {
-            get
-            {
-                if (applicationVersion == null)
-                {
-                    var versionAttribute = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>();
-                    if (versionAttribute != null)
+                    titleSearchResult.Add(new MusicBrainzTrack()
                     {
-                        applicationVersion = versionAttribute.InformationalVersion;
-                    }
+                        Id = result.Item.Id,
+                        Artist = artistString,
+                        Title = result.Item.Title,
+                        Length = result.Item.Length,
+                        Disambiguation = result.Item.Disambiguation
+                    });
                 }
-                return applicationVersion;
             }
+        }
+        catch (HttpRequestException hre)
+        {
+            _logger.LogError(hre, "Error getting response from MusicBrainz");
+        }
+        return titleSearchResult.AsReadOnly();
+    }
+
+    String? ApplicationVersion
+    {
+        get
+        {
+            if (applicationVersion == null)
+            {
+                var versionAttribute = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+                if (versionAttribute != null)
+                {
+                    applicationVersion = versionAttribute.InformationalVersion;
+                }
+            }
+            return applicationVersion;
         }
     }
 }

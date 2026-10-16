@@ -15,15 +15,14 @@
 //<http: //www.gnu.org/licenses />.
 
 
-namespace AudioCuesheetEditor.Model.AudioCuesheet.Import
+namespace AudioCuesheetEditor.Model.AudioCuesheet.Import;
+
+public class ImportCuesheet : ICuesheet
 {
-    public class ImportCuesheet : ICuesheet
-    {
-        public string? Artist { get; set; }
-        public string? Title { get; set; }
-        public IList<ImportAudiofile> Audiofiles { get; set; } = [];
-        /// <inheritdoc/>
-        public string? CDTextfile { get; set; }
-        public string? Cataloguenumber { get; set; }
-    }
+    public string? Artist { get; set; }
+    public string? Title { get; set; }
+    public IList<ImportAudiofile> Audiofiles { get; set; } = [];
+    /// <inheritdoc/>
+    public string? CDTextfile { get; set; }
+    public string? Cataloguenumber { get; set; }
 }

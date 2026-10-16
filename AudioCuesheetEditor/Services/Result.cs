@@ -13,117 +13,116 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-namespace AudioCuesheetEditor.Services
+namespace AudioCuesheetEditor.Services;
+
+/// <summary>
+/// Defines types of errors
+/// </summary>
+public enum ErrorType
 {
     /// <summary>
-    /// Defines types of errors
+    /// Validation failed with error
     /// </summary>
-    public enum ErrorType
+    ValidationFailed,
+    /// <summary>
+    /// Resource already exists
+    /// </summary>
+    AlreadyDone,
+    /// <summary>
+    /// Current action is not possible
+    /// </summary>
+    NotPossible,
+    /// <summary>
+    /// Action was aborted
+    /// </summary>
+    Aborted,
+}
+
+/// <summary>
+/// Represents an error of an service
+/// </summary>
+public class Error(ErrorType type, string message)
+{
+    /// <summary>
+    /// Type of error
+    /// </summary>
+    public ErrorType Type { get; } = type;
+    /// <summary>
+    /// The error message
+    /// </summary>
+    public string Message { get; } = message;
+}
+
+/// <summary>
+/// Indicates a service result
+/// </summary>
+public class Result
+{
+    /// <summary>
+    /// Indicates if the result was successful
+    /// </summary>
+    public bool IsSuccess { get; }
+    /// <summary>
+    /// The error if one occurred
+    /// </summary>
+    public Error? Error { get; }
+
+    /// <summary>
+    /// Private constructor
+    /// </summary>
+    protected Result()
     {
-        /// <summary>
-        /// Validation failed with error
-        /// </summary>
-        ValidationFailed,
-        /// <summary>
-        /// Resource already exists
-        /// </summary>
-        AlreadyDone,
-        /// <summary>
-        /// Current action is not possible
-        /// </summary>
-        NotPossible,
-        /// <summary>
-        /// Action was aborted
-        /// </summary>
-        Aborted,
+        IsSuccess = true;
     }
 
     /// <summary>
-    /// Represents an error of an service
+    /// Private constructor
     /// </summary>
-    public class Error(ErrorType type, string message)
+    protected Result(Error error)
     {
-        /// <summary>
-        /// Type of error
-        /// </summary>
-        public ErrorType Type { get; } = type;
-        /// <summary>
-        /// The error message
-        /// </summary>
-        public string Message { get; } = message;
+        IsSuccess = false;
+        Error = error;
     }
-
     /// <summary>
-    /// Indicates a service result
+    /// Creates a success result
     /// </summary>
-    public class Result
-    {
-        /// <summary>
-        /// Indicates if the result was successful
-        /// </summary>
-        public bool IsSuccess { get; }
-        /// <summary>
-        /// The error if one occurred
-        /// </summary>
-        public Error? Error { get; }
-
-        /// <summary>
-        /// Private constructor
-        /// </summary>
-        protected Result()
-        {
-            IsSuccess = true;
-        }
-
-        /// <summary>
-        /// Private constructor
-        /// </summary>
-        protected Result(Error error)
-        {
-            IsSuccess = false;
-            Error = error;
-        }
-        /// <summary>
-        /// Creates a success result
-        /// </summary>
-        /// <returns></returns>
-        public static Result Success() => new();
-        /// <summary>
-        /// Creates a failure result
-        /// </summary>
-        /// <param name="error"></param>
-        /// <returns></returns>
-        public static Result Failure(Error error) => new(error);
-    }
-
+    /// <returns></returns>
+    public static Result Success() => new();
     /// <summary>
-    /// Represent the result of a service
+    /// Creates a failure result
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class Result<T> : Result
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public static Result Failure(Error error) => new(error);
+}
+
+/// <summary>
+/// Represent the result of a service
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public class Result<T> : Result
+{
+    /// <summary>
+    /// The result value
+    /// </summary>
+    public T? Value { get; }
+
+    Result(T value) : base()
     {
-        /// <summary>
-        /// The result value
-        /// </summary>
-        public T? Value { get; }
-
-        private Result(T value) : base()
-        {
-            Value = value;
-        }
-
-        private Result(Error error) : base(error) { }
-        /// <summary>
-        /// Creates a success result
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static Result<T> Success(T value) => new(value);
-        /// <summary>
-        /// Creates a failure result
-        /// </summary>
-        /// <param name="error"></param>
-        /// <returns></returns>
-        public static new Result<T> Failure(Error error) => new(error);
+        Value = value;
     }
+
+    Result(Error error) : base(error) { }
+    /// <summary>
+    /// Creates a success result
+    /// </summary>
+    /// <param name="value"></param>
+    /// <returns></returns>
+    public static Result<T> Success(T value) => new(value);
+    /// <summary>
+    /// Creates a failure result
+    /// </summary>
+    /// <param name="error"></param>
+    /// <returns></returns>
+    public static new Result<T> Failure(Error error) => new(error);
 }

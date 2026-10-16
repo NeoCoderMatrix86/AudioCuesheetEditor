@@ -13,21 +13,20 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-namespace AudioCuesheetEditor.Model.UI
-{
-    public class TraceableChange
-    {
-        public TraceableChange(object? previousValue, string propertyName)
-        {
-            if (String.IsNullOrEmpty(propertyName))
-            {
-                throw new ArgumentNullException(nameof(propertyName));
-            }
-            PreviousValue = previousValue;
-            PropertyName = propertyName;
-        }
+namespace AudioCuesheetEditor.Model.UI;
 
-        public object? PreviousValue { get; }
-        public string PropertyName { get; }
+public class TraceableChange
+{
+    public TraceableChange(object? previousValue, string propertyName)
+    {
+        if (String.IsNullOrEmpty(propertyName))
+        {
+            throw new ArgumentNullException(nameof(propertyName));
+        }
+        PreviousValue = previousValue;
+        PropertyName = propertyName;
     }
+
+    public object? PreviousValue { get; }
+    public string PropertyName { get; }
 }

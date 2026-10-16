@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -18,19 +18,18 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace AudioCuesheetEditor.Tests.Utility
-{
-    internal class TestHelper
-    {
-        public ApplicationOptions ApplicationOptions { get; private set; } = new();
-        public static ILogger<T> CreateLogger<T>()
-        {
-            var serviceProvider = new ServiceCollection()
-                .AddLogging()
-                .BuildServiceProvider();
+namespace AudioCuesheetEditor.Tests.Utility;
 
-            var factory = serviceProvider.GetService<ILoggerFactory>() ?? throw new NullReferenceException();
-            return factory.CreateLogger<T>();
-        }
+class TestHelper
+{
+    public ApplicationOptions ApplicationOptions { get; private set; } = new();
+    public static ILogger<T> CreateLogger<T>()
+    {
+        var serviceProvider = new ServiceCollection()
+            .AddLogging()
+            .BuildServiceProvider();
+
+        var factory = serviceProvider.GetService<ILoggerFactory>() ?? throw new NullReferenceException();
+        return factory.CreateLogger<T>();
     }
 }

@@ -1,8 +1,7 @@
-﻿namespace AudioCuesheetEditor.Model.AudioCuesheet.Import
+﻿namespace AudioCuesheetEditor.Model.AudioCuesheet.Import;
+
+public class ImportAudiofile : IAudiofile
 {
-    public class ImportAudiofile : IAudiofile
-    {
-        public String? Name { get; set;  }
-        public IList<ImportTrack> Tracks { get; } = [];
-    }
+    public String? Name { get; set;  }
+    public IList<ImportTrack> Tracks { get; } = [];
 }

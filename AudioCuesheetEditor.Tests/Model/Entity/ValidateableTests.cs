@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -17,64 +17,63 @@ using AudioCuesheetEditor.Model.Entity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 
-namespace AudioCuesheetEditor.Tests.Model.Entity
-{
-    public class ValidateableTestClass : Validateable
-    {
-        private string? testProperty;
-        private int? testProperty2;
+namespace AudioCuesheetEditor.Tests.Model.Entity;
 
-        public string? TestProperty
+public class ValidateableTestClass : Validateable
+{
+    string? testProperty;
+    int? testProperty2;
+
+    public string? TestProperty
+    {
+        get => testProperty;
+        set
         {
-            get => testProperty;
-            set
-            {
-                testProperty = value;
-                OnValidateablePropertyChanged();
-            }
-        }
-        public int? TestProperty2
-        {
-            get => testProperty2;
-            set
-            {
-                testProperty2 = value;
-                OnValidateablePropertyChanged();
-            }
-        }
-        public override ValidationResult Validate(string property)
-        {
-            ValidationStatus validationStatus = ValidationStatus.NoValidation;
-            List<ValidationMessage>? validationMessages = null;
-            switch (property)
-            {
-                case nameof(TestProperty):
-                    validationStatus = ValidationStatus.Success;
-                    if (string.IsNullOrEmpty(TestProperty))
-                    {
-                        validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(TestProperty)));
-                    }
-                    break;
-            }
-            return ValidationResult.Create(validationStatus, validationMessages);
+            testProperty = value;
+            OnValidateablePropertyChanged();
         }
     }
-    [TestClass()]
-    public class ValidateableTests
+    public int? TestProperty2
     {
-        [TestMethod()]
-        public void ValidateTest()
+        get => testProperty2;
+        set
         {
-            var testObject = new ValidateableTestClass
-            {
-                TestProperty = string.Empty
-            };
-            Assert.AreEqual(ValidationStatus.Error, testObject.Validate().Status);
-            Assert.IsNotNull(testObject.Validate().ValidationMessages);
-            Assert.AreEqual(1, testObject.Validate().ValidationMessages?.Count);
-            testObject.TestProperty = "Test";
-            Assert.AreEqual(ValidationStatus.Success, testObject.Validate().Status);
+            testProperty2 = value;
+            OnValidateablePropertyChanged();
         }
+    }
+    public override ValidationResult Validate(string property)
+    {
+        ValidationStatus validationStatus = ValidationStatus.NoValidation;
+        List<ValidationMessage>? validationMessages = null;
+        switch (property)
+        {
+            case nameof(TestProperty):
+                validationStatus = ValidationStatus.Success;
+                if (string.IsNullOrEmpty(TestProperty))
+                {
+                    validationMessages ??= [];
+                    validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(TestProperty)));
+                }
+                break;
+        }
+        return ValidationResult.Create(validationStatus, validationMessages);
+    }
+}
+[TestClass()]
+public class ValidateableTests
+{
+    [TestMethod()]
+    public void ValidateTest()
+    {
+        var testObject = new ValidateableTestClass
+        {
+            TestProperty = string.Empty
+        };
+        Assert.AreEqual(ValidationStatus.Error, testObject.Validate().Status);
+        Assert.IsNotNull(testObject.Validate().ValidationMessages);
+        Assert.AreEqual(1, testObject.Validate().ValidationMessages?.Count);
+        testObject.TestProperty = "Test";
+        Assert.AreEqual(ValidationStatus.Success, testObject.Validate().Status);
     }
 }

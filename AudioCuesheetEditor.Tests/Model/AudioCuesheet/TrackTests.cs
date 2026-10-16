@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -18,85 +18,84 @@ using AudioCuesheetEditor.Model.Entity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
+namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet;
+
+[TestClass()]
+public class TrackTests
 {
-    [TestClass()]
-    public class TrackTests
+    [TestMethod()]
+    public void Validate_PositionNull_ReturnsValidationStatusError()
     {
-        [TestMethod()]
-        public void Validate_PositionNull_ReturnsValidationStatusError()
-        {
-            // Arrange
-            var track = new Track();
-            // Act
-            var endValidationResult = track.Validate(nameof(Track.Position));
-            // Assert
-            Assert.AreEqual(ValidationStatus.Error, endValidationResult.Status);
-        }
+        // Arrange
+        var track = new Track();
+        // Act
+        var endValidationResult = track.Validate(nameof(Track.Position));
+        // Assert
+        Assert.AreEqual(ValidationStatus.Error, endValidationResult.Status);
+    }
 
-        [TestMethod()]
-        public void Validate_Position0_ReturnsValidationStatusError()
+    [TestMethod()]
+    public void Validate_Position0_ReturnsValidationStatusError()
+    {
+        // Arrange
+        var track = new Track()
         {
-            // Arrange
-            var track = new Track()
-            {
-                Position = 0
-            };
-            // Act
-            var endValidationResult = track.Validate(nameof(Track.Position));
-            // Assert
-            Assert.AreEqual(ValidationStatus.Error, endValidationResult.Status);
-        }
+            Position = 0
+        };
+        // Act
+        var endValidationResult = track.Validate(nameof(Track.Position));
+        // Assert
+        Assert.AreEqual(ValidationStatus.Error, endValidationResult.Status);
+    }
 
-        [TestMethod()]
-        public void Validate_PositionOvverlapping_ReturnsValidationStatusError()
+    [TestMethod()]
+    public void Validate_PositionOvverlapping_ReturnsValidationStatusError()
+    {
+        // Arrange
+        var track1 = new Track()
         {
-            // Arrange
-            var track1 = new Track()
-            {
-                Position = 1
-            };
-            var track = new Track()
-            {
-                Position = 1
-            };
-            var cuesheet = new Cuesheet();
-            track1.Cuesheet = cuesheet;
-            track.Cuesheet = cuesheet;
-            // Act
-            var endValidationResult = track.Validate(nameof(Track.Position));
-            // Assert
-            Assert.AreEqual(ValidationStatus.Error, endValidationResult.Status);
-        }
+            Position = 1
+        };
+        var track = new Track()
+        {
+            Position = 1
+        };
+        var cuesheet = new Cuesheet();
+        track1.Cuesheet = cuesheet;
+        track.Cuesheet = cuesheet;
+        // Act
+        var endValidationResult = track.Validate(nameof(Track.Position));
+        // Assert
+        Assert.AreEqual(ValidationStatus.Error, endValidationResult.Status);
+    }
 
-        [TestMethod()]
-        public void Validate_InvalidEnd_ReturnsValidationStatusError()
+    [TestMethod()]
+    public void Validate_InvalidEnd_ReturnsValidationStatusError()
+    {
+        // Arrange
+        var track = new Track
         {
-            // Arrange
-            var track = new Track
-            {
-                Begin = new TimeSpan(0, 2, 32),
-                End = new TimeSpan(0, 1, 15)
-            };
-            // Act
-            var endValidationResult = track.Validate(nameof(Track.End));
-            // Assert
-            Assert.AreEqual(ValidationStatus.Error, endValidationResult.Status);
-        }
+            Begin = new TimeSpan(0, 2, 32),
+            End = new TimeSpan(0, 1, 15)
+        };
+        // Act
+        var endValidationResult = track.Validate(nameof(Track.End));
+        // Assert
+        Assert.AreEqual(ValidationStatus.Error, endValidationResult.Status);
+    }
 
-        [TestMethod()]
-        public void Validate_InvalidBegin_ReturnsValidationStatusError()
+    [TestMethod()]
+    public void Validate_InvalidBegin_ReturnsValidationStatusError()
+    {
+        // Arrange
+        var track = new Track
         {
-            // Arrange
-            var track = new Track
-            {
-                Begin = new TimeSpan(0, 4, 53),
-                End = new TimeSpan(0, 3, 15)
-            };
-            // Act
-            var endValidationResult = track.Validate(nameof(Track.Begin));
-            // Assert
-            Assert.AreEqual(ValidationStatus.Error, endValidationResult.Status);
-        }
+            Begin = new TimeSpan(0, 4, 53),
+            End = new TimeSpan(0, 3, 15)
+        };
+        // Act
+        var endValidationResult = track.Validate(nameof(Track.Begin));
+        // Assert
+        Assert.AreEqual(ValidationStatus.Error, endValidationResult.Status);
     }
 }

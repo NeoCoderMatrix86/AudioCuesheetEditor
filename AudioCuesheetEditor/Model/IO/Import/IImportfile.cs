@@ -16,29 +16,28 @@
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Services.IO;
 
-namespace AudioCuesheetEditor.Model.IO.Import
+namespace AudioCuesheetEditor.Model.IO.Import;
+
+public interface IImportfile
 {
-    public interface IImportfile
-    {
-        /// <summary>
-        /// File content
-        /// </summary>
-        String? FileContent { get; set; }
-        /// <summary>
-        /// File content with marking which passages has been recognized by scheme
-        /// </summary>
-        String? FileContentRecognized { get; set; }
-        /// <summary>
-        /// Exception that has been thrown while reading out the file
-        /// </summary>
-        Exception? AnalyseException { get; set; }
-        /// <summary>
-        /// The cue sheet which was created during analyzing the <see cref="FileContent"/>
-        /// </summary>
-        ImportCuesheet? AnalyzedCuesheet { get; set; }
-        /// <summary>
-        /// Type of file (text, cuesheet, project, etc.)
-        /// </summary>
-        ImportFileType FileType { get; set; }
-    }
+    /// <summary>
+    /// File content
+    /// </summary>
+    String? FileContent { get; set; }
+    /// <summary>
+    /// File content with marking which passages has been recognized by scheme
+    /// </summary>
+    String? FileContentRecognized { get; set; }
+    /// <summary>
+    /// Exception that has been thrown while reading out the file
+    /// </summary>
+    Exception? AnalyseException { get; set; }
+    /// <summary>
+    /// The cue sheet which was created during analyzing the <see cref="FileContent"/>
+    /// </summary>
+    ImportCuesheet? AnalyzedCuesheet { get; set; }
+    /// <summary>
+    /// Type of file (text, cuesheet, project, etc.)
+    /// </summary>
+    ImportFileType FileType { get; set; }
 }

@@ -13,25 +13,24 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-namespace AudioCuesheetEditor.Model.AudioCuesheet
+namespace AudioCuesheetEditor.Model.AudioCuesheet;
+
+public class CuesheetConstants
 {
-    public class CuesheetConstants
-    {
-        public static readonly String CuesheetArtist = "PERFORMER";
-        public static readonly String CuesheetTitle = "TITLE";
-        public static readonly String CuesheetFileName = "FILE";
-        public static readonly String CuesheetTrack = "TRACK";
-        public static readonly String CuesheetTrackAudio = "AUDIO";
-        public static readonly String TrackArtist = "PERFORMER";
-        public static readonly String TrackTitle = "TITLE";
-        public static readonly String TrackIndex01 = "INDEX 01";
-        public static readonly String TrackFlags = "FLAGS";
-        public static readonly String TrackPreGap = "PREGAP";
-        public static readonly String TrackPostGap = "POSTGAP";
-        public static readonly String Tab = "\t";
-        public static readonly String CuesheetCDTextfile = "CDTEXTFILE";
-        public static readonly String CuesheetCatalogueNumber = "CATALOG";
-        public static readonly String MarkHTMLStart = "<Mark>";
-        public static readonly String RecognizedMarkHTML = MarkHTMLStart + "{0}" + "</Mark>";
-    }
+    public static readonly String CuesheetArtist = "PERFORMER";
+    public static readonly String CuesheetTitle = "TITLE";
+    public static readonly String CuesheetFileName = "FILE";
+    public static readonly String CuesheetTrack = "TRACK";
+    public static readonly String CuesheetTrackAudio = "AUDIO";
+    public static readonly String TrackArtist = "PERFORMER";
+    public static readonly String TrackTitle = "TITLE";
+    public static readonly String TrackIndex01 = "INDEX 01";
+    public static readonly String TrackFlags = "FLAGS";
+    public static readonly String TrackPreGap = "PREGAP";
+    public static readonly String TrackPostGap = "POSTGAP";
+    public static readonly String Tab = "\t";
+    public static readonly String CuesheetCDTextfile = "CDTEXTFILE";
+    public static readonly String CuesheetCatalogueNumber = "CATALOG";
+    public static readonly String MarkHTMLStart = "<Mark>";
+    public static readonly String RecognizedMarkHTML = MarkHTMLStart + "{0}" + "</Mark>";
 }

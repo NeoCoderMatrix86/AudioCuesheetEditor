@@ -17,28 +17,27 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
 
-namespace AudioCuesheetEditor.Services.UI
+namespace AudioCuesheetEditor.Services.UI;
+
+public interface ISessionStateContainer
 {
-    public interface ISessionStateContainer
-    {
-        public event EventHandler? CuesheetChanged;
-        public event EventHandler? ActiveCuesheetChanged;
-        public Cuesheet Cuesheet { get; set; }
-        public Cuesheet? ImportCuesheet { get; set; }
-        public IList<Audiofile> ImportAudiofiles { get; set; }
-        public Dictionary<Audiofile, Audiofile?> ImportAudiofileMapping { get; set; }
-        public IImportfile? Importfile { get; set; }
-        public Boolean ImportIsAnalyzed { get; set; }
-        public Task ResetImportAsync(Boolean revokeObjectURLs);
-        public Task ResetAudioImportAsync(Boolean revokeObjectURLs);
-        /// <summary>
-        /// Initialize this class
-        /// </summary>
-        /// <returns></returns>
-        Task InitializeAsync();
-        /// <summary>
-        /// Get current cuesheet based on current view
-        /// </summary>
-        public Cuesheet? ActiveCuesheet { get; }
-    }
+    event EventHandler? CuesheetChanged;
+    event EventHandler? ActiveCuesheetChanged;
+    Cuesheet Cuesheet { get; set; }
+    Cuesheet? ImportCuesheet { get; set; }
+    IList<Audiofile> ImportAudiofiles { get; set; }
+    Dictionary<Audiofile, Audiofile?> ImportAudiofileMapping { get; set; }
+    IImportfile? Importfile { get; set; }
+    Boolean ImportIsAnalyzed { get; set; }
+    Task ResetImportAsync(Boolean revokeObjectURLs);
+    Task ResetAudioImportAsync(Boolean revokeObjectURLs);
+    /// <summary>
+    /// Initialize this class
+    /// </summary>
+    /// <returns></returns>
+    Task InitializeAsync();
+    /// <summary>
+    /// Get current cuesheet based on current view
+    /// </summary>
+    Cuesheet? ActiveCuesheet { get; }
 }

@@ -13,27 +13,26 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-namespace AudioCuesheetEditor.Model.UI
+namespace AudioCuesheetEditor.Model.UI;
+
+/// <summary>
+/// Class for tracing changes on an object
+/// </summary>
+public class TracedChange(object traceableObject, TraceableChange traceableChange)
 {
-    /// <summary>
-    /// Class for tracing changes on an object
-    /// </summary>
-    public class TracedChange(object traceableObject, TraceableChange traceableChange)
+    readonly WeakReference<object> _tracedObject = new(traceableObject, false);
+
+    public object? TraceableObject
     {
-        private readonly WeakReference<object> _tracedObject = new(traceableObject, false);
-
-        public object? TraceableObject
+        get
         {
-            get
+            if (_tracedObject.TryGetTarget(out var traceable))
             {
-                if (_tracedObject.TryGetTarget(out var traceable))
-                {
-                    return traceable;
-                }
-                return null;
+                return traceable;
             }
+            return null;
         }
-
-        public TraceableChange TraceableChange { get; } = traceableChange;
     }
+
+    public TraceableChange TraceableChange { get; } = traceableChange;
 }

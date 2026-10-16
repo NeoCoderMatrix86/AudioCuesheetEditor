@@ -16,23 +16,22 @@
 using Microsoft.Playwright;
 using System.Text.RegularExpressions;
 
-namespace AudioCuesheetEditor.End2EndTests.Models
+namespace AudioCuesheetEditor.End2EndTests.Models;
+
+partial class ViewModes(IPage page, bool mobile)
 {
-    internal partial class ViewModes(IPage page, bool mobile)
+    readonly IPage _page = page;
+    readonly bool _isMobile = mobile;
+
+    internal async Task SwitchView(string viewMode)
     {
-        private readonly IPage _page = page;
-        private readonly bool _isMobile = mobile;
-
-        internal async Task SwitchView(string viewMode)
+        if (_isMobile)
         {
-            if (_isMobile)
-            {
-                await _page.GetByRole(AriaRole.Button).Filter(new() { HasTextRegex = ViewModeForward() }).Nth(4).ClickAsync();
-            }
-            await _page.GetByText(viewMode).ClickAsync();
+            await _page.GetByRole(AriaRole.Button).Filter(new() { HasTextRegex = ViewModeForward() }).Nth(4).ClickAsync();
         }
-
-        [GeneratedRegex("^$")]
-        internal static partial Regex ViewModeForward();
+        await _page.GetByText(viewMode).ClickAsync();
     }
+
+    [GeneratedRegex("^$")]
+    internal static partial Regex ViewModeForward();
 }

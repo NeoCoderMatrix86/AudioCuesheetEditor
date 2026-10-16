@@ -13,11 +13,10 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-namespace AudioCuesheetEditor.Model.UI
+namespace AudioCuesheetEditor.Model.UI;
+
+public class TracedChanges(IEnumerable<TracedChange> changes)
 {
-    public class TracedChanges(IEnumerable<TracedChange> changes)
-    {
-        public List<TracedChange> Changes { get; } = [.. changes];
-        public bool HasTraceableObject { get { return Changes.Any(x => x.TraceableObject != null); } }
-    }
+    public List<TracedChange> Changes { get; } = [.. changes];
+    public bool HasTraceableObject { get { return Changes.Any(x => x.TraceableObject != null); } }
 }

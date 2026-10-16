@@ -15,44 +15,43 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Services.Provider;
 
-namespace AudioCuesheetEditor.Services.UI
+namespace AudioCuesheetEditor.Services.UI;
+
+public class AutocompleteManager(MusicBrainzDataProvider musicBrainzDataProvider)
 {
-    public class AutocompleteManager(MusicBrainzDataProvider musicBrainzDataProvider)
+    readonly MusicBrainzDataProvider _musicBrainzDataProvider = musicBrainzDataProvider;
+
+    public async Task<IEnumerable<MusicBrainzArtist>> SearchArtistsAsync(String? searchString, CancellationToken cancellationToken)
     {
-        private readonly MusicBrainzDataProvider _musicBrainzDataProvider = musicBrainzDataProvider;
-
-        public async Task<IEnumerable<MusicBrainzArtist>> SearchArtistsAsync(String? searchString, CancellationToken cancellationToken)
+        try
         {
-            try
-            {
-                var artists = await _musicBrainzDataProvider.SearchArtistAsync(searchString, cancellationToken);
-                return artists;
-            }
-            catch (TaskCanceledException)
-            {
-                return [];
-            }
-            catch (OperationCanceledException)
-            {
-                return [];
-            }
+            var artists = await _musicBrainzDataProvider.SearchArtistAsync(searchString, cancellationToken);
+            return artists;
         }
-
-        public async Task<IEnumerable<MusicBrainzTrack>> SearchTitlesAsync(String? searchString, String? artist, CancellationToken cancellationToken)
+        catch (TaskCanceledException)
         {
-            try
-            {
-                var tracks = await _musicBrainzDataProvider.SearchTitleAsync(searchString, artist, cancellationToken);
-                return tracks;
-            }
-            catch (TaskCanceledException)
-            {
-                return [];
-            }
-            catch (OperationCanceledException)
-            {
-                return [];
-            }
+            return [];
+        }
+        catch (OperationCanceledException)
+        {
+            return [];
+        }
+    }
+
+    public async Task<IEnumerable<MusicBrainzTrack>> SearchTitlesAsync(String? searchString, String? artist, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var tracks = await _musicBrainzDataProvider.SearchTitleAsync(searchString, artist, cancellationToken);
+            return tracks;
+        }
+        catch (TaskCanceledException)
+        {
+            return [];
+        }
+        catch (OperationCanceledException)
+        {
+            return [];
         }
     }
 }

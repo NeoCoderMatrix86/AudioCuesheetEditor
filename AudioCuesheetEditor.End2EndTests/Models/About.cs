@@ -15,22 +15,21 @@
 //<http: //www.gnu.org/licenses />.
 using Microsoft.Playwright;
 
-namespace AudioCuesheetEditor.End2EndTests.Models
+namespace AudioCuesheetEditor.End2EndTests.Models;
+
+class About(IPage page)
 {
-    internal class About(IPage page)
+    internal const string BaseUrl = "http://localhost:5132/about";
+
+    readonly IPage _page = page;
+
+    internal ILocator AboutHeading => _page.GetByRole(AriaRole.Heading, new() { Name = "About AudioCuesheetEditor" });
+
+    internal async Task GotoAsync()
     {
-        internal const string BaseUrl = "http://localhost:5132/about";
-
-        private readonly IPage _page = page;
-
-        internal ILocator AboutHeading => _page.GetByRole(AriaRole.Heading, new() { Name = "About AudioCuesheetEditor" });
-
-        internal async Task GotoAsync()
-        {
-            await _page.GotoAsync(BaseUrl);
-            await _page.WaitForURLAsync(BaseUrl);
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-            await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
-        }
+        await _page.GotoAsync(BaseUrl);
+        await _page.WaitForURLAsync(BaseUrl);
+        await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
     }
 }

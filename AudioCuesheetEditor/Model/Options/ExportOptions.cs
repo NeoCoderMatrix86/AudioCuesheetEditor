@@ -16,69 +16,68 @@
 using AudioCuesheetEditor.Model.IO.Export;
 using System.Text.Json.Serialization;
 
-namespace AudioCuesheetEditor.Model.Options
+namespace AudioCuesheetEditor.Model.Options;
+
+public class ExportOptions : IOptions
 {
-    public class ExportOptions : IOptions
+    public static readonly Exportprofile DefaultSelectedExportProfile = new() 
     {
-        public static readonly Exportprofile DefaultSelectedExportProfile = new() 
+        Filename = "YouTube.txt",
+        Name = "YouTube",
+        SchemeHead = "%Cuesheet.Artist% - %Cuesheet.Title%",
+        SchemeTracks = "%Track.Artist% - %Track.Title% %Track.Begin%"
+    };
+    public static readonly ICollection<Exportprofile> DefaultExportProfiles =
+    [
+        DefaultSelectedExportProfile,
+        new Exportprofile()
         {
-            Filename = "YouTube.txt",
-            Name = "YouTube",
-            SchemeHead = "%Cuesheet.Artist% - %Cuesheet.Title%",
+            Filename = "Mixcloud.txt",
+            Name = "Mixcloud",
             SchemeTracks = "%Track.Artist% - %Track.Title% %Track.Begin%"
-        };
-        public static readonly ICollection<Exportprofile> DefaultExportProfiles =
-        [
-            DefaultSelectedExportProfile,
-            new Exportprofile()
-            {
-                Filename = "Mixcloud.txt",
-                Name = "Mixcloud",
-                SchemeTracks = "%Track.Artist% - %Track.Title% %Track.Begin%"
-            },
-            new Exportprofile()
-            {
-                Filename = "Export.csv",
-                Name = "CSV Export",
-                SchemeHead = "%Cuesheet.Artist%;%Cuesheet.Title%;",
-                SchemeTracks = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%",
-                SchemeFooter = "Exported at %DateTime% using AudioCuesheetEditor (https://neocodermatrix86.github.io/AudioCuesheetEditor/)"
-            },
-            new Exportprofile()
-            {
-                Filename = "Tracks.txt",
-                Name = "Tracks only",
-                SchemeTracks = "%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%",
-            }
-        ];
-        public ExportOptions() 
+        },
+        new Exportprofile()
         {
-            ExportProfiles = DefaultExportProfiles;
-            SelectedProfileId = DefaultSelectedExportProfile.Id;
-        }
-        [JsonConstructor]
-        public ExportOptions(ICollection<Exportprofile> exportProfiles, Guid? selectedProfileId = null)
+            Filename = "Export.csv",
+            Name = "CSV Export",
+            SchemeHead = "%Cuesheet.Artist%;%Cuesheet.Title%;",
+            SchemeTracks = "%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%",
+            SchemeFooter = "Exported at %DateTime% using AudioCuesheetEditor (https://neocodermatrix86.github.io/AudioCuesheetEditor/)"
+        },
+        new Exportprofile()
         {
-            ExportProfiles = exportProfiles;
-            SelectedProfileId = selectedProfileId ?? ExportProfiles.FirstOrDefault()?.Id;
+            Filename = "Tracks.txt",
+            Name = "Tracks only",
+            SchemeTracks = "%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%",
         }
-        public ICollection<Exportprofile> ExportProfiles { get; set; }
-        [JsonIgnore]
-        public Exportprofile? SelectedExportProfile
-        {
-            get => SelectedProfileId.HasValue ? ExportProfiles.FirstOrDefault(x => x.Id == SelectedProfileId) : null;
-            set
-            {
-                if (ExportProfiles.Any(x => x.Id == value?.Id) == false)
-                {
-                    if (value != null)
-                    {
-                        ExportProfiles.Add(value);
-                    }
-                }
-                SelectedProfileId = value?.Id;
-            }
-        }
-        public Guid? SelectedProfileId { get; private set; }
+    ];
+    public ExportOptions() 
+    {
+        ExportProfiles = DefaultExportProfiles;
+        SelectedProfileId = DefaultSelectedExportProfile.Id;
     }
+    [JsonConstructor]
+    public ExportOptions(ICollection<Exportprofile> exportProfiles, Guid? selectedProfileId = null)
+    {
+        ExportProfiles = exportProfiles;
+        SelectedProfileId = selectedProfileId ?? ExportProfiles.FirstOrDefault()?.Id;
+    }
+    public ICollection<Exportprofile> ExportProfiles { get; set; }
+    [JsonIgnore]
+    public Exportprofile? SelectedExportProfile
+    {
+        get => SelectedProfileId.HasValue ? ExportProfiles.FirstOrDefault(x => x.Id == SelectedProfileId) : null;
+        set
+        {
+            if (ExportProfiles.Any(x => x.Id == value?.Id) == false)
+            {
+                if (value != null)
+                {
+                    ExportProfiles.Add(value);
+                }
+            }
+            SelectedProfileId = value?.Id;
+        }
+    }
+    public Guid? SelectedProfileId { get; private set; }
 }

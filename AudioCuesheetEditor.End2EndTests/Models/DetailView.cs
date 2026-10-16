@@ -15,121 +15,120 @@
 //<http: //www.gnu.org/licenses />.
 using Microsoft.Playwright;
 
-namespace AudioCuesheetEditor.End2EndTests.Models
+namespace AudioCuesheetEditor.End2EndTests.Models;
+
+class DetailView(IPage page)
 {
-    internal class DetailView(IPage page)
+    internal const string BaseUrl = "http://localhost:5132/";
+
+    readonly IPage _page = page;
+
+    internal ILocator CuesheetArtistInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet artist" });
+
+    internal ILocator CuesheetTitleInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" });
+
+    internal ILocator NewFileNameInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "New file name" });
+
+    internal async Task GotoAsync()
     {
-        internal const string BaseUrl = "http://localhost:5132/";
+        await _page.GotoAsync(BaseUrl);
+        await _page.WaitForURLAsync(BaseUrl);
+        await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
+    }
 
-        private readonly IPage _page = page;
+    internal async Task AddAudiofileAsync()
+    {
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Add file" }).ClickAsync();
+    }
 
-        internal ILocator CuesheetArtistInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet artist" });
+    internal async Task SetAudiofileInputFileAsync(int audiofileIndex, string file)
+    {
+        await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "No file uploaded!" }).Nth(audiofileIndex).Locator("input[type=\"file\"]").SetInputFilesAsync(file);
+    }
 
-        internal ILocator CuesheetTitleInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" });
+    internal async Task AddTrackAsync(int audiofileIndex)
+    {
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Add new track" }).Nth(audiofileIndex).ClickAsync();
+    }
 
-        internal ILocator NewFileNameInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "New file name" });
-
-        internal async Task GotoAsync()
+    internal async Task EditTrackAsync(string? artist = null, string? title = null, TimeSpan? begin = null, TimeSpan? end = null, int trackPosition = 1)
+    {
+        if (artist != null)
         {
-            await _page.GotoAsync(BaseUrl);
-            await _page.WaitForURLAsync(BaseUrl);
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-            await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
+            await EditTrackFieldAsync(trackPosition, "Artist", artist);
         }
-
-        internal async Task AddAudiofileAsync()
+        if (title != null)
         {
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Add file" }).ClickAsync();
+            await EditTrackFieldAsync(trackPosition, "Title", title);
         }
-
-        internal async Task SetAudiofileInputFileAsync(int audiofileIndex, string file)
+        if (begin != null)
         {
-            await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "No file uploaded!" }).Nth(audiofileIndex).Locator("input[type=\"file\"]").SetInputFilesAsync(file);
+            await EditTrackFieldAsync(trackPosition, "Begin", begin.ToString() ?? string.Empty);
         }
-
-        internal async Task AddTrackAsync(int audiofileIndex)
+        if (end != null)
         {
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Add new track" }).Nth(audiofileIndex).ClickAsync();
+            await EditTrackFieldAsync(trackPosition, "End", end.ToString() ?? string.Empty);
         }
+    }
 
-        internal async Task EditTrackAsync(string? artist = null, string? title = null, TimeSpan? begin = null, TimeSpan? end = null, int trackPosition = 1)
+    internal async Task SelectTracksAsync(IEnumerable<int> trackTablePositions, Boolean uncheck = false)
+    {
+        foreach (var trackTablePosition in trackTablePositions)
         {
-            if (artist != null)
+            if (uncheck)
             {
-                await EditTrackFieldAsync(trackPosition, "Artist", artist);
+                await _page.Locator($"tr:nth-child({trackTablePosition + 1}) > td").First.GetByRole(AriaRole.Checkbox).UncheckAsync();
             }
-            if (title != null)
+            else
             {
-                await EditTrackFieldAsync(trackPosition, "Title", title);
-            }
-            if (begin != null)
-            {
-                await EditTrackFieldAsync(trackPosition, "Begin", begin.ToString() ?? string.Empty);
-            }
-            if (end != null)
-            {
-                await EditTrackFieldAsync(trackPosition, "End", end.ToString() ?? string.Empty);
-            }
-        }
-
-        internal async Task SelectTracksAsync(IEnumerable<int> trackTablePositions, Boolean uncheck = false)
-        {
-            foreach (var trackTablePosition in trackTablePositions)
-            {
-                if (uncheck)
-                {
-                    await _page.Locator($"tr:nth-child({trackTablePosition + 1}) > td").First.GetByRole(AriaRole.Checkbox).UncheckAsync();
-                }
-                else
-                {
-                    await _page.Locator($"tr:nth-child({trackTablePosition + 1}) > td").First.GetByRole(AriaRole.Checkbox).CheckAsync();
-                }
+                await _page.Locator($"tr:nth-child({trackTablePosition + 1}) > td").First.GetByRole(AriaRole.Checkbox).CheckAsync();
             }
         }
+    }
 
-        internal async Task EditSelectedTracksModalAsync()
-        {
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Edit selected tracks" }).ClickAsync();
-        }
+    internal async Task EditSelectedTracksModalAsync()
+    {
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Edit selected tracks" }).ClickAsync();
+    }
 
-        internal async Task EditTracksModalAsync(string artist, string title, string end, IEnumerable<string> flagsToSelect)
+    internal async Task EditTracksModalAsync(string artist, string title, string end, IEnumerable<string> flagsToSelect)
+    {
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Edit selected tracks" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Combobox, new() { Name = "Artist" }).FillAsync(artist);
+        await _page.GetByRole(AriaRole.Combobox, new() { Name = "Artist" }).PressAsync("Tab");
+        await _page.GetByRole(AriaRole.Combobox, new() { Name = "Title" }).FillAsync(title);
+        await _page.GetByRole(AriaRole.Combobox, new() { Name = "Title" }).PressAsync("Tab");
+        await _page.GetByRole(AriaRole.Textbox, new() { Name = "End" }).FillAsync(end);
+        foreach (var flag in flagsToSelect)
         {
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Edit selected tracks" }).ClickAsync();
-            await _page.GetByRole(AriaRole.Combobox, new() { Name = "Artist" }).FillAsync(artist);
-            await _page.GetByRole(AriaRole.Combobox, new() { Name = "Artist" }).PressAsync("Tab");
-            await _page.GetByRole(AriaRole.Combobox, new() { Name = "Title" }).FillAsync(title);
-            await _page.GetByRole(AriaRole.Combobox, new() { Name = "Title" }).PressAsync("Tab");
-            await _page.GetByRole(AriaRole.Textbox, new() { Name = "End" }).FillAsync(end);
-            foreach (var flag in flagsToSelect)
-            {
-                await _page.GetByRole(AriaRole.Button, new() { Name = flag }).ClickAsync();
-            }
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Save changes" }).ClickAsync();
+            await _page.GetByRole(AriaRole.Button, new() { Name = flag }).ClickAsync();
         }
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Save changes" }).ClickAsync();
+    }
 
-        internal async Task RenameAudiofileAsync(int audiofileIndex, string filename)
-        {
-            await OpenRenameAudiofileDialogAsync(audiofileIndex);
-            await NewFileNameInput.FillAsync(filename);
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Ok" }).ClickAsync();
-        }
+    internal async Task RenameAudiofileAsync(int audiofileIndex, string filename)
+    {
+        await OpenRenameAudiofileDialogAsync(audiofileIndex);
+        await NewFileNameInput.FillAsync(filename);
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Ok" }).ClickAsync();
+    }
 
-        internal async Task OpenRenameAudiofileDialogAsync(int audiofileIndex)
-        {
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Rename file" }).Nth(audiofileIndex).ClickAsync();
-        }
+    internal async Task OpenRenameAudiofileDialogAsync(int audiofileIndex)
+    {
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Rename file" }).Nth(audiofileIndex).ClickAsync();
+    }
 
-        async Task EditTrackFieldAsync(int trackPosition, string dataLabel, string value)
-        {
-            var row = _page.Locator("tbody tr").Nth(trackPosition);
-            var cell = row.Locator($"td[data-label='{dataLabel}']");
-            await cell.ClickAsync();
-            var textbox = cell.Locator("input[type='text']");
-            await textbox.FillAsync(value);
-            await textbox.PressAsync("Tab");
-            // Click outside the autocomplete to have an focus lost event for getting the value written to model
-            await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync(new() { Force = true });
-            await _page.WaitForTimeoutAsync(100);
-        }
+    async Task EditTrackFieldAsync(int trackPosition, string dataLabel, string value)
+    {
+        var row = _page.Locator("tbody tr").Nth(trackPosition);
+        var cell = row.Locator($"td[data-label='{dataLabel}']");
+        await cell.ClickAsync();
+        var textbox = cell.Locator("input[type='text']");
+        await textbox.FillAsync(value);
+        await textbox.PressAsync("Tab");
+        // Click outside the autocomplete to have an focus lost event for getting the value written to model
+        await _page.GetByRole(AriaRole.Heading, new() { Name = "Playback" }).ClickAsync(new() { Force = true });
+        await _page.WaitForTimeoutAsync(100);
     }
 }

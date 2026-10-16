@@ -18,30 +18,29 @@ using AudioCuesheetEditor.Services.UI;
 using System.Globalization;
 using System.Text.Json.Serialization;
 
-namespace AudioCuesheetEditor.Model.Options
+namespace AudioCuesheetEditor.Model.Options;
+
+public class ApplicationOptions : IOptions
 {
-    public class ApplicationOptions : IOptions
+    public const LogLevel DefaultLogLevel = LogLevel.Information;
+    public String? CultureName { get; set; } = LocalizationService.DefaultCulture;
+    [JsonIgnore]
+    public CultureInfo Culture
     {
-        public const LogLevel DefaultLogLevel = LogLevel.Information;
-        public String? CultureName { get; set; } = LocalizationService.DefaultCulture;
-        [JsonIgnore]
-        public CultureInfo Culture
+        get
         {
-            get
+            if (String.IsNullOrEmpty(CultureName) == false)
             {
-                if (String.IsNullOrEmpty(CultureName) == false)
-                {
-                    return new CultureInfo(CultureName);
-                }
-                else
-                {
-                    return CultureInfo.CurrentCulture;
-                }
+                return new CultureInfo(CultureName);
+            }
+            else
+            {
+                return CultureInfo.CurrentCulture;
             }
         }
-        public TimeSpanFormat? TimeSpanFormat { get; set; }
-        public Boolean DefaultIsLinkedToPreviousTrack { get; set; } = true;
-        public String? DisplayTimeSpanFormat { get; set; }
-        public LogLevel MinimumLogLevel { get; set; } = DefaultLogLevel;
     }
+    public TimeSpanFormat? TimeSpanFormat { get; set; }
+    public Boolean DefaultIsLinkedToPreviousTrack { get; set; } = true;
+    public String? DisplayTimeSpanFormat { get; set; }
+    public LogLevel MinimumLogLevel { get; set; } = DefaultLogLevel;
 }
