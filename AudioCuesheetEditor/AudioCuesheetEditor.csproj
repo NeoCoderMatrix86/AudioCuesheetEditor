@@ -1,10 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
 
   <PropertyGroup>
-	<TargetFramework>net10.0</TargetFramework>
 	<BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
-	<Nullable>enable</Nullable>
-	<ImplicitUsings>enable</ImplicitUsings>
 	<PackageProjectUrl>https://github.com/NeoCoderMatrix86/AudioCuesheetEditor</PackageProjectUrl>
 	<RazorLangVersion>Latest</RazorLangVersion>
 	<Version>13.3.0</Version>
@@ -13,17 +10,8 @@
 	<RunAOTCompilation>true</RunAOTCompilation>
 	<ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
   </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
-  </PropertyGroup>
   
   <ItemGroup>
-    <None Include="..\.editorconfig" Link=".editorconfig" />
     <None Include="wwwroot\Licence.txt" />
   </ItemGroup>
 
