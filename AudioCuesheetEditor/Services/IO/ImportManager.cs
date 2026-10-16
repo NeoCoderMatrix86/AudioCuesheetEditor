@@ -299,6 +299,12 @@ namespace AudioCuesheetEditor.Services.IO
                     position++;
                     targetAudiofile.Tracks.Add(clone);
                 }
+                //Set last track end
+                var lastTrack = targetAudiofile.Tracks.LastOrDefault();
+                if ((lastTrack?.End.HasValue == false) && (targetAudiofile.Duration.HasValue == true))
+                {
+                    _trackManager.SetProperty(lastTrack, x => x.End, targetAudiofile.Duration);
+                }
                 target.Audiofiles.Add(targetAudiofile);
             }
         }
