@@ -18,9 +18,7 @@ tab_width = 4
 #TODO: Enable all of these
 dotnet_diagnostic.CA1000.severity = suggestion
 dotnet_diagnostic.CA1051.severity = suggestion
-dotnet_diagnostic.CA1304.severity = suggestion
 dotnet_diagnostic.CA1305.severity = suggestion
-dotnet_diagnostic.CA1309.severity = suggestion
 dotnet_diagnostic.CA1310.severity = suggestion
 dotnet_diagnostic.CA1311.severity = suggestion
 dotnet_diagnostic.CA1716.severity = suggestion

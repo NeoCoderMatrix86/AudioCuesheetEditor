@@ -19,6 +19,7 @@ using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.Extensions.Localization;
+using System.Globalization;
 using System.Text;
 
 namespace AudioCuesheetEditor.Services.IO;
@@ -72,7 +73,7 @@ public class CuesheetExportService(ISessionStateContainer sessionStateContainer,
         _ = builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, _sessionStateContainer.Cuesheet.Artist));
         foreach (var audiofile in _sessionStateContainer.Cuesheet.Audiofiles)
         {
-            _ = builder.AppendLine(string.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, audiofile.Name, audiofile.AudioCodec?.FileExtension.Replace(".", string.Empty).ToUpper()));
+            _ = builder.AppendLine(string.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, audiofile.Name, audiofile.AudioCodec?.FileExtension.Replace(".", string.Empty).ToUpper(CultureInfo.InvariantCulture)));
             foreach(var track in audiofile.Tracks)
             {
                 _ = builder.AppendLine(string.Format("{0}{1} {2:00} {3}", CuesheetConstants.Tab, CuesheetConstants.CuesheetTrack, track.Position, CuesheetConstants.CuesheetTrackAudio));

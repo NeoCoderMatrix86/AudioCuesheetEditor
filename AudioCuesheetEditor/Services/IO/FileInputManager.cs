@@ -68,14 +68,14 @@ public class FileInputManager(IJSRuntime jsRuntime, ILogger<FileInputManager> lo
                 }
                 else
                 {
-                    fileMimeTypeMatches = fileContentType.Equals(mimeType, StringComparison.CurrentCultureIgnoreCase);
+                    fileMimeTypeMatches = fileContentType.Equals(mimeType, StringComparison.OrdinalIgnoreCase);
                 }
             }
             if ((fileMimeTypeMatches == false) && fileExtensions.Any())
             {
                 //Try to find by file extension
                 var extension = Path.GetExtension(fileName);
-                fileMimeTypeMatches = fileExtensions.Any(x => x.Equals(extension, StringComparison.CurrentCultureIgnoreCase));
+                fileMimeTypeMatches = fileExtensions.Any(x => x.Equals(extension, StringComparison.OrdinalIgnoreCase));
             }
         }
         return fileMimeTypeMatches;

@@ -49,7 +49,7 @@ public class Audiofile() : Validateable, IAudiofile
         set
         {
             var extension = Path.GetExtension(value);
-            if (extension?.Equals(AudioCodec?.FileExtension, StringComparison.CurrentCultureIgnoreCase) == false)
+            if (extension?.Equals(AudioCodec?.FileExtension, StringComparison.OrdinalIgnoreCase) == false)
             {
                 value = $"{value}{AudioCodec?.FileExtension}";
             }

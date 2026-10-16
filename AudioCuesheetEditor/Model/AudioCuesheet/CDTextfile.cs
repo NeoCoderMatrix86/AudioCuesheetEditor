@@ -19,18 +19,17 @@ namespace AudioCuesheetEditor.Model.AudioCuesheet;
 
 public class CDTextfile
 {
-    string name;
     public CDTextfile(string name)
     {
         if (string.IsNullOrEmpty(name))
         {
             throw new ArgumentNullException(nameof(name));
         }
-        this.name = name;
+        Name = name;
     }
     public string Name 
     {
-        get => name;
+        get;
         set
         {
             if (string.IsNullOrEmpty(value))
@@ -38,11 +37,11 @@ public class CDTextfile
                 throw new ArgumentNullException(nameof(value));
             }
             var extension = Path.GetExtension(value);
-            if (extension.Equals(FileExtensions.CDTextfile, StringComparison.CurrentCultureIgnoreCase) == false)
+            if (extension.Equals(FileExtensions.CDTextfile, StringComparison.OrdinalIgnoreCase) == false)
             {
                 value = $"{value}{FileExtensions.CDTextfile}";
             }
-            name = value;
+            field = value;
         }
     }
 }

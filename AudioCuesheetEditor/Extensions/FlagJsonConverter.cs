@@ -26,7 +26,7 @@ public class FlagJsonConverter : JsonConverter<Flag>
         var json = reader.GetString();
         if (string.IsNullOrEmpty(json) == false)
         {
-            return Flag.AvailableFlags.Single(x => x.CuesheetLabel.Equals(json));
+            return Flag.AvailableFlags.Single(x => x.CuesheetLabel.Equals(json, StringComparison.Ordinal));
         }
         else
         {

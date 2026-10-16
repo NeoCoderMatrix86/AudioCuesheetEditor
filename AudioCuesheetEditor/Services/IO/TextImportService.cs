@@ -64,6 +64,7 @@ public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsP
         return regex.Replace(input, match =>
         {
             var result = match.Value;
+            //TODO: Consider using a more efficient data structure to store group information
             var groupInfos = new List<(int RelIndex, int Length, string Value, string Key)>();
             for (var matchCounter = 1; matchCounter < match.Groups.Count; matchCounter++)
             {
@@ -247,7 +248,7 @@ public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsP
                 {
                     var entity = entityCreation.Invoke();
                     var markedLine = ApplyRegexAndMarkGroups(entity, regex, line, importProfile.TimeSpanFormat);
-                    if (!string.Equals(markedLine, line))
+                    if (!string.Equals(markedLine, line, StringComparison.Ordinal))
                     {
                         stopSearch = ifEntityFound.Invoke(pos, entity);
                     }

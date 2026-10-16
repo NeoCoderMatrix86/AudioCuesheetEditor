@@ -199,7 +199,7 @@ public class ImportManagerTests
         Assert.AreEqual(importAudiofile.Name, sessionStateContainerImportCuesheet.Audiofiles.First().Name);
         Assert.AreEqual(importCuesheet.Cataloguenumber, sessionStateContainerImportCuesheet.Cataloguenumber);
         Assert.IsNotNull(sessionStateContainerImportCuesheet.CDTextfile);
-        Assert.AreEqual(importCuesheet.CDTextfile, sessionStateContainerImportCuesheet.CDTextfile.Name);
+        Assert.AreEqual($"{importCuesheet.CDTextfile}{FileExtensions.CDTextfile}", sessionStateContainerImportCuesheet.CDTextfile.Name);
         Assert.AreEqual(importAudiofile.Tracks.First().Artist, sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().Artist);
         Assert.AreEqual(importAudiofile.Tracks.First().Title, sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().Title);
         Assert.AreEqual(importAudiofile.Tracks.First().Begin, sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().Begin);
