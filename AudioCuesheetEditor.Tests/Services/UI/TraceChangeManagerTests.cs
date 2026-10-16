@@ -19,6 +19,7 @@ using AudioCuesheetEditor.Services.UI;
 using AudioCuesheetEditor.Tests.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AudioCuesheetEditor.Tests.Services.UI
@@ -110,6 +111,40 @@ namespace AudioCuesheetEditor.Tests.Services.UI
             Assert.IsNull(cuesheet.Title);
             Assert.IsNull(cuesheet.Cataloguenumber);
             Assert.IsTrue(_traceChangeManager.CanRedo);
+        }
+
+
+        [TestMethod()]
+        public void BulkEditFalse_AfterBulkEditAndUndo_ResetsRedoStack()
+        {
+            // Arrange
+            var audiofile = new Audiofile();
+            var track1 = new Track();
+            var track2 = new Track();
+            var track3 = new Track();
+            _traceChangeManager.BulkEdit = true;
+            _traceChangeManager.AddChange(new(audiofile, new(new List<Track>() { track1 }, nameof(Audiofile.Tracks))));
+            track1.Audiofile = audiofile;
+            _traceChangeManager.BulkEdit = false;
+            _traceChangeManager.BulkEdit = true;
+            _traceChangeManager.AddChange(new(audiofile, new(new List<Track>() { track1, track2 }, nameof(Audiofile.Tracks))));
+            track1.Audiofile = audiofile;
+            track2.Audiofile = audiofile;
+            _traceChangeManager.BulkEdit = false;
+            _traceChangeManager.Undo();
+            _traceChangeManager.BulkEdit = true;
+            _traceChangeManager.AddChange(new(audiofile, new(new List<Track>() { track1, track2, track3 }, nameof(Audiofile.Tracks))));
+            track1.Audiofile = audiofile;
+            track2.Audiofile = audiofile;
+            track3.Audiofile = audiofile;
+            _traceChangeManager.BulkEdit = false;
+            _traceChangeManager.BulkEdit = true;
+            _traceChangeManager.AddChange(new(track2, new("Testartist", nameof(Track.Artist))));
+            // Act
+            _traceChangeManager.BulkEdit = false;
+            // Assert
+            Assert.IsTrue(_traceChangeManager.CanUndo);
+            Assert.IsFalse(_traceChangeManager.CanRedo);
         }
 
         [TestMethod()]

@@ -21,10 +21,11 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<ValidationMessage> _validationMessageLocalizer
 @inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
 @inject AutocompleteManager _autocompleteManager
-@inject DialogManager _editTrackModalManager
+@inject IDialogManager _editTrackModalManager
 @inject ValidationService _validationService
 @inject PlaybackService _playbackService
 @inject IDialogService _dialogService
+@inject IDialogManager _dialogManager
 @inject ITrackManager _trackManager
 @inject ICuesheetManager _cuesheetManager
 @inject ITraceChangeManager _traceChangeManager
@@ -34,38 +35,28 @@ along with Foobar.  If not, see
 {
     case ViewMode.DetailView:
     case ViewMode.ImportView:
-        var validationResult = Audiofile?.Validate(nameof(Audiofile.Tracks));
-        if (validationResult?.Status == ValidationStatus.Error)
-        {
-            <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
-                <MudText Typo="Typo.h4">@_localizer["Validation errors"]</MudText>
-                @foreach (var message in validationResult.ValidationMessages)
-                {
-                    <MudText>@message.GetMessageLocalized(_validationMessageLocalizer)</MudText>
-                }
-            </MudAlert>
-        }
         <div aria-label="@_localizer["Track table controls"]">
             <TrackListControlButtons AddButtonClicked="AddTrackClicked" EditSelectedTracksClicked="EditSelectedTracksClicked" EditSelectedTracksDisabled="_selectedTracks.Count == 0"
                                      DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="_selectedTracks.Count == 0"
-                                     DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Audiofile?.Tracks.Any() == false"
+                                     DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Audiofile.Tracks.Any() == false"
                                      MoveTracksUpDisabled="!_cuesheetManager.IsMoveUpPossible(_selectedTracks)" MoveTracksUpClicked="() => _cuesheetManager.MoveUp(_selectedTracks)"
-                                     MoveTracksDownDisabled="!_cuesheetManager.IsMoveDownPossible(_selectedTracks)" MoveTracksDownClicked="(MoveTracksDownClicked) => _cuesheetManager.MoveDown(_selectedTracks)"
+                                     MoveTracksDownDisabled="!_cuesheetManager.IsMoveDownPossible(_selectedTracks)" MoveTracksDownClicked="() => _cuesheetManager.MoveDown(_selectedTracks)"
                                      CopySelectedTracksDisabled="_selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
-                                     FixedHeader="_fixedTableHeader" FixedHeaderClicked="() => _fixedTableHeader = !_fixedTableHeader" />
+                                     FixedHeader="_fixedTableHeader" FixedHeaderClicked="() => _fixedTableHeader = !_fixedTableHeader" MoveTracksUpSeveralClicked="MoveTracksUpSeveralClicked"
+                                     MoveTracksDownSeveralClicked="MoveTracksDownSeveralClicked" />
         </div>
         break;
 }
 
 <MudForm @ref="_form">
-    <MudDataGrid T="Track" Items="Audiofile?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="_selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
+    <MudDataGrid T="Track" Items="Audiofile.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="_selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
                  EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(_fixedTableHeader == true ? "600px" : null)"
                  FixedHeader="_fixedTableHeader" Validator="_form" Virtualize SortMode="SortMode.None">
         <Columns>
             <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
             <TemplateColumn Title="@_localizer["Controls"]" Hidden="CurrentViewMode != ViewMode.RecordView">
                 <EditTemplate>
-                    <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => _audiofileManager.RemoveTracks(Audiofile!, [context.Item])" />
+                    <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => _audiofileManager.RemoveTracks(Audiofile, [context.Item])" />
                 </EditTemplate>
             </TemplateColumn>
             <PropertyColumn Property="x => x.Position" Title="#" Editable="false" HeaderStyle="width: 1px;" />
@@ -108,7 +99,7 @@ along with Foobar.  If not, see
             </PropertyColumn>
             <TemplateColumn Title="@_localizer["Status"]" Hidden="CurrentViewMode != ViewMode.DetailView" HeaderStyle="width: 1px;">
                 <EditTemplate>
-                    @if (Audiofile?.Tracks.FirstOrDefault() != context.Item)
+                    @if (Audiofile.Tracks.FirstOrDefault() != context.Item)
                     {
                         <MudTooltip Text="@GetLinkedTrackTooltip(context.Item)">
                             <MudChip Icon="@GetLinkedTrackIcon(context.Item)" Color="Color.Secondary" OnClick="() => _trackManager.SetProperty(context.Item, x => x.IsLinkedToPreviousTrack, !context.Item.IsLinkedToPreviousTrack)" />
@@ -138,7 +129,7 @@ along with Foobar.  If not, see
 
     [Parameter]
     [EditorRequired]
-    public Audiofile? Audiofile { get; set; }
+    public Audiofile Audiofile { get; set; }
 
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
@@ -187,7 +178,7 @@ along with Foobar.  If not, see
         var result = await dialog.Result;
         if (result?.Canceled == false)
         {
-            _audiofileManager.RemoveTracks(Audiofile!, Audiofile!.Tracks);
+            _audiofileManager.RemoveTracks(Audiofile, Audiofile.Tracks);
             _selectedTracks.Clear();
         }
     }
@@ -224,7 +215,7 @@ along with Foobar.  If not, see
             copy.Position = (ushort?)(trackThatWillBeCopied.Position + 1);
             copy.Begin = trackThatWillBeCopied.End;
             copy.End = null;
-            _audiofileManager.AddTrack(Audiofile!, copy);
+            _audiofileManager.AddTrack(Audiofile, copy);
             await EditTrackModalClicked(copy);
         }
     }
@@ -295,6 +286,24 @@ along with Foobar.  If not, see
         if (_form != null)
         {
             await _form.ValidateAsync();
+        }
+    }
+
+    async Task MoveTracksUpSeveralClicked()
+    {
+        var result = await _dialogManager.ShowInputDialogAsync<uint>(@_localizer["Move tracks up"], @_localizer["Number of positions to move up"], @_localizer["Enter positions to move up"], 1);
+        if (result.IsSuccess)
+        {
+            _cuesheetManager.MoveUp(_selectedTracks, result.Value);
+        }
+    }
+
+    async Task MoveTracksDownSeveralClicked()
+    {
+        var result = await _dialogManager.ShowInputDialogAsync<uint>(@_localizer["Move tracks down"], @_localizer["Number of positions to move down"], @_localizer["Enter positions to move down"], 1);
+        if (result.IsSuccess)
+        {
+            _cuesheetManager.MoveDown(_selectedTracks, result.Value);
         }
     }
 }

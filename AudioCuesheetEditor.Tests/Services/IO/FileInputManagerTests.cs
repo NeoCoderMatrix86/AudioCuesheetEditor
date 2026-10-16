@@ -120,7 +120,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var contentType = "audio/wav";
 
             // Act
-            var result = _service.IsValidAudiofile(contentType, fileName);
+            var result = _service.IsValidAudiofile(fileName, contentType);
 
             // Assert
             Assert.IsTrue(result);
@@ -134,7 +134,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var contentType = "just a fantasy";
 
             // Act
-            var result = _service.IsValidAudiofile(contentType, fileName);
+            var result = _service.IsValidAudiofile(fileName, contentType);
 
             // Assert
             Assert.IsFalse(result);
@@ -148,7 +148,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var contentType = "audio/webm";
 
             // Act
-            var result = _service.GetAudioCodec(contentType, fileName);
+            var result = _service.GetAudioCodec(fileName, contentType);
 
             // Assert
             Assert.IsNotNull(result);
@@ -163,7 +163,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var contentType = "audio/webm";
 
             // Act
-            var result = _service.GetAudioCodec(contentType, fileName);
+            var result = _service.GetAudioCodec(fileName, contentType);
 
             // Assert
             Assert.IsNotNull(result);
@@ -178,10 +178,24 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var contentType = "fantasy stuff";
 
             // Act
-            var result = _service.GetAudioCodec(contentType, fileName);
+            var result = _service.GetAudioCodec(fileName, contentType);
 
             // Assert
             Assert.IsNull(result);
+        }
+
+        [TestMethod()]
+        public void GetAudioCodec_ReturnsAudiocodec_WhenFileExtensionMatches()
+        {
+            // Arrange
+            var fileName = "test.mP3";
+
+            // Act
+            var result = _service.GetAudioCodec(fileName);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(Audiofile.AudioCodecs.Single(x => x.FileExtension.Equals(".mp3", StringComparison.OrdinalIgnoreCase)), result);
         }
 
         [TestMethod()]
@@ -218,7 +232,6 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             // Arrange
             var firstFile = CreateBrowserFile("Test.txt", "text/plain", "Just a test!");
             var secondFile = CreateBrowserFile("Test.mp3", "audio/mpeg");
-            var fileInputId = nameof(CreateFileUploadsAsync_ReturnsFileUploads_WhenFileHasTextContentAsync);
             IReadOnlyList<IBrowserFile> browserfiles = [
                 firstFile,
                 secondFile
@@ -226,7 +239,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             var objectUrl = "Some object url!";
             _jsRuntimeMock.Setup(js => js.InvokeAsync<String>(It.IsAny<string>(), It.IsAny<object[]>())).ReturnsAsync(objectUrl);
             // Act
-            var result = await _service.CreateFileUploadsAsync(browserfiles, fileInputId);
+            var result = await _service.CreateFileUploadsAsync(browserfiles);
             // Assert
             Assert.HasCount(2, result);
             Assert.AreEqual(firstFile.Name, result.First().Name);
@@ -251,7 +264,7 @@ namespace AudioCuesheetEditor.Tests.Services.IO
             // Act
             var result = await _service.CreateFileUploadsAsync(browserfiles);
             // Assert
-            Assert.HasCount(0, result);
+            Assert.IsEmpty(result);
         }
 
         static IBrowserFile CreateBrowserFile(string name, string contentType, string? content = null)

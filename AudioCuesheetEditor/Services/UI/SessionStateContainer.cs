@@ -18,12 +18,14 @@ using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Services.Options;
+using Microsoft.JSInterop;
 
 namespace AudioCuesheetEditor.Services.UI
 {
     public class SessionStateContainer : ISessionStateContainer, IDisposable
     {
         private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider;
+        private readonly IJSRuntime _jsRuntime;
 
         private Cuesheet _cuesheet = new();
         private Cuesheet? _importCuesheet;
@@ -34,10 +36,11 @@ namespace AudioCuesheetEditor.Services.UI
         public event EventHandler? CuesheetChanged;
         public event EventHandler? ActiveCuesheetChanged;
 
-        public SessionStateContainer(ILocalStorageOptionsProvider localStorageOptionsProvider)
+        public SessionStateContainer(ILocalStorageOptionsProvider localStorageOptionsProvider, IJSRuntime jsRuntime)
         {
             _localStorageOptionsProvider = localStorageOptionsProvider;
             _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+            _jsRuntime = jsRuntime;
         }
 
         public void Dispose()
@@ -66,6 +69,7 @@ namespace AudioCuesheetEditor.Services.UI
             }
         }
         public IList<Audiofile> ImportAudiofiles { get; set; } = [];
+        public Dictionary<Audiofile, Audiofile?> ImportAudiofileMapping { get; set; } = [];
         public IImportfile? Importfile { get; set; }
         public Boolean ImportIsAnalyzed { get; set; } = false;
 
@@ -76,12 +80,35 @@ namespace AudioCuesheetEditor.Services.UI
             SetActiveCuesheet();
         }
 
-        public void ResetImport()
+        public async Task ResetImportAsync(Boolean revokeObjectURLs)
         {
             Importfile = null;
-            ImportAudiofiles = [];
+            await ResetAudioImportAsync(revokeObjectURLs);
             ImportCuesheet = null;
             ImportIsAnalyzed = false;
+        }
+
+        public async Task ResetAudioImportAsync(bool revokeObjectURLs)
+        {
+            if (revokeObjectURLs)
+            {
+                foreach (var audiofile in ImportAudiofiles)
+                {
+                    if (!string.IsNullOrEmpty(audiofile.ObjectURL))
+                    {
+                        await _jsRuntime.InvokeVoidAsync("revokeAudioObjectURL", audiofile.ObjectURL);
+                    }
+                }
+                foreach (var audiofile in ImportAudiofileMapping.Values.Where(x => x != null))
+                {
+                    if (!string.IsNullOrEmpty(audiofile!.ObjectURL))
+                    {
+                        await _jsRuntime.InvokeVoidAsync("revokeAudioObjectURL", audiofile.ObjectURL);
+                    }
+                }
+            }
+            ImportAudiofileMapping = [];
+            ImportAudiofiles = [];
         }
 
         /// <inheritdoc/>
@@ -131,5 +158,6 @@ namespace AudioCuesheetEditor.Services.UI
                 }
             }
         }
+
     }
 }

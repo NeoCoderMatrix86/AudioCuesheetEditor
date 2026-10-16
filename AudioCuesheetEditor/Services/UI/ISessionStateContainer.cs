@@ -26,9 +26,11 @@ namespace AudioCuesheetEditor.Services.UI
         public Cuesheet Cuesheet { get; set; }
         public Cuesheet? ImportCuesheet { get; set; }
         public IList<Audiofile> ImportAudiofiles { get; set; }
+        public Dictionary<Audiofile, Audiofile?> ImportAudiofileMapping { get; set; }
         public IImportfile? Importfile { get; set; }
         public Boolean ImportIsAnalyzed { get; set; }
-        public void ResetImport();
+        public Task ResetImportAsync(Boolean revokeObjectURLs);
+        public Task ResetAudioImportAsync(Boolean revokeObjectURLs);
         /// <summary>
         /// Initialize this class
         /// </summary>

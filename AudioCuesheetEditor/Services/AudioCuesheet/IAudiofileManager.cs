@@ -31,8 +31,14 @@ namespace AudioCuesheetEditor.Services.AudioCuesheet
         /// </summary>
         /// <param name="audiofile"></param>
         /// <param name="browserFile"></param>
-        /// <param name="fileInputId"></param>
-        Task SetPropertiesAsync(Audiofile audiofile, IBrowserFile? browserFile, string fileInputId);
+        Task SetPropertiesAsync(Audiofile audiofile, IBrowserFile browserFile);
+        /// <summary>
+        /// Clear properties of an audiofile
+        /// </summary>
+        /// <param name="audiofile"></param>
+        /// <param name="setTracing">Parameter controlling if tracing should be handled by this service or by calling services</param>
+        /// <returns></returns>
+        Task ClearPropertiesAsync(Audiofile audiofile, Boolean setTracing = true);
         /// <summary>
         /// Set property for an audio file
         /// </summary>

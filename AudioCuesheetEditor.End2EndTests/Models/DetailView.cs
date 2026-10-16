@@ -44,7 +44,7 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         internal async Task SetAudiofileInputFileAsync(int audiofileIndex, string file)
         {
-            await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile" }).Nth(audiofileIndex).Locator("input[type=\"file\"]").SetInputFilesAsync(file);
+            await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "No file uploaded!" }).Nth(audiofileIndex).Locator("input[type=\"file\"]").SetInputFilesAsync(file);
         }
 
         internal async Task AddTrackAsync(int audiofileIndex)
@@ -116,8 +116,7 @@ namespace AudioCuesheetEditor.End2EndTests.Models
 
         internal async Task OpenRenameAudiofileDialogAsync(int audiofileIndex)
         {
-            await _page.GetByRole(AriaRole.Group).Filter(new() { HasText = "AudiofileAudiofile" }).Nth(audiofileIndex).GetByLabel("More").ClickAsync();
-            await _page.GetByText("Rename file").ClickAsync();
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Rename file" }).Nth(audiofileIndex).ClickAsync();
         }
 
         async Task EditTrackFieldAsync(int trackPosition, string dataLabel, string value)

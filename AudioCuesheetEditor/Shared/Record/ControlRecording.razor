@@ -18,7 +18,7 @@ along with Foobar.  If not, see
 @inherits BaseLocalizedComponent
 
 @inject IStringLocalizer<ControlRecording> _localizer
-@inject IDialogService _dialogService
+@inject IDialogManager _dialogManager
 @inject ISessionStateContainer _sessionStateContainer
 @inject ICuesheetManager _cuesheetManager
 
@@ -146,13 +146,12 @@ along with Foobar.  If not, see
 
     async Task DisplayStartCountdownDialog()
     {
-        var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, CloseButton = true };
-        var dialog = await _dialogService.ShowAsync<StartRecordCountdownDialog>(options);
-        var result = await dialog.Result;
-        var recordCountdownTimer = result?.Data as uint?;
-        if ((result?.Canceled == false) && (recordCountdownTimer.HasValue))
+        var recordOptions = await LocalStorageOptionsProvider.GetOptionsAsync<RecordOptions>();
+        var result = await _dialogManager.ShowInputDialogAsync<uint>(@_localizer["Start record countdown timer"], @_localizer["Seconds till record starts"], @_localizer["Record countdown in sconds"], recordOptions.RecordCountdownTimer, @_localizer["Start countdown"], @Icons.Material.Outlined.Timer);
+        if (result.IsSuccess)
         {
-            _startRecordTimer = new Timer(recordCountdownTimer.Value * 1000);
+            await LocalStorageOptionsProvider.SaveOptionsValueAsync<RecordOptions>(x => x.RecordCountdownTimer, result.Value);
+            _startRecordTimer = new Timer(result.Value * 1000);
             _startRecordTimer.Elapsed += delegate
             {
                 StartRecording();

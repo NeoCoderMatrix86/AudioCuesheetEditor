@@ -13,7 +13,6 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-using AngleSharp.Media.Dom;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO;
@@ -34,7 +33,7 @@ namespace AudioCuesheetEditor.Services.IO
         Textfile,
         Audiofile
     }
-    public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService, ITrackManager trackManager, ILogger<ImportManager> logger)
+    public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService, ITrackManager trackManager, IAudioImportService audioImportService, ILogger<ImportManager> logger)
     {
         public event EventHandler<IEnumerable<string>>? UploadFilesFinished;
 
@@ -44,6 +43,7 @@ namespace AudioCuesheetEditor.Services.IO
         private readonly IFileInputManager _fileInputManager = fileInputManager;
         private readonly ITextImportService _textImportService = textImportService;
         private readonly ITrackManager _trackManager = trackManager;
+        private readonly IAudioImportService _audioImportService = audioImportService;
 
         public void ImportData(String? data)
         {
@@ -61,7 +61,7 @@ namespace AudioCuesheetEditor.Services.IO
             }
         }
         
-        public async Task AnalyseImportfile()
+        public async Task<Boolean> AnalyseImportfile()
         {
             ResetTracing();
             var stopwatch = Stopwatch.StartNew();
@@ -96,14 +96,16 @@ namespace AudioCuesheetEditor.Services.IO
                         break;
                 }
             }
+            var cancelImport = await _audioImportService.MapAudioImportAsync();
             stopwatch.Stop();
             if (_logger.IsEnabled(LogLevel.Debug))
             {
                 _logger.LogDebug("AnalyseImportfile duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
             }
+            return cancelImport;
         }
         
-        public void ImportCuesheet()
+        public async Task ImportCuesheetAsync()
         {
             var stopwatch = Stopwatch.StartNew();
             ResetTracing();
@@ -115,7 +117,7 @@ namespace AudioCuesheetEditor.Services.IO
                 _sessionStateContainer.Cuesheet = newCuesheet;
                 _traceChangeManager.AddChange(new TracedChange(_sessionStateContainer, new(previousValue, nameof(SessionStateContainer.Cuesheet))));
             }
-            _sessionStateContainer.ResetImport();
+            await _sessionStateContainer.ResetImportAsync(false);
             stopwatch.Stop();
             if (_logger.IsEnabled(LogLevel.Debug))
             {
@@ -132,7 +134,7 @@ namespace AudioCuesheetEditor.Services.IO
                 if (_fileInputManager.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Projectfile, [FileExtensions.Projectfile])
                     || _fileInputManager.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Cuesheet, [FileExtensions.Cuesheet])
                     || _fileInputManager.IsValidForImportView(file.ContentType, file.Name)
-                    || _fileInputManager.IsValidAudiofile(file.ContentType, file.Name))
+                    || _fileInputManager.IsValidAudiofile(file.Name, file.ContentType))
                 {
                     if (_fileInputManager.CheckFileMimeType(file.ContentType, file.Name, FileMimeTypes.Projectfile, [FileExtensions.Projectfile]))
                     {
@@ -161,7 +163,7 @@ namespace AudioCuesheetEditor.Services.IO
                             FileType = ImportFileType.Textfile
                         };
                     }
-                    if (_fileInputManager.IsValidAudiofile(file.ContentType, file.Name))
+                    if (_fileInputManager.IsValidAudiofile(file.Name, file.ContentType))
                     {
                         var audioFile = await _fileInputManager.CreateAudiofileAsync(file);
                         if (audioFile != null)
@@ -188,10 +190,11 @@ namespace AudioCuesheetEditor.Services.IO
             target.Artist = cuesheetToCopy.Artist;
             target.Title = cuesheetToCopy.Title;
             target.Cataloguenumber = cuesheetToCopy.Cataloguenumber;
+            IEnumerable<IAudiofile> audiofiles = [];
             if (cuesheetToCopy is Cuesheet originCuesheet)
             {
                 target.CDTextfile = originCuesheet.CDTextfile;
-                AttachClonedAudiofiles(target, originCuesheet.Audiofiles);
+                audiofiles = originCuesheet.Audiofiles;
             }
             if (cuesheetToCopy is ImportCuesheet importCuesheet)
             {
@@ -199,8 +202,9 @@ namespace AudioCuesheetEditor.Services.IO
                 {
                     target.CDTextfile = new CDTextfile(importCuesheet.CDTextfile);
                 }
-                AttachClonedAudiofiles(target, importCuesheet.Audiofiles);
+                audiofiles = importCuesheet.Audiofiles;
             }
+            AttachClonedAudiofiles(target, audiofiles);
         }
 
         void AttachClonedAudiofiles(Cuesheet target, IEnumerable<IAudiofile> audiofiles) 
@@ -220,6 +224,7 @@ namespace AudioCuesheetEditor.Services.IO
                     targetAudiofile ??= new Audiofile()
                     {
                         Name = importAudiofile.Name,
+                        AudioCodec = String.IsNullOrEmpty(importAudiofile.Name) == false ? _fileInputManager.GetAudioCodec(importAudiofile.Name) : null
                     };
                     tracks = importAudiofile.Tracks;
                 }
@@ -293,6 +298,12 @@ namespace AudioCuesheetEditor.Services.IO
                     begin = clone.End;
                     position++;
                     targetAudiofile.Tracks.Add(clone);
+                }
+                //Set last track end
+                var lastTrack = targetAudiofile.Tracks.LastOrDefault();
+                if ((lastTrack?.End.HasValue == false) && (targetAudiofile.Duration.HasValue == true))
+                {
+                    _trackManager.SetProperty(lastTrack, x => x.End, targetAudiofile.Duration);
                 }
                 target.Audiofiles.Add(targetAudiofile);
             }

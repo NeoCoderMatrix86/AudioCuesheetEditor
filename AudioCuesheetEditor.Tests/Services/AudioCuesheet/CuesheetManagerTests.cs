@@ -64,6 +64,7 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         {
             // Arrange
             var cuesheet = new Cuesheet();
+            _sessionStateContainer.SetupGet(x => x.Cuesheet).Returns(cuesheet);
             _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
             // Act
             _cuesheetManager.SetProperty(x => x.Artist, "Artist");
@@ -114,6 +115,21 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             _cuesheetManager.SetProperty(x => x.Audiofiles, files);
             // Assert
             _jsRuntime.Verify(x => x.InvokeAsync<Microsoft.JSInterop.Infrastructure.IJSVoidResult>("revokeAudioObjectURL", It.Is<object[]>(args => args.Length == 1 && args[0].Equals(audiofile2.ObjectURL))), Times.Once());
+        }
+
+        [TestMethod]
+        public void SetProperty_OnImportCuesheet_DoesNotTraceChanges()
+        {
+            // Arrange
+            var importCuesheet = new Cuesheet();
+            var cuesheet = new Cuesheet();
+            _sessionStateContainer.SetupGet(x => x.ImportCuesheet).Returns(importCuesheet);
+            _sessionStateContainer.SetupGet(x => x.Cuesheet).Returns(cuesheet);
+            _sessionStateContainer.SetupGet(x => x.ActiveCuesheet).Returns(importCuesheet);
+            // Act
+            _cuesheetManager.SetProperty(x => x.Artist, nameof(SetProperty_OnImportCuesheet_DoesNotTraceChanges));
+            // Assert
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == importCuesheet)), Times.Never);
         }
 
         [TestMethod]
@@ -691,6 +707,75 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
         }
 
         [TestMethod]
+        public void MoveUp_Move2Positions_ReturnsSuccess()
+        {
+            // Arrange
+            var track1End = new TimeSpan(0, 3, 12);
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = track1End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track2End = new TimeSpan(0, 7, 34);
+            var track2 = new Track()
+            {
+                Position = 2,
+                Begin = track1End,
+                End = track2End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track3End = new TimeSpan(0, 10, 4);
+            var track3 = new Track()
+            {
+                Position = 3,
+                Begin = track2End,
+                End = track3End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track4 = new Track()
+            {
+                Position = 4,
+                Begin = track3End,
+                End = new TimeSpan(0, 13, 45),
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Audiofiles = [
+                    new() {
+                        Tracks = [track4, track3, track2, track1]
+                    }
+                ],
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            track3.Cuesheet = cuesheet;
+            track4.Cuesheet = cuesheet;
+            track1.Audiofile = cuesheet.Audiofiles.First();
+            track2.Audiofile = cuesheet.Audiofiles.First();
+            track3.Audiofile = cuesheet.Audiofiles.First();
+            track4.Audiofile = cuesheet.Audiofiles.First();
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
+            // Act
+            var result = _cuesheetManager.MoveUp([track2, track3], 2);
+            // Assert
+            Assert.IsTrue(result.IsSuccess);
+            Assert.AreEqual((ushort?)1, track2.Position);
+            Assert.AreEqual(TimeSpan.Zero, track2.Begin);
+            Assert.AreEqual(track1End, track2.End);
+            Assert.AreEqual((ushort?)2, track3.Position);
+            Assert.AreEqual(track1End, track3.Begin);
+            Assert.AreEqual(track2End, track3.End);
+            Assert.AreEqual((ushort?)3, track1.Position);
+            Assert.AreEqual(track2End, track1.Begin);
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet.Audiofiles.First() && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Never);
+            _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Once);
+            _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Once);
+        }
+
+        [TestMethod]
         public void MoveUp_NoTracksAbove_ReturnsFailure()
         {
             // Arrange
@@ -1039,6 +1124,78 @@ namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet
             Assert.AreEqual(track2End, track1.End);
             Assert.AreEqual((ushort?)3, track2.Position);
             Assert.AreEqual(track2End, track2.Begin);
+            _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet.Audiofiles.First() && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Never);
+            _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Once);
+            _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Once);
+        }
+
+        [TestMethod]
+        public void MoveDown_Move2Positions_ReturnsSuccess()
+        {
+            // Arrange
+            var track1End = new TimeSpan(0, 3, 12);
+            var track1 = new Track()
+            {
+                Position = 1,
+                Begin = TimeSpan.Zero,
+                End = track1End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track2End = new TimeSpan(0, 7, 34);
+            var track2 = new Track()
+            {
+                Position = 2,
+                Begin = track1End,
+                End = track2End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track3End = new TimeSpan(0, 10, 4);
+            var track3 = new Track()
+            {
+                Position = 3,
+                Begin = track2End,
+                End = track3End,
+                IsLinkedToPreviousTrack = true
+            };
+            var track4 = new Track()
+            {
+                Position = 4,
+                Begin = track3End,
+                End = new TimeSpan(0, 13, 45),
+                IsLinkedToPreviousTrack = true
+            };
+            var cuesheet = new Cuesheet()
+            {
+                Audiofiles = [
+                    new() {
+                        Tracks = [track4, track3, track2, track1]
+                    }
+                ]
+            };
+            track1.Cuesheet = cuesheet;
+            track2.Cuesheet = cuesheet;
+            track3.Cuesheet = cuesheet;
+            track4.Cuesheet = cuesheet;
+            track1.Audiofile = cuesheet.Audiofiles.First();
+            track2.Audiofile = cuesheet.Audiofiles.First();
+            track3.Audiofile = cuesheet.Audiofiles.First();
+            track4.Audiofile = cuesheet.Audiofiles.First();
+            _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
+            // Act
+            var result = _cuesheetManager.MoveDown([track2, track1], 2);
+            // Assert
+            Assert.IsTrue(result.IsSuccess);
+            Assert.AreEqual((ushort?)1, track3.Position);
+            Assert.AreEqual(TimeSpan.Zero, track3.Begin);
+            Assert.AreEqual(track1End, track3.End);
+            Assert.AreEqual((ushort?)2, track4.Position);
+            Assert.AreEqual(track1End, track4.Begin);
+            Assert.AreEqual(track2End, track4.End);
+            Assert.AreEqual((ushort?)3, track1.Position);
+            Assert.AreEqual(track2End, track1.Begin);
+            Assert.AreEqual(track3End, track1.End);
+            Assert.AreEqual((ushort?)4, track2.Position);
+            Assert.AreEqual(track3End, track2.Begin);
             _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet.Audiofiles.First() && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Never);
             _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Once);
             _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Once);

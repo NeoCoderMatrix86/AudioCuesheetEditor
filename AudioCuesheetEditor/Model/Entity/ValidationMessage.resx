@@ -216,4 +216,7 @@
   <data name="{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!" xml:space="preserve">
     <value>{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!</value>
   </data>
+  <data name="AudioCodec" xml:space="preserve">
+    <value>Audio codec</value>
+  </data>
 </root>

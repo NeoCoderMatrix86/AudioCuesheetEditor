@@ -1,0 +1,171 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<ImportAudiofilesDialog> _localizer
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">
+            <MudIcon Icon="@Icons.Material.Filled.AudioFile" Class="mr-3 mb-n1" />@_localizer["Assign files"]
+        </MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudDropContainer T="Audiofile" Items="_audiofiles" ItemsSelector="ItemsSelector" ItemPicked="ItemPicked" ItemDropped="ItemDropped" CanDropClass="mud-border-success" NoDropClass="mud-border-error"
+                          ApplyDropClassesOnDragStarted Class="d-flex flex-column flex-grow-1">
+            <ChildContent>
+                <MudCard Outlined>
+                    <MudCardHeader>
+                        <CardHeaderContent>
+                            <MudText Typo="Typo.h6">@_localizer["Files"]</MudText>
+                        </CardHeaderContent>
+                        <CardHeaderActions>
+                            <MudButtonGroup OverrideStyles="false">
+                                <MudTooltip Text="@_localizer["Add file"]">
+                                    <MudIconButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddButtonClicked" Icon="@Icons.Material.Outlined.Add" aria-label="@_localizer["Add file"]" />
+                                </MudTooltip>
+                            </MudButtonGroup>
+                        </CardHeaderActions>
+                    </MudCardHeader>
+                    <MudCardContent>
+                        <MudStack>
+                            @foreach (var dropzone in _dropzones)
+                            {
+                                <MudDropZone T="Audiofile" Identifier="@dropzone.Key" Class="rounded-lg border-2 border-solid mud-border-lines-default pa-3">
+                                    <MudStack Row Justify="Justify.SpaceBetween">
+                                        <MudText>@GetFileName(dropzone.Value)</MudText>
+                                        <MudText>@_localizer["Track count: {0}", @dropzone.Value.Tracks.Count]</MudText>
+                                        <MudIconButton Color="Color.Error" Variant="Variant.Filled" OnClick="() => DeleteButtonClicked(dropzone.Value)" Icon="@Icons.Material.Outlined.Delete" aria-label="Delete file" />
+                                    </MudStack>
+                                </MudDropZone>
+                            }
+                        </MudStack>
+                    </MudCardContent>
+                </MudCard>
+                <MudText Typo="Typo.h6" Class="mb-2 mt-2">@_localizer["Uploaded files"]</MudText>
+                <MudDropZone T="Audiofile" Identifier="@UploadedZoneIdentifier" CanDrop="(item) => false" Class="rounded-lg border-2 border-solid mud-border-lines-default pa-3 flex-grow-1 d-flex flex-wrap" />
+            </ChildContent>
+            <ItemRenderer>
+                <MudPaper Class="pa-2 ma-1 mud-theme-primary">
+                    <MudText Typo="Typo.body2">@context.Name</MudText>
+                </MudPaper>
+            </ItemRenderer>
+        </MudDropContainer>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Info" Variant="Variant.Filled" Disabled="ImportAudiofiles.Count > 0" OnClick="() => _mudDialog?.Close(DialogResult.Ok(MappedAudiofiles))" aria-label="Ok">@_localizer["Ok"]</MudButton>
+        <MudButton Color="Color.Error" Variant="Variant.Filled" OnClick="() => _mudDialog?.Cancel()" aria-label="Abort">@_localizer["Abort"]</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    IMudDialogInstance? _mudDialog { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public IList<Audiofile> ImportAudiofiles { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public Dictionary<Audiofile, Audiofile?> MappedAudiofiles { get; set; }
+
+    List<Audiofile> _audiofiles = [];
+    const string UploadedZoneIdentifier = "uploaded";
+    Dictionary<String, Audiofile> _dropzones = [];
+    string? _sourceZoneIdentifier;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        SetDropzones();
+        SetImportAudiofiles();
+    }
+
+    bool ItemsSelector(Audiofile item, string zone)
+    {
+        if (zone == UploadedZoneIdentifier)
+        {
+            return ImportAudiofiles.Contains(item);
+        }
+        var audiofile = _dropzones[zone];
+        return MappedAudiofiles[audiofile] == item;
+    }
+
+    void ItemPicked(MudDragAndDropItemTransaction<Audiofile> itemTransaction)
+    {
+        _sourceZoneIdentifier = itemTransaction.SourceZoneIdentifier;
+    }
+
+    void ItemDropped(MudItemDropInfo<Audiofile> itemDropInfo)
+    {
+        if (_sourceZoneIdentifier != null && _sourceZoneIdentifier != UploadedZoneIdentifier)
+        {
+            var sourceAudiofile = _dropzones[_sourceZoneIdentifier];
+            var currentlyMapped = MappedAudiofiles[sourceAudiofile];
+            if (currentlyMapped != null)
+            {
+                ImportAudiofiles.Add(currentlyMapped);
+            }
+            MappedAudiofiles[sourceAudiofile] = null;
+        }
+        var targetAudiofile = _dropzones[itemDropInfo.DropzoneIdentifier];
+        var currentlyMappedFile = MappedAudiofiles[targetAudiofile];
+        MappedAudiofiles[targetAudiofile] = itemDropInfo.Item;
+        ImportAudiofiles.Remove(itemDropInfo.Item!);
+        if (currentlyMappedFile != null)
+        {
+            ImportAudiofiles.Add(currentlyMappedFile);
+        }
+        SetImportAudiofiles();
+        _sourceZoneIdentifier = null;
+    }
+
+    String GetFileName(Audiofile audiofile)
+    {
+        return String.IsNullOrEmpty(audiofile.Name) ? _localizer["No file uploaded!"] : audiofile.Name;
+    }
+
+    void SetImportAudiofiles()
+    {
+        _audiofiles = [.. ImportAudiofiles, .. MappedAudiofiles.Values.Where(x => x != null).Select(x => x!)];
+    }
+
+    void SetDropzones()
+    {
+        _dropzones = MappedAudiofiles.ToDictionary(x => Guid.NewGuid().ToString(), x => x.Key);
+    }
+
+    void AddButtonClicked()
+    {
+        var audiofile = new Audiofile();
+        MappedAudiofiles.Add(audiofile, null);
+        SetDropzones();
+    }
+
+    void DeleteButtonClicked(Audiofile audiofile)
+    {
+        var currentlyMappedAudiofile = MappedAudiofiles[audiofile];
+        if (currentlyMappedAudiofile != null)
+        {
+            ImportAudiofiles.Add(currentlyMappedAudiofile);
+        }
+        MappedAudiofiles.Remove(audiofile);
+        SetDropzones();
+    }
+}

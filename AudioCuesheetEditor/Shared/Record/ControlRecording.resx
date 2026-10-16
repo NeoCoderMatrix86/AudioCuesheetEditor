@@ -126,6 +126,9 @@
   <data name="Enter countdown timer" xml:space="preserve">
     <value>Enter countdown timer</value>
   </data>
+  <data name="Record countdown in sconds" xml:space="preserve">
+    <value>Record countdown in sconds</value>
+  </data>
   <data name="Record is already running!" xml:space="preserve">
     <value>Record is already running!</value>
   </data>
@@ -137,6 +140,15 @@
   </data>
   <data name="Recording!" xml:space="preserve">
     <value>Recording!</value>
+  </data>
+  <data name="Seconds till record starts" xml:space="preserve">
+    <value>Seconds till record starts</value>
+  </data>
+  <data name="Start countdown" xml:space="preserve">
+    <value>Start countdown</value>
+  </data>
+  <data name="Start record countdown timer" xml:space="preserve">
+    <value>Start record countdown timer</value>
   </data>
   <data name="Start recording" xml:space="preserve">
     <value>Start recording</value>

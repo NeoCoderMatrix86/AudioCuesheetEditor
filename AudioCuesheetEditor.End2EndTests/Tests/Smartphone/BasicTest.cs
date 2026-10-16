@@ -50,7 +50,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await detailView.AddAudiofileAsync();
             await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
             await detailView.RenameAudiofileAsync(0, "Kalimba test 123.mp3");
-            await Expect(TestPage.GetByRole(AriaRole.Textbox, new() { Name = "Audiofile" })).ToMatchAriaSnapshotAsync("- textbox \"Audiofile\": Kalimba test 123.mp3");
+            await Expect(TestPage.GetByRole(AriaRole.Group).Filter(new() { HasText = "Kalimba test 123.mp3" })).ToMatchAriaSnapshotAsync("- group:\r\n  - checkbox\r\n  - heading \"Kalimba test 123.mp3\" [level=6]\r\n  - button \"Upload file\"\r\n  - button \"Rename file\"\r\n  - button \"Clear file\"");
         }
 
         [TestMethod]
@@ -61,6 +61,18 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await detailView.GotoAsync();
             await bar.OpenSettingsAsync();
             await Expect(TestPage.GetByRole(AriaRole.Heading, new() { Name = "Settings" })).ToBeVisibleAsync();
+        }
+
+        [TestMethod]
+        public async Task ResetCuesheet_ShouldResetAllCuesheetReferences_WhenResettingCuesheetAsync()
+        {
+            var bar = new AppBar(TestPage);
+            var detailView = new DetailView(TestPage);
+            await detailView.GotoAsync();
+            await detailView.AddAudiofileAsync();
+            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
+            await bar.ResetCuesheetAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Tabpanel, new() { Name = "Detail view" })).ToMatchAriaSnapshotAsync("- group:\n  - paragraph: \"--:--:--\"\n  - slider \"Playback slider\" [disabled]: \"0\"\n  - paragraph: \"--:--:--\"\n- group:\n  - button \"Play\" [disabled]\n  - group:\n    - button \"Jump to previous track\" [disabled]\n    - button \"Stop the current playback\" [disabled]\n    - button \"Jump to next track\" [disabled]");
         }
 
         [TestMethod]
@@ -192,7 +204,7 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
             await detailView.NewFileNameInput.FillAsync("Test 123");
             await TestPage.Keyboard.PressAsync("Enter");
             await TestPage.GetByRole(AriaRole.Dialog).WaitForAsync(new() { State = WaitForSelectorState.Detached });
-            await Expect(TestPage.GetByRole(AriaRole.Textbox, new() { Name = "Audiofile" })).ToMatchAriaSnapshotAsync("- textbox \"Audiofile\": Test 123.mp3");
+            await Expect(TestPage.GetByRole(AriaRole.Group).Filter(new() { HasText = "Test 123.mp3" })).ToMatchAriaSnapshotAsync("- group:\r\n  - checkbox\r\n  - heading \"Test 123.mp3\" [level=6]\r\n  - button \"Upload file\"\r\n  - button \"Rename file\"\r\n  - button \"Clear file\"");
         }
     }
 }

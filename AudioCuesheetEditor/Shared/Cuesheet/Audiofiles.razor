@@ -20,23 +20,15 @@ along with Foobar.  If not, see
 @inject IStringLocalizer<Audiofiles> _localizer
 @inject IStringLocalizer<ValidationMessage> _validationMessageLocalizer
 @inject IAudiofileManager _audiofileManager
-@inject IDialogService _dialogService
+@inject IDialogManager _dialogManager
 
 @switch (CurrentViewMode)
 {
     case ViewMode.DetailView:
     case ViewMode.ImportView:
-        var validationResult = Cuesheet?.Validate(nameof(Cuesheet.Audiofiles));
-        if (validationResult?.Status == ValidationStatus.Error)
+        if (Cuesheet != null)
         {
-            <MudAlert Severity="Severity.Error" Variant="Variant.Filled">
-                <MudText Typo="Typo.h4">@_localizer["Validation errors"]</MudText>
-                @foreach (var message in validationResult.ValidationMessages)
-                {
-                    <MudText>@message.GetMessageLocalized(_validationMessageLocalizer)</MudText>
-                }
-            </MudAlert>
-            <br />
+            <Alert ValidationResult="Cuesheet.Validate(nameof(Cuesheet.Audiofiles))" />
         }
         break;
 }
@@ -46,14 +38,18 @@ along with Foobar.  If not, see
     {
         <MudExpansionPanel Expanded>
             <TitleContent>
-                <MudStack Row AlignItems="AlignItems.Start" StretchItems="StretchItems.End">
-                    <MudCheckBox T="Boolean" Value="@SelectedFiles.Contains(file)" ValueChanged="(selected) => SelectedChanged(file, selected)" Class="mt-2" />
-                    @{
-                        var fileInputId = $"Audiofile_{Guid.NewGuid()}";
-                    }
-                    <FileInput Id="@fileInputId" Label="@_localizer["Audiofile"]" FileName="@file.Name" OnFileSelected="(IBrowserFile? browserFile) => _audiofileManager.SetPropertiesAsync(file, browserFile, fileInputId)"
-                               OnFileRenameClicked="() => FileRenameClicked(file)" Filter="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))"
-                               FileRenameDisabled="file.Name == null" Error="file.Validate().Status == ValidationStatus.Error" />
+                <Alert ValidationResult="file.Validate()" />
+                <MudStack Row AlignItems="AlignItems.Center">
+                    <MudCheckBox T="Boolean" Value="@SelectedFiles.Contains(file)" ValueChanged="(selected) => SelectedChanged(file, selected)" />
+                    <MudText Typo="Typo.h6" Style="width: 100%; line-break: anywhere;">@GetFileName(file)</MudText>
+                    <MudFileUpload @key="file.ObjectURL" T="IBrowserFile" Accept="@String.Join(",", Audiofile.AudioCodecs.Select(x => x.MimeType))" FilesChanged="(browserFile) => FileUploaded(browserFile, file)" Hidden InputClass="file-upload">
+                        <CustomContent>
+                            <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Icon="@Icons.Material.Outlined.FileUpload" OnClick="context.OpenFilePickerAsync" aria-label="Upload file" />
+                        </CustomContent>
+                        <SelectedTemplate />
+                    </MudFileUpload>
+                    <MudIconButton Variant="Variant.Filled" Color="Color.Info" Icon="@Icons.Material.Outlined.EditAttributes" OnClick="() => FileRenameClicked(file)" Disabled="String.IsNullOrEmpty(file.Name)" aria-label="Rename file" />
+                    <MudIconButton Variant="Variant.Filled" Color="Color.Error" Icon="@Icons.Material.Outlined.Clear" OnClick="() => _audiofileManager.ClearPropertiesAsync(file)" Disabled="String.IsNullOrEmpty(file.Name)" aria-label="Clear file" />
                 </MudStack>
             </TitleContent>
             <ChildContent>
@@ -81,34 +77,15 @@ along with Foobar.  If not, see
     [Parameter]
     public EventCallback<HashSet<Audiofile>> SelectedFilesChanged { get; set; }
 
-    async Task<String?> ShowInputDialog(string? initialValue)
-    {
-        var parameters = new DialogParameters<InputTextDialog>
-        {
-            { x => x.Placeholder, _localizer["Enter the new file name here"] },
-            { x => x.Label, _localizer["New file name"] },
-            { x => x.InitialValue, initialValue }
-        };
-        var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true, CloseButton = true };
-        var dialog = await _dialogService.ShowAsync<InputTextDialog>(_localizer["Change file name"], parameters, options);
-        var result = await dialog.Result;
-        var newFileName = result?.Data as string;
-        if ((result?.Canceled == false) && (String.IsNullOrEmpty(newFileName) == false))
-        {
-            return newFileName;
-        }
-        else
-        {
-            return null;
-        }
-    }
-
     async Task FileRenameClicked(Audiofile audiofile)
     {
-        var newFileName = await ShowInputDialog(audiofile.Name);
-        if (String.IsNullOrEmpty(newFileName) == false)
+        var result = await _dialogManager.ShowInputDialogAsync<string?>(_localizer["Change file name"], _localizer["Enter the new file name here"], _localizer["New file name"], audiofile.Name);
+        if (result.IsSuccess)
         {
-            _audiofileManager.SetProperty(audiofile, x => x.Name, newFileName);
+            if (String.IsNullOrEmpty(result.Value) == false)
+            {
+                _audiofileManager.SetProperty(audiofile, x => x.Name, result.Value);
+            }
         }
     }
 
@@ -123,5 +100,18 @@ along with Foobar.  If not, see
             SelectedFiles.Remove(audiofile);
         }
         SelectedFilesChanged.InvokeAsync(SelectedFiles);
+    }
+
+    async Task FileUploaded(IBrowserFile? browserFile, Audiofile audiofile)
+    {
+        if (browserFile != null)
+        {
+            await _audiofileManager.SetPropertiesAsync(audiofile, browserFile);
+        }
+    }
+
+    String GetFileName(Audiofile audiofile)
+    {
+        return String.IsNullOrEmpty(audiofile.Name) ? _localizer["No file uploaded!"] : audiofile.Name;
     }
 }

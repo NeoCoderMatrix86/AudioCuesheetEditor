@@ -1,0 +1,100 @@
+﻿<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@typeparam T
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<InputDialog<T>> _localizer
+@inject HotKeys _hotKeys
+
+<MudDialog>
+    <DialogContent>
+        @if (IsNumericType)
+        {
+            <MudNumericField T="T" @bind-Value="_value" Label="@Label" Placeholder="@Placeholder" Variant="Variant.Outlined" Immediate OnKeyDown="OnKeyDown" />
+        }
+        else
+        {
+            <MudTextField T="T" @bind-Value="_value" Label="@Label" Placeholder="@Placeholder" Variant="Variant.Outlined" Immediate OnKeyDown="OnKeyDown" />
+        }
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="CloseDialogOk" StartIcon="@OkButtonStartIcon">@OkText</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    HotKeysContext? _hotKeysContext;
+    T? _value;
+
+    [Parameter]
+    public T? InitialValue { get; set; }
+
+    [Parameter]
+    public string? Label { get; set; }
+
+    [Parameter]
+    public string? Placeholder { get; set; }
+
+    [Parameter]
+    public string? OkText { get; set; }
+
+    [Parameter]
+    public string? OkButtonStartIcon { get; set; }
+
+    [CascadingParameter]
+    private IMudDialogInstance? MudDialog { get; set; }
+
+    bool IsNumericType => typeof(T) == typeof(short) || typeof(T) == typeof(ushort) || typeof(T) == typeof(int) || typeof(T) == typeof(uint) || typeof(T) == typeof(long) 
+                       || typeof(T) == typeof(ulong) || typeof(T) == typeof(float) || typeof(T) == typeof(double) || typeof(T) == typeof(decimal);
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _hotKeysContext = _hotKeys.CreateContext().Add(ModKey.None, Key.Enter, CloseDialogOk);
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        _value = InitialValue;
+        if (String.IsNullOrEmpty(OkText))
+        {
+            OkText = _localizer["Ok"];
+        }
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        _hotKeysContext?.DisposeAsync();
+    }
+
+    void OnKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter")
+        {
+            //Use a timer to close the dialog after a short delay to ensure that the keyboard event is fully processed before closing the dialog.
+            new System.Threading.Timer(CloseDialogOk, null, 0, 10);
+        }
+    }
+
+    void CloseDialogOk(object? state = null)
+    {
+        MudDialog?.Close(_value);
+    }
+}

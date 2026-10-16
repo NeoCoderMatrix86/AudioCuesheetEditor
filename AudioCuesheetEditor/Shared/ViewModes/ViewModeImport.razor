@@ -19,12 +19,12 @@ along with Foobar.  If not, see
 
 @inject IStringLocalizer<ViewModeImport> _localizer
 @inject ImportManager _importManager
-@inject DialogManager _dialogManager
+@inject IDialogManager _dialogManager
 @inject ISessionStateContainer _sessionStateContainer
 
 @if (IsAnalyzed == false)
 {
-    <TextField Placeholder="@_localizer["Please enter text or upload a file for import"]" Text="@importText" TextChanged="ImportTextChanged" />
+    <TextField Placeholder="@_localizer["Please enter text or upload a file for import"]" Text="@_importText" TextChanged="ImportTextChanged" />
     <Importprofiles />
     <MudFab Color="Color.Primary" Style="position:fixed; right:16px; bottom:16px; z-index:2000;" Label="@_localizer["Analyze"]" EndIcon="@Icons.Material.Outlined.NavigateNext"
             OnClick="Analyze" />
@@ -40,9 +40,9 @@ else
                 OnClick="ImportData" />
     </MudHidden>
     <MudHidden Breakpoint="Breakpoint.MdAndUp">
-        <MudMenu @bind-Open="fapMenuOpened" Style="position:fixed; left:16px; bottom:72px; z-index:2000;">
+        <MudMenu @bind-Open="_fapMenuOpened" Style="position:fixed; left:16px; bottom:72px; z-index:2000;">
             <ActivatorContent>
-                <MudFab Color="Color.Primary" Style="position:fixed; left:16px; bottom:16px; z-index:2000;" EndIcon="@Icons.Material.Outlined.Add" OnClick="() => fapMenuOpened = !fapMenuOpened" />
+                <MudFab Color="Color.Primary" Style="position:fixed; left:16px; bottom:16px; z-index:2000;" EndIcon="@Icons.Material.Outlined.Add" OnClick="() => _fapMenuOpened = !_fapMenuOpened" />
             </ActivatorContent>
             <ChildContent>
                 <MudMenuItem IconColor="Color.Warning" Label="@_localizer["Back"]" Icon="@Icons.Material.Outlined.ArrowBack" OnClick="ResetAsync" />
@@ -53,8 +53,8 @@ else
 }
 
 @code {
-    string? importText;
-    Boolean fapMenuOpened = false;
+    string? _importText;
+    Boolean _fapMenuOpened = false;
 
     public Boolean IsAnalyzed
     {
@@ -77,8 +77,8 @@ else
 
     void ImportTextChanged(string? newImportText)
     {
-        importText = newImportText;
-        _importManager.ImportData(importText);
+        _importText = newImportText;
+        _importManager.ImportData(_importText);
     }
 
     async Task Analyze()
@@ -86,24 +86,22 @@ else
         await _dialogManager.ShowLoadingDialogAsync();
         try
         {
-            await AnalyseImportfile();
+            IsAnalyzed = await AnalyseImportfile();
         }
         finally
         {
             _dialogManager.HideLoadingDialog();
         }
-        // Switch to analyzed data
-        IsAnalyzed = true;
     }
 
-    async Task AnalyseImportfile()
+    async Task<Boolean> AnalyseImportfile()
     {
-        await _importManager.AnalyseImportfile();
+        return await _importManager.AnalyseImportfile();
     }
 
-    void ImportData()
+    async Task ImportData()
     {
-        _importManager.ImportCuesheet();
+        await _importManager.ImportCuesheetAsync();
         ResetAsync();
         // Don't await since otherwise the rendering will stop and this view will not be reset
         _ = LocalStorageOptionsProvider.SaveOptionsValueAsync<ViewOptions>(x => x.ActiveTab, ViewMode.DetailView);
@@ -125,7 +123,7 @@ else
         {
             if (_sessionStateContainer.Importfile?.FileType == ImportFileType.Textfile)
             {
-                importText = _sessionStateContainer.Importfile.FileContent;
+                _importText = _sessionStateContainer.Importfile.FileContent;
                 StateHasChanged();
             }
         });

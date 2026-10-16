@@ -1,36 +1,28 @@
 ﻿window.addEventListener('beforeunload', beforeunload);
 
-window._audioObjectURLCache = {};
-window.getObjectURLFromMudFileUpload = function (inputOrFieldId) {
-    if (window._audioObjectURLCache[inputOrFieldId]) {
-        return window._audioObjectURLCache[inputOrFieldId];
-    }
+window.getObjectURLFromMudFileUpload = function (fileName, fileSize, fileContentType, fileLastModified) {
+    const inputElement = document.querySelector(`input.file-upload`);
 
-    let inputElem = inputOrFieldId;
-    if (typeof inputOrFieldId === "string") {
-        inputElem = document.getElementById(inputOrFieldId) ||
-            document.querySelector(`input[identifier="${inputOrFieldId}"]`) ||
-            document.querySelector(`input[id="${inputOrFieldId}"]`);
-    }
-
-    const files = inputElem.files;
+    const files = inputElement.files;
     for (let i = 0; i < files.length; i++) {
-        const f = files[i];
-        if (f && f.type && f.type.startsWith("audio/")) {
-            const newObjectURL = URL.createObjectURL(f);
-            window._audioObjectURLCache[inputOrFieldId] = newObjectURL;
-            return newObjectURL;
+        const file = files[i];
+
+        if (file &&
+            file.type &&
+            file.type.startsWith("audio/") &&
+            file.name === fileName &&
+            file.size === fileSize &&
+            file.type === fileContentType &&
+            file.lastModified === fileLastModified) {
+
+            return URL.createObjectURL(file);
         }
     }
+
     return null;
 };
 
 window.revokeAudioObjectURL = function (objectUrl) {
-    Object.keys(window._audioObjectURLCache).forEach(key => {
-        if (window._audioObjectURLCache[key] === objectUrl) {
-            delete window._audioObjectURLCache[key];
-        }
-    });
     URL.revokeObjectURL(objectUrl);
 };
 
