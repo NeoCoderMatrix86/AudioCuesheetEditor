@@ -75,5 +75,13 @@ namespace AudioCuesheetEditor.End2EndTests.Models
             await MenuButton.ClickAsync();
             await _page.GetByText("Hotkeys").ClickAsync();
         }
+
+        internal async Task ResetCuesheetAsync()
+        {
+            await MenuButton.ClickAsync();
+            await _page.GetByRole(AriaRole.Menuitem, new() { Name = "Reset" }).ClickAsync();
+            await _page.GetByText("Reset cuesheet").ClickAsync();
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Yes" }).ClickAsync();
+        }
     }
 }

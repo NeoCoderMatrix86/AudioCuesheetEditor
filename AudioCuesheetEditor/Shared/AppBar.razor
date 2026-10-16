@@ -82,8 +82,8 @@ along with Foobar.  If not, see
         @if (DisplayReset)
         {
             <MudMenu Label="@_localizer["Reset"]">
-                <MudMenuItem Icon="@Icons.Material.Outlined.NotStarted" OnClick="ResetCuesheetClicked">@_localizer["Reset cuesheet"]</MudMenuItem>
-                <MudMenuItem Icon="@Icons.Material.Outlined.RestartAlt" OnClick="ResetApplicationClicked">@_localizer["Reset application"]</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Outlined.NotStarted" OnClick="ResetCuesheetClicked" aria-label="Reset cuesheet">@_localizer["Reset cuesheet"]</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Outlined.RestartAlt" OnClick="ResetApplicationClicked" aria-label="Reset application">@_localizer["Reset application"]</MudMenuItem>
             </MudMenu>
         }
     </MudMenu>

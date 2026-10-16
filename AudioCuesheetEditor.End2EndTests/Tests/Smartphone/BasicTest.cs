@@ -64,6 +64,18 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
         }
 
         [TestMethod]
+        public async Task ResetCuesheet_ShouldResetAllCuesheetReferences_WhenResettingCuesheetAsync()
+        {
+            var bar = new AppBar(TestPage);
+            var detailView = new DetailView(TestPage);
+            await detailView.GotoAsync();
+            await detailView.AddAudiofileAsync();
+            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
+            await bar.ResetCuesheetAsync();
+            await Expect(TestPage.GetByRole(AriaRole.Tabpanel, new() { Name = "Detail view" })).ToMatchAriaSnapshotAsync("- group:\n  - paragraph: \"--:--:--\"\n  - slider \"Playback slider\" [disabled]: \"0\"\n  - paragraph: \"--:--:--\"\n- group:\n  - button \"Play\" [disabled]\n  - group:\n    - button \"Jump to previous track\" [disabled]\n    - button \"Stop the current playback\" [disabled]\n    - button \"Jump to next track\" [disabled]");
+        }
+
+        [TestMethod]
         public async Task ChangeLanguage_ShouldSwitchLanguage_WhenGermanIsSelected()
         {
             var bar = new AppBar(TestPage);

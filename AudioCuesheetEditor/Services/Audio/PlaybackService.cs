@@ -92,6 +92,7 @@ namespace AudioCuesheetEditor.Services.Audio
         void SessionStateContainer_CuesheetChanged(object? sender, EventArgs e)
         {
             _ = StopAsync();
+            CurrentPositionChanged?.Invoke();
         }
 
         public async Task PlayOrPauseAsync()
