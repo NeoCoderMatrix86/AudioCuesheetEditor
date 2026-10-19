@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -61,10 +61,10 @@ public class FileInputManager(IJSRuntime jsRuntime, ILogger<FileInputManager> lo
         {
             if (string.IsNullOrEmpty(fileContentType) == false)
             {
-                if (mimeType.EndsWith("/*"))
+                if (mimeType.EndsWith("/*", StringComparison.OrdinalIgnoreCase))
                 {
                     var mainType = mimeType[..^1];
-                    fileMimeTypeMatches = fileContentType.StartsWith(mainType, StringComparison.CurrentCultureIgnoreCase);
+                    fileMimeTypeMatches = fileContentType.StartsWith(mainType, StringComparison.OrdinalIgnoreCase);
                 }
                 else
                 {

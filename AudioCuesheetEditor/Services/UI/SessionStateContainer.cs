@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ public class SessionStateContainer : ISessionStateContainer, IDisposable
     public IList<Audiofile> ImportAudiofiles { get; set; } = [];
     public Dictionary<Audiofile, Audiofile?> ImportAudiofileMapping { get; set; } = [];
     public IImportfile? Importfile { get; set; }
-    public bool ImportIsAnalyzed { get; set; } = false;
+    public bool ImportIsAnalyzed { get; set; }
 
     /// <inheritdoc/>
     public async Task InitializeAsync()
