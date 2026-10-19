@@ -16,11 +16,10 @@
 using AudioCuesheetEditor.Model.Options;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
 
 namespace AudioCuesheetEditor.Tests.Utility;
 
-class TestHelper
+sealed class TestHelper
 {
     public ApplicationOptions ApplicationOptions { get; private set; } = new();
     public static ILogger<T> CreateLogger<T>()
