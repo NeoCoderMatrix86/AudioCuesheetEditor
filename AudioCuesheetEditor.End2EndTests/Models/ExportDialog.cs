@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.End2EndTests.Models;
 
-class ExportDialog(IPage page)
+sealed class ExportDialog(IPage page)
 {
     readonly IPage _page = page;
 

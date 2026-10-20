@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@ using Microsoft.Playwright;
 
 namespace AudioCuesheetEditor.End2EndTests.Models;
 
-class DetailView(IPage page)
+sealed class DetailView(IPage page)
 {
     internal const string BaseUrl = "http://localhost:5132/";
 

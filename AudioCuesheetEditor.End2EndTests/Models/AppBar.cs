@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@ using Microsoft.Playwright;
 
 namespace AudioCuesheetEditor.End2EndTests.Models;
 
-partial class AppBar(IPage page)
+sealed class AppBar(IPage page)
 {
     readonly IPage _page = page;
     internal ILocator MenuButton => _page.GetByRole(AriaRole.Toolbar).GetByRole(AriaRole.Button, new() { Name = "More" });
