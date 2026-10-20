@@ -166,7 +166,7 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         {
             UseRegularExpression = true,
             SchemeCuesheet = @"(?'Artist'\A.*)[|](?'Title'\w{1,})\t{1,}(?'CDTextfile'[^\r\n]+)",
-            SchemeTracks = @"(?'Position'\d{1,})[|](?'Artist'.{1,}) - (?'Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'End'.{1,})"
+            SchemeTracks = @"(?'Position'\d{1,})[|](?'Artist'.{1,}) - (?'Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'Finish'.{1,})"
         };
         var options = new ImportOptions
         {
@@ -206,8 +206,8 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         var profile = new Importprofile()
         {
             UseRegularExpression = false,
-            SchemeCuesheet = @"Artist|Title	CDTextfile",
-            SchemeTracks = @"Position|Artist - Title	End"
+            SchemeCuesheet = @$"{nameof(Cuesheet.Artist)}|{nameof(Cuesheet.Title)}	{nameof(Cuesheet.CDTextfile)}",
+            SchemeTracks = @$"{nameof(Track.Position)}|{nameof(Track.Artist)} - {nameof(Track.Title)}	{nameof(Track.Finish)}"
         };
         var options = new ImportOptions
         {
@@ -299,7 +299,7 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         {
             UseRegularExpression = true,
             SchemeCuesheet = @"(?'Artist'\A.*)[|](?'Title'\w{1,})\t{1,}(?'CDTextfile'[a-zA-Z0-9_ .();äöü&:,\\]{1,})\t{1,}(?'Cataloguenumber'[^\r\n]+)",
-            SchemeTracks = @"(?'Position'.{1,})[|](?'Artist'.{1,}) - (?'Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'End'.{1,})"
+            SchemeTracks = @"(?'Position'.{1,})[|](?'Artist'.{1,}) - (?'Title'[a-zA-Z0-9_ ]{1,})\t{1,}(?'Finish'.{1,})"
         };
         var options = new ImportOptions
         {
