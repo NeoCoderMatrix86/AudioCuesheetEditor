@@ -27,6 +27,8 @@ using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.Services.IO;
 
+readonly record struct CapturedText(string Name, int Index,int Length, string Value);
+
 public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsProvider) : ITextImportService
 {
     readonly ILocalStorageOptionsProvider _localStorageOptionsProvider = localStorageOptionsProvider;
@@ -64,33 +66,32 @@ public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsP
         return regex.Replace(input, match =>
         {
             var result = match.Value;
-            //TODO: Consider using a more efficient data structure to store group information
-            var groupInfos = new List<(int RelIndex, int Length, string Value, string Key)>();
+            var capturedTexts = new List<CapturedText>();
             for (var matchCounter = 1; matchCounter < match.Groups.Count; matchCounter++)
             {
                 var group = match.Groups[matchCounter];
-                var key = regex.GroupNameFromNumber(matchCounter);
-                if (!string.IsNullOrEmpty(key) && key != matchCounter.ToString())
+                var groupName = regex.GroupNameFromNumber(matchCounter);
+                if (!string.IsNullOrEmpty(groupName) && groupName != matchCounter.ToString())
                 {
-                    var property = entity.GetType().GetProperty(key, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                    var property = entity.GetType().GetProperty(groupName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                     if (property != null)
                     {
                         SetValue(entity, property, group.Value, timeSpanFormat);
                     }
-                    var relIndex = group.Index - match.Index;
-                    groupInfos.Add((relIndex, group.Length, group.Value, key));
+                    var relativeIndex = group.Index - match.Index;
+                    capturedTexts.Add(new CapturedText(groupName, relativeIndex, group.Length, group.Value));
                 }
             }
-            if (groupInfos.Count == 0)
+            if (capturedTexts.Count == 0)
             {
                 return result;
             }
-            groupInfos.Sort((a, b) => b.RelIndex.CompareTo(a.RelIndex));
+            capturedTexts.Sort((a, b) => b.Index.CompareTo(a.Index));
             var sb = new StringBuilder(result);
-            foreach (var (RelIndex, Length, Value, Key) in groupInfos)
+            foreach (var capturedText in capturedTexts)
             {
-                _ = sb.Remove(RelIndex, Length);
-                _ = sb.Insert(RelIndex, CuesheetConstants.GetMarkedText(Value));
+                _ = sb.Remove(capturedText.Index, capturedText.Length);
+                _ = sb.Insert(capturedText.Index, CuesheetConstants.GetMarkedText(capturedText.Value));
             }
             return sb.ToString();
         });
