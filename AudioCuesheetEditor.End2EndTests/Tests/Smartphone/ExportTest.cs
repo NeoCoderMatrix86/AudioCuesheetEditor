@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -16,34 +16,34 @@
 using AudioCuesheetEditor.End2EndTests.Models;
 using Microsoft.Playwright;
 
-namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
-{
-    [TestClass]
-    public class ExportTest : PlaywrightTestBase
-    {
-        protected override string? DeviceName => "iPhone 13";
+namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone;
 
-        [TestMethod]
-        public async Task DownloadCuesheet_GeneratesCuesheetFile_WhenCuesheetIsValid()
-        {
-            var bar = new AppBar(TestPage);
-            var detailView = new DetailView(TestPage);
-            await detailView.GotoAsync();
-            await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
-            await detailView.CuesheetTitleInput.FillAsync("Cuesheet Title 1");
-            await detailView.AddAudiofileAsync();
-            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
-            await detailView.AddTrackAsync(0);
-            await detailView.EditTrackAsync("Track Artist 1", "Track Title 1");
-            await bar.OpenExportDialogAsync("Cuesheet");
-            var downloadTask = TestPage.WaitForDownloadAsync();
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Download" }).ClickAsync();
-            var download = await downloadTask;
-            using var stream = await download.CreateReadStreamAsync();
-            using var reader = new StreamReader(stream);
-            var content = await reader.ReadToEndAsync(TestContext.CancellationToken);
-            content = content.Replace("\n", Environment.NewLine);
-            Assert.AreEqual(@"TITLE ""Cuesheet Title 1""
+[TestClass]
+public class ExportTest : PlaywrightTestBase
+{
+    protected override string? DeviceName => "iPhone 13";
+
+    [TestMethod]
+    public async Task DownloadCuesheet_GeneratesCuesheetFile_WhenCuesheetIsValid()
+    {
+        var bar = new AppBar(TestPage);
+        var detailView = new DetailView(TestPage);
+        await detailView.GotoAsync();
+        await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
+        await detailView.CuesheetTitleInput.FillAsync("Cuesheet Title 1");
+        await detailView.AddAudiofileAsync();
+        await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
+        await detailView.AddTrackAsync(0);
+        await detailView.EditTrackAsync("Track Artist 1", "Track Title 1");
+        await bar.OpenExportDialogAsync("Cuesheet");
+        var downloadTask = TestPage.WaitForDownloadAsync();
+        await TestPage.GetByRole(AriaRole.Button, new() { Name = "Download" }).ClickAsync();
+        var download = await downloadTask;
+        using var stream = await download.CreateReadStreamAsync();
+        using var reader = new StreamReader(stream);
+        var content = await reader.ReadToEndAsync(TestContext.CancellationToken);
+        content = content.Replace("\n", Environment.NewLine);
+        Assert.AreEqual(@"TITLE ""Cuesheet Title 1""
 PERFORMER ""Cuesheet Artist 1""
 FILE ""Kalimba.mp3"" MP3
 	TRACK 01 AUDIO
@@ -51,84 +51,84 @@ FILE ""Kalimba.mp3"" MP3
 		PERFORMER ""Track Artist 1""
 		INDEX 01 00:00:00
 ", content);
-        }
+    }
 
-        [TestMethod]
-        public async Task DownloadProject_GeneratesProjectFile_WhenCuesheetIsValidAsync()
-        {
-            var bar = new AppBar(TestPage);
-            var detailView = new DetailView(TestPage);
-            await detailView.GotoAsync();
-            await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
-            await detailView.CuesheetTitleInput.FillAsync("Cuesheet Title 1");
-            await detailView.AddAudiofileAsync();
-            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
-            await detailView.AddTrackAsync(0);
-            await detailView.EditTrackAsync("Track Artist 1", "Track Title 1");
-            await bar.OpenExportDialogAsync("Projectfile");
-            var downloadTask = TestPage.WaitForDownloadAsync();
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Download project" }).ClickAsync();
-            var download = await downloadTask;
-            using var stream = await download.CreateReadStreamAsync();
-            using var reader = new StreamReader(stream);
-            var content = await reader.ReadToEndAsync(TestContext.CancellationToken);
-            Assert.AreEqual("{\"Artist\":\"Cuesheet Artist 1\",\"Title\":\"Cuesheet Title 1\",\"Audiofiles\":[{\"Name\":\"Kalimba.mp3\",\"Duration\":\"00:05:48.0608330\",\"AudioCodec\":{\"MimeType\":\"audio/mpeg\",\"FileExtension\":\".mp3\",\"Name\":\"AudioCodec MP3\"},\"Tracks\":[{\"Position\":1,\"Artist\":\"Track Artist 1\",\"Title\":\"Track Title 1\",\"Begin\":\"00:00:00\",\"End\":\"00:05:48.0608330\",\"Flags\":[],\"IsLinkedToPreviousTrack\":true}]}]}", content);
-        }
+    [TestMethod]
+    public async Task DownloadProject_GeneratesProjectFile_WhenCuesheetIsValidAsync()
+    {
+        var bar = new AppBar(TestPage);
+        var detailView = new DetailView(TestPage);
+        await detailView.GotoAsync();
+        await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
+        await detailView.CuesheetTitleInput.FillAsync("Cuesheet Title 1");
+        await detailView.AddAudiofileAsync();
+        await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
+        await detailView.AddTrackAsync(0);
+        await detailView.EditTrackAsync("Track Artist 1", "Track Title 1");
+        await bar.OpenExportDialogAsync("Projectfile");
+        var downloadTask = TestPage.WaitForDownloadAsync();
+        await TestPage.GetByRole(AriaRole.Button, new() { Name = "Download project" }).ClickAsync();
+        var download = await downloadTask;
+        using var stream = await download.CreateReadStreamAsync();
+        using var reader = new StreamReader(stream);
+        var content = await reader.ReadToEndAsync(TestContext.CancellationToken);
+        Assert.AreEqual("{\"Artist\":\"Cuesheet Artist 1\",\"Title\":\"Cuesheet Title 1\",\"Audiofiles\":[{\"Name\":\"Kalimba.mp3\",\"Duration\":\"00:05:48.0608330\",\"AudioCodec\":{\"MimeType\":\"audio/mpeg\",\"FileExtension\":\".mp3\",\"Name\":\"AudioCodec MP3\"},\"Tracks\":[{\"Position\":1,\"Artist\":\"Track Artist 1\",\"Title\":\"Track Title 1\",\"Begin\":\"00:00:00\",\"Finish\":\"00:05:48.0608330\",\"Flags\":[],\"IsLinkedToPreviousTrack\":true}]}]}", content);
+    }
 
-        [TestMethod]
-        public async Task DownloadText_GeneratesTextFile_WhenCuesheetIsValidAsync()
-        {
-            var bar = new AppBar(TestPage);
-            var detailView = new DetailView(TestPage);
-            await detailView.GotoAsync();
-            await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
-            await detailView.CuesheetTitleInput.FillAsync("Cuesheet Title 1");
-            await detailView.AddAudiofileAsync();
-            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
-            await detailView.AddTrackAsync(0);
-            await detailView.AddTrackAsync(0);
-            await detailView.AddTrackAsync(0);
-            await detailView.AddTrackAsync(0);
-            await detailView.AddTrackAsync(0);
-            await detailView.AddTrackAsync(0);
-            await detailView.AddTrackAsync(0);
-            await detailView.AddTrackAsync(0);
-            await detailView.AddTrackAsync(0);
-            await detailView.AddTrackAsync(0);
-            await detailView.AddTrackAsync(0);
-            await detailView.AddTrackAsync(0);
-            await detailView.AddTrackAsync(0);
-            await detailView.AddTrackAsync(0);
-            await detailView.AddTrackAsync(0);
-            await detailView.AddTrackAsync(0);
-            await detailView.EditTrackAsync("Track Artist 1", "Track Title 1", TimeSpan.Zero, new TimeSpan(0, 0, 10), 1);
-            await detailView.EditTrackAsync("Track Artist 2", "Track Title 2", new TimeSpan(0, 0, 10), new TimeSpan(0, 0, 20), 2);
-            await detailView.EditTrackAsync("Track Artist 3", "Track Title 3", new TimeSpan(0, 0, 20), new TimeSpan(0, 0, 30), 3);
-            await detailView.EditTrackAsync("Track Artist 4", "Track Title 4", new TimeSpan(0, 0, 30), new TimeSpan(0, 0, 40), 4);
-            await detailView.EditTrackAsync("Track Artist 5", "Track Title 5", new TimeSpan(0, 0, 40), new TimeSpan(0, 0, 50), 5);
-            await detailView.EditTrackAsync("Track Artist 6", "Track Title 6", new TimeSpan(0, 0, 50), new TimeSpan(0, 1, 0), 6);
-            await detailView.EditTrackAsync("Track Artist 7", "Track Title 7", new TimeSpan(0, 1, 0), new TimeSpan(0, 1, 10), 7);
-            await detailView.EditTrackAsync("Track Artist 8", "Track Title 8", new TimeSpan(0, 1, 10), new TimeSpan(0, 1, 20), 8);
-            await detailView.EditTrackAsync("Track Artist 9", "Track Title 9", new TimeSpan(0, 1, 20), new TimeSpan(0, 1, 30), 9);
-            await detailView.EditTrackAsync("Track Artist 10", "Track Title 10", new TimeSpan(0, 1, 30), new TimeSpan(0, 1, 40), 10);
-            await detailView.EditTrackAsync("Track Artist 11", "Track Title 11", new TimeSpan(0, 1, 40), new TimeSpan(0, 1, 50), 11);
-            await detailView.EditTrackAsync("Track Artist 12", "Track Title 12", new TimeSpan(0, 1, 50), new TimeSpan(0, 2, 0), 12);
-            await detailView.EditTrackAsync("Track Artist 13", "Track Title 13", new TimeSpan(0, 2, 0), new TimeSpan(0, 2, 10), 13);
-            await detailView.EditTrackAsync("Track Artist 14", "Track Title 14", new TimeSpan(0, 2, 10), new TimeSpan(0, 2, 20), 14);
-            await detailView.EditTrackAsync("Track Artist 15", "Track Title 15", new TimeSpan(0, 2, 20), new TimeSpan(0, 2, 30), 15);
-            await detailView.EditTrackAsync("Track Artist 16", "Track Title 16", new TimeSpan(0, 2, 30), null, 16);
-            await bar.OpenExportDialogAsync("Textfile");
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Generate export" }).ClickAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Button, new() { Name = "Download" })).ToBeVisibleAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Button, new() { Name = "Copy to clipboard" })).ToBeVisibleAsync();
-            var downloadTask = TestPage.WaitForDownloadAsync();
-            await TestPage.GetByRole(AriaRole.Button, new() { Name = "Download" }).ClickAsync();
-            var download = await downloadTask;
-            using var stream = await download.CreateReadStreamAsync();
-            using var reader = new StreamReader(stream);
-            var content = await reader.ReadToEndAsync(TestContext.CancellationToken);
-            content = content.Replace("\n", Environment.NewLine);
-            Assert.AreEqual(@"Cuesheet Artist 1 - Cuesheet Title 1
+    [TestMethod]
+    public async Task DownloadText_GeneratesTextFile_WhenCuesheetIsValidAsync()
+    {
+        var bar = new AppBar(TestPage);
+        var detailView = new DetailView(TestPage);
+        await detailView.GotoAsync();
+        await detailView.CuesheetArtistInput.FillAsync("Cuesheet Artist 1");
+        await detailView.CuesheetTitleInput.FillAsync("Cuesheet Title 1");
+        await detailView.AddAudiofileAsync();
+        await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
+        await detailView.AddTrackAsync(0);
+        await detailView.AddTrackAsync(0);
+        await detailView.AddTrackAsync(0);
+        await detailView.AddTrackAsync(0);
+        await detailView.AddTrackAsync(0);
+        await detailView.AddTrackAsync(0);
+        await detailView.AddTrackAsync(0);
+        await detailView.AddTrackAsync(0);
+        await detailView.AddTrackAsync(0);
+        await detailView.AddTrackAsync(0);
+        await detailView.AddTrackAsync(0);
+        await detailView.AddTrackAsync(0);
+        await detailView.AddTrackAsync(0);
+        await detailView.AddTrackAsync(0);
+        await detailView.AddTrackAsync(0);
+        await detailView.AddTrackAsync(0);
+        await detailView.EditTrackAsync("Track Artist 1", "Track Title 1", TimeSpan.Zero, new TimeSpan(0, 0, 10), 1);
+        await detailView.EditTrackAsync("Track Artist 2", "Track Title 2", new TimeSpan(0, 0, 10), new TimeSpan(0, 0, 20), 2);
+        await detailView.EditTrackAsync("Track Artist 3", "Track Title 3", new TimeSpan(0, 0, 20), new TimeSpan(0, 0, 30), 3);
+        await detailView.EditTrackAsync("Track Artist 4", "Track Title 4", new TimeSpan(0, 0, 30), new TimeSpan(0, 0, 40), 4);
+        await detailView.EditTrackAsync("Track Artist 5", "Track Title 5", new TimeSpan(0, 0, 40), new TimeSpan(0, 0, 50), 5);
+        await detailView.EditTrackAsync("Track Artist 6", "Track Title 6", new TimeSpan(0, 0, 50), new TimeSpan(0, 1, 0), 6);
+        await detailView.EditTrackAsync("Track Artist 7", "Track Title 7", new TimeSpan(0, 1, 0), new TimeSpan(0, 1, 10), 7);
+        await detailView.EditTrackAsync("Track Artist 8", "Track Title 8", new TimeSpan(0, 1, 10), new TimeSpan(0, 1, 20), 8);
+        await detailView.EditTrackAsync("Track Artist 9", "Track Title 9", new TimeSpan(0, 1, 20), new TimeSpan(0, 1, 30), 9);
+        await detailView.EditTrackAsync("Track Artist 10", "Track Title 10", new TimeSpan(0, 1, 30), new TimeSpan(0, 1, 40), 10);
+        await detailView.EditTrackAsync("Track Artist 11", "Track Title 11", new TimeSpan(0, 1, 40), new TimeSpan(0, 1, 50), 11);
+        await detailView.EditTrackAsync("Track Artist 12", "Track Title 12", new TimeSpan(0, 1, 50), new TimeSpan(0, 2, 0), 12);
+        await detailView.EditTrackAsync("Track Artist 13", "Track Title 13", new TimeSpan(0, 2, 0), new TimeSpan(0, 2, 10), 13);
+        await detailView.EditTrackAsync("Track Artist 14", "Track Title 14", new TimeSpan(0, 2, 10), new TimeSpan(0, 2, 20), 14);
+        await detailView.EditTrackAsync("Track Artist 15", "Track Title 15", new TimeSpan(0, 2, 20), new TimeSpan(0, 2, 30), 15);
+        await detailView.EditTrackAsync("Track Artist 16", "Track Title 16", new TimeSpan(0, 2, 30), null, 16);
+        await bar.OpenExportDialogAsync("Textfile");
+        await TestPage.GetByRole(AriaRole.Button, new() { Name = "Generate export" }).ClickAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Button, new() { Name = "Download" })).ToBeVisibleAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Button, new() { Name = "Copy to clipboard" })).ToBeVisibleAsync();
+        var downloadTask = TestPage.WaitForDownloadAsync();
+        await TestPage.GetByRole(AriaRole.Button, new() { Name = "Download" }).ClickAsync();
+        var download = await downloadTask;
+        using var stream = await download.CreateReadStreamAsync();
+        using var reader = new StreamReader(stream);
+        var content = await reader.ReadToEndAsync(TestContext.CancellationToken);
+        content = content.Replace("\n", Environment.NewLine);
+        Assert.AreEqual(@"Cuesheet Artist 1 - Cuesheet Title 1
 
 Track Artist 1 - Track Title 1 00:00:00
 Track Artist 2 - Track Title 2 00:00:10
@@ -148,6 +148,5 @@ Track Artist 15 - Track Title 15 00:02:20
 Track Artist 16 - Track Title 16 00:02:30
 
 ", content);
-        }
     }
 }

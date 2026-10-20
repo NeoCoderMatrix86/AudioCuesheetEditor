@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -17,60 +17,59 @@ using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO.Import;
 using System.Text.Json.Serialization;
 
-namespace AudioCuesheetEditor.Model.Options
+namespace AudioCuesheetEditor.Model.Options;
+
+public class ImportOptions : IOptions
 {
-    public class ImportOptions : IOptions
+    public static readonly Importprofile DefaultSelectedImportprofile = new()
     {
-        public static readonly Importprofile DefaultSelectedImportprofile = new()
+        Name = "Textfile (common data in first line)",
+        UseRegularExpression = false,
+        SchemeCuesheet = $"{nameof(ImportCuesheet.Artist)} - {nameof(ImportCuesheet.Title)}",
+        SchemeAudiofiles = $"- {nameof(ImportAudiofile.Name)}",
+        SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.Finish)}"
+    };
+
+    public static readonly ICollection<Importprofile> DefaultImportprofiles =
+    [
+        DefaultSelectedImportprofile,
+        new()
         {
-            Name = "Textfile (common data in first line)",
+            Name = "Textfile (just track data)",
             UseRegularExpression = false,
-            SchemeCuesheet = $"{nameof(ImportCuesheet.Artist)} - {nameof(ImportCuesheet.Title)}",
-            SchemeAudiofiles = $"- {nameof(ImportAudiofile.Name)}",
-            SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.End)}"
-        };
-
-        public static readonly ICollection<Importprofile> DefaultImportprofiles =
-        [
-            DefaultSelectedImportprofile,
-            new()
-            {
-                Name = "Textfile (just track data)",
-                UseRegularExpression = false,
-                SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.End)}"
-            },
-            new()
-            {
-                Name = "Textfile (track data seperated by ~)",
-                UseRegularExpression = false,
-                SchemeTracks = $"{nameof(ImportTrack.Artist)}~{nameof(ImportTrack.Title)}~{nameof(ImportTrack.StartDateTime)}"
-            },
-            new()
-            {
-                Name = "Traktor history",
-                UseRegularExpression = true,
-                SchemeTracks = @$"<tr>\s*<td>(?<{nameof(ImportTrack.Position)}>\d+)</td>\s*<td>(?<{nameof(ImportTrack.Artist)}>.*?)</td>\s*<td>(?<{nameof(ImportTrack.Title)}>.*?)</td>\s*<td>(?<{nameof(ImportTrack.StartDateTime)}>.*?)</td>\s*</tr>"
-            }
-        ];
-
-        [JsonInclude]
-        public Guid? SelectedImportProfileId { get; private set; } = DefaultSelectedImportprofile.Id;
-        public ICollection<Importprofile> ImportProfiles { get; set; } = DefaultImportprofiles;
-        [JsonIgnore]
-        public Importprofile? SelectedImportProfile
+            SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.Finish)}"
+        },
+        new()
         {
-            get => SelectedImportProfileId.HasValue ? ImportProfiles.FirstOrDefault(x => x.Id == SelectedImportProfileId) : null;
-            set
+            Name = "Textfile (track data seperated by ~)",
+            UseRegularExpression = false,
+            SchemeTracks = $"{nameof(ImportTrack.Artist)}~{nameof(ImportTrack.Title)}~{nameof(ImportTrack.StartDateTime)}"
+        },
+        new()
+        {
+            Name = "Traktor history",
+            UseRegularExpression = true,
+            SchemeTracks = @$"<tr>\s*<td>(?<{nameof(ImportTrack.Position)}>\d+)</td>\s*<td>(?<{nameof(ImportTrack.Artist)}>.*?)</td>\s*<td>(?<{nameof(ImportTrack.Title)}>.*?)</td>\s*<td>(?<{nameof(ImportTrack.StartDateTime)}>.*?)</td>\s*</tr>"
+        }
+    ];
+
+    [JsonInclude]
+    public Guid? SelectedImportProfileId { get; private set; } = DefaultSelectedImportprofile.Id;
+    public ICollection<Importprofile> ImportProfiles { get; set; } = DefaultImportprofiles;
+    [JsonIgnore]
+    public Importprofile? SelectedImportProfile
+    {
+        get => SelectedImportProfileId.HasValue ? ImportProfiles.FirstOrDefault(x => x.Id == SelectedImportProfileId) : null;
+        set
+        {
+            if (ImportProfiles.Any(x => x.Id == value?.Id) == false)
             {
-                if (ImportProfiles.Any(x => x.Id == value?.Id) == false)
+                if (value != null)
                 {
-                    if (value != null)
-                    {
-                        ImportProfiles.Add(value);
-                    }
+                    ImportProfiles.Add(value);
                 }
-                SelectedImportProfileId = value?.Id;
             }
+            SelectedImportProfileId = value?.Id;
         }
     }
 }

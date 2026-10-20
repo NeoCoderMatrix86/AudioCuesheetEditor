@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -13,117 +13,127 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-namespace AudioCuesheetEditor.Services
+namespace AudioCuesheetEditor.Services;
+
+/// <summary>
+/// Defines types of errors
+/// </summary>
+public enum ErrorType
 {
     /// <summary>
-    /// Defines types of errors
+    /// Validation failed with error
     /// </summary>
-    public enum ErrorType
+    ValidationFailed,
+    /// <summary>
+    /// Resource already exists
+    /// </summary>
+    AlreadyDone,
+    /// <summary>
+    /// Current action is not possible
+    /// </summary>
+    NotPossible,
+    /// <summary>
+    /// Action was aborted
+    /// </summary>
+    Aborted,
+}
+
+/// <summary>
+/// Represents failure of a service
+/// </summary>
+public class FailureDetails(ErrorType type, string message)
+{
+    /// <summary>
+    /// Type of error
+    /// </summary>
+    public ErrorType Type { get; } = type;
+    /// <summary>
+    /// The error message
+    /// </summary>
+    public string Message { get; } = message;
+}
+
+
+/// <summary>
+/// Indicates a service result.
+/// </summary>
+public class Result
+{
+    /// <summary>
+    /// Indicates whether the operation was successful.
+    /// </summary>
+    public bool IsSuccess { get; }
+
+    /// <summary>
+    /// Contains the failure details if the operation failed.
+    /// </summary>
+    public FailureDetails? FailureDetails { get; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Result"/> class.
+    /// </summary>
+    protected Result()
     {
-        /// <summary>
-        /// Validation failed with error
-        /// </summary>
-        ValidationFailed,
-        /// <summary>
-        /// Resource already exists
-        /// </summary>
-        AlreadyDone,
-        /// <summary>
-        /// Current action is not possible
-        /// </summary>
-        NotPossible,
-        /// <summary>
-        /// Action was aborted
-        /// </summary>
-        Aborted,
+        IsSuccess = true;
     }
 
     /// <summary>
-    /// Represents an error of an service
+    /// Initializes a new instance of the <see cref="Result"/> class with an error.
     /// </summary>
-    public class Error(ErrorType type, string message)
+    /// <param name="failureDetails"></param>
+    protected Result(FailureDetails failureDetails)
     {
-        /// <summary>
-        /// Type of error
-        /// </summary>
-        public ErrorType Type { get; } = type;
-        /// <summary>
-        /// The error message
-        /// </summary>
-        public string Message { get; } = message;
+        IsSuccess = false;
+        FailureDetails = failureDetails;
     }
 
     /// <summary>
-    /// Indicates a service result
+    /// Creates a successful result without a value.
     /// </summary>
-    public class Result
-    {
-        /// <summary>
-        /// Indicates if the result was successful
-        /// </summary>
-        public bool IsSuccess { get; }
-        /// <summary>
-        /// The error if one occurred
-        /// </summary>
-        public Error? Error { get; }
-
-        /// <summary>
-        /// Private constructor
-        /// </summary>
-        protected Result()
-        {
-            IsSuccess = true;
-        }
-
-        /// <summary>
-        /// Private constructor
-        /// </summary>
-        protected Result(Error error)
-        {
-            IsSuccess = false;
-            Error = error;
-        }
-        /// <summary>
-        /// Creates a success result
-        /// </summary>
-        /// <returns></returns>
-        public static Result Success() => new();
-        /// <summary>
-        /// Creates a failure result
-        /// </summary>
-        /// <param name="error"></param>
-        /// <returns></returns>
-        public static Result Failure(Error error) => new(error);
-    }
+    public static Result Success() => new();
 
     /// <summary>
-    /// Represent the result of a service
+    /// Creates a successful result containing a value.
     /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public class Result<T> : Result
+    public static Result<T> Success<T>(T value) => new(value);
+
+    /// <summary>
+    /// Creates a failed result.
+    /// </summary>
+    public static FailureResult Failure(FailureDetails error) => new(error);
+}
+
+/// <summary>
+/// Represents a failed result before conversion to a specific result type.
+/// </summary>
+public sealed class FailureResult : Result
+{
+    internal FailureResult(FailureDetails error) : base(error) { }
+}
+
+/// <summary>
+/// Represents a service result containing a value.
+/// </summary>
+/// <typeparam name="T">The type of the result value.</typeparam>
+public class Result<T> : Result
+{
+    /// <summary>
+    /// Gets the result value.
+    /// </summary>
+    public T? Value { get; }
+
+    internal Result(T value)
     {
-        /// <summary>
-        /// The result value
-        /// </summary>
-        public T? Value { get; }
+        Value = value;
+    }
 
-        private Result(T value) : base()
-        {
-            Value = value;
-        }
+    Result(FailureDetails error) : base(error) { }
 
-        private Result(Error error) : base(error) { }
-        /// <summary>
-        /// Creates a success result
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public static Result<T> Success(T value) => new(value);
-        /// <summary>
-        /// Creates a failure result
-        /// </summary>
-        /// <param name="error"></param>
-        /// <returns></returns>
-        public static new Result<T> Failure(Error error) => new(error);
+    /// <summary>
+    /// Converts a failed result to a typed failed result.
+    /// </summary>
+    public static implicit operator Result<T>(FailureResult failure)
+    {
+        return new Result<T>(failure.FailureDetails ?? throw new InvalidOperationException("A failed result requires failure details."));
     }
 }

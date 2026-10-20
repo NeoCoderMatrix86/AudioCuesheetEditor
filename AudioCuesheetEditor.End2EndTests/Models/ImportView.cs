@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -16,112 +16,93 @@
 using Microsoft.Playwright;
 using System.Text.RegularExpressions;
 
-namespace AudioCuesheetEditor.End2EndTests.Models
+namespace AudioCuesheetEditor.End2EndTests.Models;
+
+sealed partial class ImportView(IPage page, bool mobile)
 {
-    partial class ImportView(IPage page, bool mobile)
+    [GeneratedRegex("^Scheme common data$")]
+    private static partial Regex SchemeCommonData();
+
+    [GeneratedRegex("^Scheme audiofiles$")]
+    private static partial Regex SchemeAudiofiles();
+
+    internal const string BaseUrl = "http://localhost:5132/";
+
+    readonly IPage _page = page;
+    readonly bool _isMobile = mobile;
+
+    internal ILocator CuesheetArtistInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet artist" });
+
+    internal ILocator CuesheetTitleInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" });
+
+    internal ILocator CatalogueNumberInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cataloguenumber" });
+
+    internal async Task GotoAsync()
     {
-        [GeneratedRegex("^Scheme common data$")]
-        private static partial Regex SchemeCommonData();
+        _ = await _page.GotoAsync(BaseUrl);
+        await _page.WaitForURLAsync(BaseUrl);
+        await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        _ = await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
+        await _page.GetByText("Import view").ClickAsync();
+    }
 
-        [GeneratedRegex("^Scheme audiofiles$")]
-        private static partial Regex SchemeAudiofiles();
+    internal async Task ImportFileAsync(string filepath) => await _page.GetByLabel("TextField file upload").SetInputFilesAsync(filepath);
 
-        internal const string BaseUrl = "http://localhost:5132/";
+    internal async Task ImportTextAsync(string text) => await _page.GetByRole(AriaRole.Textbox, new() { Name = "Please enter text or upload a" }).FillAsync(text);
 
-        private readonly IPage _page = page;
-        private readonly bool _isMobile = mobile;
+    internal async Task Analyze() => await _page.GetByRole(AriaRole.Button, new() { Name = "Analyze" }).ClickAsync();
 
-        internal ILocator CuesheetArtistInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet artist" });
-
-        internal ILocator CuesheetTitleInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cuesheet title" });
-
-        internal ILocator CatalogueNumberInput => _page.GetByRole(AriaRole.Textbox, new() { Name = "Cataloguenumber" });
-
-        internal async Task GotoAsync()
+    internal async Task CompleteImportAsync()
+    {
+        if (_isMobile)
         {
-            await _page.GotoAsync(BaseUrl);
-            await _page.WaitForURLAsync(BaseUrl);
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-            await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
-            await _page.GetByText("Import view").ClickAsync();
+            await _page.Locator(".mud-button-root.mud-fab").ClickAsync();
+            await _page.GetByText("Import data").ClickAsync();
         }
-
-        internal async Task ImportFileAsync(string filepath)
+        else
         {
-            await _page.GetByLabel("TextField file upload").SetInputFilesAsync(filepath);
+            await _page.GetByRole(AriaRole.Button, new() { Name = "Import data" }).ClickAsync();
         }
+    }
 
-        internal async Task ImportTextAsync(string text)
+    internal async Task SelectTracksAsync(IEnumerable<int> trackTablePositions, bool uncheck = false)
+    {
+        foreach (var trackTablePosition in trackTablePositions)
         {
-            await _page.GetByRole(AriaRole.Textbox, new() { Name = "Please enter text or upload a" }).FillAsync(text);
-        }
-
-        internal async Task Analyze()
-        {
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Analyze" }).ClickAsync();
-        }
-
-        internal async Task CompleteImportAsync()
-        {
-            if (_isMobile)
+            if (uncheck)
             {
-                await _page.Locator(".mud-button-root.mud-fab").ClickAsync();
-                await _page.GetByText("Import data").ClickAsync();
+                await _page.Locator($"tr:nth-child({trackTablePosition + 1}) > td").First.GetByRole(AriaRole.Checkbox).UncheckAsync();
             }
             else
             {
-                await _page.GetByRole(AriaRole.Button, new() { Name = "Import data" }).ClickAsync();
+                await _page.Locator($"tr:nth-child({trackTablePosition + 1}) > td").First.GetByRole(AriaRole.Checkbox).CheckAsync();
             }
         }
+    }
 
-        internal async Task SelectTracksAsync(IEnumerable<int> trackTablePositions, Boolean uncheck = false)
-        {
-            foreach (var trackTablePosition in trackTablePositions)
-            {
-                if (uncheck)
-                {
-                    await _page.Locator($"tr:nth-child({trackTablePosition + 1}) > td").First.GetByRole(AriaRole.Checkbox).UncheckAsync();
-                }
-                else
-                {
-                    await _page.Locator($"tr:nth-child({trackTablePosition + 1}) > td").First.GetByRole(AriaRole.Checkbox).CheckAsync();
-                }
-            }
-        }
+    internal async Task EditTracksModalAsync(string title)
+    {
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Edit selected tracks" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Combobox, new() { Name = "Title" }).FillAsync(title);
+        await _page.GetByRole(AriaRole.Combobox, new() { Name = "Title" }).PressAsync("Tab");
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Save changes" }).ClickAsync();
+    }
 
-        internal async Task EditTracksModalAsync(string title)
-        {
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Edit selected tracks" }).ClickAsync();
-            await _page.GetByRole(AriaRole.Combobox, new() { Name = "Title" }).FillAsync(title);
-            await _page.GetByRole(AriaRole.Combobox, new() { Name = "Title" }).PressAsync("Tab");
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Save changes" }).ClickAsync();
-        }
+    internal async Task SwitchImportProfileAsync(string profile)
+    {
+        await _page.GetByText("Textfile (common data in").ClickAsync();
+        await _page.GetByText(profile).ClickAsync();
+    }
 
-        internal async Task SwitchImportProfileAsync(string profile)
-        {
-            await _page.GetByText("Textfile (common data in").ClickAsync();
-            await _page.GetByText(profile).ClickAsync();
-        }
+    internal async Task ClearSchemeCommonDataAsync() => await _page.Locator("div").Filter(new() { HasTextRegex = SchemeCommonData() }).GetByLabel("Clear").ClickAsync();
 
-        internal async Task ClearSchemeCommonDataAsync()
-        {
-            await _page.Locator("div").Filter(new() { HasTextRegex = SchemeCommonData() }).GetByLabel("Clear").ClickAsync();
-        }
+    internal async Task ClearSchemeAudiofilesAsync() => await _page.Locator("div").Filter(new() { HasTextRegex = SchemeAudiofiles() }).GetByLabel("Clear").ClickAsync();
 
-        internal async Task ClearSchemeAudiofilesAsync()
-        {
-            await _page.Locator("div").Filter(new() { HasTextRegex = SchemeAudiofiles() }).GetByLabel("Clear").ClickAsync();
-        }
+    internal async Task SetSchemeCommonDataAsync(string schemeCommonData) => await _page.GetByRole(AriaRole.Textbox, new() { Name = "Scheme common data" }).FillAsync(schemeCommonData);
 
-        internal async Task SetSchemeCommonDataAsync(string schemeCommonData)
-        {
-            await _page.GetByRole(AriaRole.Textbox, new() { Name = "Scheme common data" }).FillAsync(schemeCommonData);
-        }
-
-        internal async Task SelectSchemeCommonDataPlaceholderAsync(string placeholder)
-        {
-            await _page.Locator("div").Filter(new() { HasTextRegex = SchemeCommonData() }).GetByRole(AriaRole.Button).Nth(1).ClickAsync();
-            await _page.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = placeholder }).ClickAsync();
-        }
+    internal async Task SelectSchemeCommonDataPlaceholderAsync(string placeholder)
+    {
+        await _page.Locator("div").Filter(new() { HasTextRegex = SchemeCommonData() }).GetByRole(AriaRole.Button).Nth(1).ClickAsync();
+        await _page.GetByRole(AriaRole.Paragraph).Filter(new() { HasText = placeholder }).ClickAsync();
     }
 }

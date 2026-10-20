@@ -1,4 +1,4 @@
-﻿<!--
+<!--
 This file is part of AudioCuesheetEditor.
 
 AudioCuesheetEditor is free software: you can redistribute it and/or modify
@@ -120,9 +120,9 @@ along with Foobar.  If not, see
                     </MudSelect>
                 </MudItem>
                 <MudItem xs="8" sm="9">
-                    <MudTextField Label="@_localizer["End"]" Variant="Variant.Outlined" Value="@EditedTrack.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.End, value)" 
-                                  Disabled="editModeTrackEnd == DynamicEditValue.DoNotChange" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editModeTrackEnd != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.End)))"
-                                  ErrorText="@GetValidationErrorMessage(editModeTrackEnd != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.End))" />
+                    <MudTextField Label="@_localizer["End"]" Variant="Variant.Outlined" Value="@EditedTrack.Finish.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Finish, value)" 
+                                  Disabled="editModeTrackEnd == DynamicEditValue.DoNotChange" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(editModeTrackEnd != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.Finish)))"
+                                  ErrorText="@GetValidationErrorMessage(editModeTrackEnd != DynamicEditValue.DoNotChange, EditedTrack, nameof(Track.Finish))" />
                 </MudItem>
                 <MudFlexBreak />
                 <MudItem xs="4" sm="3">

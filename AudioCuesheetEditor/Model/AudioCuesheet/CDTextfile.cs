@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -15,35 +15,33 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.IO;
 
-namespace AudioCuesheetEditor.Model.AudioCuesheet
+namespace AudioCuesheetEditor.Model.AudioCuesheet;
+
+public class CDTextfile
 {
-    public class CDTextfile
+    public CDTextfile(string name)
     {
-        private string name;
-        public CDTextfile(String name)
+        if (string.IsNullOrEmpty(name))
         {
-            if (String.IsNullOrEmpty(name))
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-            this.name = name;
+            throw new ArgumentNullException(nameof(name));
         }
-        public String Name 
+        Name = name;
+    }
+    public string Name 
+    {
+        get;
+        set
         {
-            get => name;
-            set
+            if (string.IsNullOrEmpty(value))
             {
-                if (String.IsNullOrEmpty(value))
-                {
-                    throw new ArgumentNullException(nameof(value));
-                }
-                var extension = Path.GetExtension(value);
-                if (extension.Equals(FileExtensions.CDTextfile, StringComparison.CurrentCultureIgnoreCase) == false)
-                {
-                    value = $"{value}{FileExtensions.CDTextfile}";
-                }
-                name = value;
+                throw new ArgumentNullException(nameof(value));
             }
+            var extension = Path.GetExtension(value);
+            if (extension.Equals(FileExtensions.CDTextfile, StringComparison.OrdinalIgnoreCase) == false)
+            {
+                value = $"{value}{FileExtensions.CDTextfile}";
+            }
+            field = value;
         }
     }
 }

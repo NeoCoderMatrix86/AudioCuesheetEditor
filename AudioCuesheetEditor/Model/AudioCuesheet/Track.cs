@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -17,157 +17,156 @@ using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Audio;
 using System.Text.Json.Serialization;
 
-namespace AudioCuesheetEditor.Model.AudioCuesheet
+namespace AudioCuesheetEditor.Model.AudioCuesheet;
+
+public class Track : Validateable, ITrack
 {
-    public class Track : Validateable, ITrack
+    public ushort? Position { get; set; }
+    public string? Artist { get; set; }
+    public string? Title { get; set; }
+    public TimeSpan? Begin { get; set; }        
+    public TimeSpan? Finish { get; set; }
+    [JsonIgnore]
+    public TimeSpan? Length 
     {
-        public ushort? Position { get; set; }
-        public String? Artist { get; set; }
-        public String? Title { get; set; }
-        public TimeSpan? Begin { get; set; }        
-        public TimeSpan? End { get; set; }
-        [JsonIgnore]
-        public TimeSpan? Length 
+        get
         {
-            get
+            if ((Begin.HasValue == true) && (Finish.HasValue == true) && (Begin.Value <= Finish.Value))
             {
-                if ((Begin.HasValue == true) && (End.HasValue == true) && (Begin.Value <= End.Value))
-                {
-                    return End - Begin;
-                }
-                else
-                {
-                    return null;
-                }
+                return Finish - Begin;
             }
-            set
+            else
             {
-                if ((Begin.HasValue == false) && (End.HasValue == false))
+                return null;
+            }
+        }
+        set
+        {
+            if ((Begin.HasValue == false) && (Finish.HasValue == false))
+            {
+                Finish = value;
+            }
+            else
+            {
+                if ((Begin.HasValue == true) && (Finish.HasValue == true))
                 {
-                    End = value;
+                    Finish = Begin.Value + value;
                 }
                 else
                 {
-                    if ((Begin.HasValue == true) && (End.HasValue == true))
+                    if ((Finish.HasValue == false) && (Begin.HasValue))
                     {
-                        End = Begin.Value + value;
+                        Finish = Begin.Value + value;
                     }
-                    else
+                    if ((Begin.HasValue == false) && (Finish.HasValue))
                     {
-                        if ((End.HasValue == false) && (Begin.HasValue))
-                        {
-                            End = Begin.Value + value;
-                        }
-                        if ((Begin.HasValue == false) && (End.HasValue))
-                        {
-                            Begin = End.Value - value;
-                        }
+                        Begin = Finish.Value - value;
                     }
                 }
             }
         }
-        [JsonIgnore]
-        public Cuesheet? Cuesheet { get; set; }
-        [JsonInclude]
-        public IEnumerable<Flag> Flags { get; set; } = [];
-        /// <inheritdoc/>
-        public TimeSpan? PreGap { get; set;  }
-        /// <inheritdoc/>
-        public TimeSpan? PostGap { get; set; }
-        /// <summary>
-        /// Set that this track is linked to the previous track in cuesheet
-        /// </summary>
-        public Boolean IsLinkedToPreviousTrack { get; set; }
-        [JsonIgnore]
-        public Audiofile? Audiofile { get; set; }
+    }
+    [JsonIgnore]
+    public Cuesheet? Cuesheet { get; set; }
+    [JsonInclude]
+    public IEnumerable<Flag> Flags { get; set; } = [];
+    /// <inheritdoc/>
+    public TimeSpan? PreGap { get; set;  }
+    /// <inheritdoc/>
+    public TimeSpan? PostGap { get; set; }
+    /// <summary>
+    /// Set that this track is linked to the previous track in cuesheet
+    /// </summary>
+    public bool IsLinkedToPreviousTrack { get; set; }
+    [JsonIgnore]
+    public Audiofile? Audiofile { get; set; }
 
-        public override ValidationResult Validate(string property)
+    public override ValidationResult Validate(string propertyName)
+    {
+        var validationStatus = ValidationStatus.NoValidation;
+        List<ValidationMessage>? validationMessages = null;
+        switch (propertyName)
         {
-            ValidationStatus validationStatus = ValidationStatus.NoValidation;
-            List<ValidationMessage>? validationMessages = null;
-            switch (property)
-            {
-                case nameof(Position):
-                    validationStatus = ValidationStatus.Success;
-                    if (Position == null)
+            case nameof(Position):
+                validationStatus = ValidationStatus.Success;
+                if (Position == null)
+                {
+                    validationMessages ??= [];
+                    validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Position)));
+                }
+                else
+                {
+                    if (Position == 0)
                     {
                         validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Position)));
+                        validationMessages.Add(new ValidationMessage("{0} may not be 0!", nameof(Position)));
                     }
                     else
                     {
-                        if (Position == 0)
+                        // Check correct track position
+                        if (Cuesheet != null)
                         {
-                            validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} may not be 0!", nameof(Position)));
-                        }
-                        else
-                        {
-                            // Check correct track position
-                            if (Cuesheet != null)
+                            var positionTrackShouldHave = Cuesheet.Audiofiles.SelectMany(x => x.Tracks).OrderBy(x => x.Begin ?? TimeSpan.MaxValue).ThenBy(x => x.Position).ToList().IndexOf(this) + 1;
+                            if (positionTrackShouldHave != Position)
                             {
-                                var positionTrackShouldHave = Cuesheet.Audiofiles.SelectMany(x => x.Tracks).OrderBy(x => x.Begin ?? TimeSpan.MaxValue).ThenBy(x => x.Position).ToList().IndexOf(this) + 1;
-                                if (positionTrackShouldHave != Position)
-                                {
-                                    validationMessages ??= [];
-                                    validationMessages.Add(new ValidationMessage("Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!", Position, Artist ?? String.Empty, Title ?? String.Empty, Begin != null ? Begin : String.Empty, End != null ? End : String.Empty, positionTrackShouldHave));
-                                }
+                                validationMessages ??= [];
+                                validationMessages.Add(new ValidationMessage("Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!", Position, Artist ?? string.Empty, Title ?? string.Empty, Begin != null ? Begin : string.Empty, Finish != null ? Finish : string.Empty, positionTrackShouldHave));
                             }
                         }
                     }
-                    break;
-                case nameof(Begin):
-                    validationStatus = ValidationStatus.Success;
-                    if (Begin == null)
+                }
+                break;
+            case nameof(Begin):
+                validationStatus = ValidationStatus.Success;
+                if (Begin == null)
+                {
+                    validationMessages ??= [];
+                    validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Begin)));
+                }
+                else
+                {
+                    if (Begin < TimeSpan.Zero)
                     {
                         validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Begin)));
+                        validationMessages.Add(new ValidationMessage("{0} must be equal or greater zero!", nameof(Begin)));
                     }
-                    else
-                    {
-                        if (Begin < TimeSpan.Zero)
-                        {
-                            validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} must be equal or greater zero!", nameof(Begin)));
-                        }
-                        if (Begin > End)
-                        {
-                            validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} should be less than or equal '{1}'!", nameof(Begin), nameof(End)));
-                        }
-                    }
-                    break;
-                case nameof(End):
-                    validationStatus = ValidationStatus.Success;
-                    if (End == null)
+                    if (Begin > Finish)
                     {
                         validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(End)));
+                        validationMessages.Add(new ValidationMessage("{0} should be less than or equal '{1}'!", nameof(Begin), nameof(Finish)));
                     }
-                    else
-                    {
-                        if (End < TimeSpan.Zero)
-                        {
-                            validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} must be equal or greater zero!", nameof(End)));
-                        }
-                        if (End < Begin)
-                        {
-                            validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} should be greater than or equal '{1}'!", nameof(End), nameof(Begin)));
-                        }
-                    }
-                    break;
-                case nameof(Length):
-                    validationStatus = ValidationStatus.Success;
-                    if (Length == null)
+                }
+                break;
+            case nameof(Finish):
+                validationStatus = ValidationStatus.Success;
+                if (Finish == null)
+                {
+                    validationMessages ??= [];
+                    validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Finish)));
+                }
+                else
+                {
+                    if (Finish < TimeSpan.Zero)
                     {
                         validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Length)));
+                        validationMessages.Add(new ValidationMessage("{0} must be equal or greater zero!", nameof(Finish)));
                     }
-                    break;
-            }
-            return ValidationResult.Create(validationStatus, validationMessages);
+                    if (Finish < Begin)
+                    {
+                        validationMessages ??= [];
+                        validationMessages.Add(new ValidationMessage("{0} should be greater than or equal '{1}'!", nameof(Finish), nameof(Begin)));
+                    }
+                }
+                break;
+            case nameof(Length):
+                validationStatus = ValidationStatus.Success;
+                if (Length == null)
+                {
+                    validationMessages ??= [];
+                    validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Length)));
+                }
+                break;
         }
+        return ValidationResult.Create(validationStatus, validationMessages);
     }
 }

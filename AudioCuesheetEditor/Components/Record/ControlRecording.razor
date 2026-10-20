@@ -1,4 +1,4 @@
-﻿<!--
+<!--
 This file is part of AudioCuesheetEditor.
 
 AudioCuesheetEditor is free software: you can redistribute it and/or modify
@@ -100,7 +100,7 @@ along with Foobar.  If not, see
         var result = _cuesheetManager.IsRecordingPossible;
         if (result.IsSuccess == false)
         {
-            _errorMessage = result.Error!.Message;
+            _errorMessage = result.FailureDetails!.Message;
         }
     }
 
@@ -135,7 +135,7 @@ along with Foobar.  If not, see
         }
         else
         {
-            _errorMessage = result.Error!.Message;
+            _errorMessage = result.FailureDetails!.Message;
         }
     }
 
@@ -169,7 +169,7 @@ along with Foobar.  If not, see
         var result = _cuesheetManager.IsRecordingPossible;
         if (result.IsSuccess == false)
         {
-            _errorMessage = result.Error!.Message;
+            _errorMessage = result.FailureDetails!.Message;
         }
     }
 }

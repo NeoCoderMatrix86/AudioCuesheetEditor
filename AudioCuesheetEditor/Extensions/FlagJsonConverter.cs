@@ -17,29 +17,28 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AudioCuesheetEditor.Extensions
-{
-    public class FlagJsonConverter : JsonConverter<Flag>
-    {
-        public override Flag? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-        {
-            var json = reader.GetString();
-            if (string.IsNullOrEmpty(json) == false)
-            {
-                return Flag.AvailableFlags.Single(x => x.CuesheetLabel.Equals(json));
-            }
-            else
-            {
-                return null;
-            }
-        }
+namespace AudioCuesheetEditor.Extensions;
 
-        public override void Write(Utf8JsonWriter writer, Flag value, JsonSerializerOptions options)
+public class FlagJsonConverter : JsonConverter<Flag>
+{
+    public override Flag? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        var json = reader.GetString();
+        if (string.IsNullOrEmpty(json) == false)
         {
-            if ((value != null) && (String.IsNullOrEmpty(value.CuesheetLabel) == false))
-            {
-                writer.WriteStringValue(value.CuesheetLabel);
-            }
+            return Flag.AvailableFlags.Single(x => x.CuesheetLabel.Equals(json, StringComparison.Ordinal));
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    public override void Write(Utf8JsonWriter writer, Flag value, JsonSerializerOptions options)
+    {
+        if ((value != null) && (string.IsNullOrEmpty(value.CuesheetLabel) == false))
+        {
+            writer.WriteStringValue(value.CuesheetLabel);
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿<!--
+<!--
 This file is part of AudioCuesheetEditor.
 
 AudioCuesheetEditor is free software: you can redistribute it and/or modify
@@ -79,13 +79,13 @@ along with Foobar.  If not, see
                                   Validation="(string? newBegin) => _validationService.Validate(context.Item, nameof(Track.Begin))" Style="width: 55px;" />
                 </EditTemplate>
             </PropertyColumn>
-            <PropertyColumn Property="x => x.End" Title="@_localizer["End"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
+            <PropertyColumn Property="x => x.Finish" Title="@_localizer["End"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
                 <CellTemplate>
-                    @_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.End)
+                    @_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Finish)
                 </CellTemplate>
                 <EditTemplate>
-                    <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.End)" ValueChanged="(string value) => TimespanChanged(context.Item, x => x.End, value)"
-                                  Validation="(string? newEnd) => _validationService.Validate(context.Item, nameof(Track.End))" Style="width: 55px;" />
+                    <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Finish)" ValueChanged="(string value) => TimespanChanged(context.Item, x => x.Finish, value)"
+                                  Validation="(string? newEnd) => _validationService.Validate(context.Item, nameof(Track.Finish))" Style="width: 55px;" />
                 </EditTemplate>
             </PropertyColumn>
             <PropertyColumn Property="x => x.Length" Title="@_localizer["Length"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
@@ -213,8 +213,8 @@ along with Foobar.  If not, see
         {
             var copy = _trackManager.Clone(trackThatWillBeCopied);
             copy.Position = (ushort?)(trackThatWillBeCopied.Position + 1);
-            copy.Begin = trackThatWillBeCopied.End;
-            copy.End = null;
+            copy.Begin = trackThatWillBeCopied.Finish;
+            copy.Finish = null;
             _audiofileManager.AddTrack(Audiofile, copy);
             await EditTrackModalClicked(copy);
         }

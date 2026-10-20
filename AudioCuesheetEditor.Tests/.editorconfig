@@ -1,0 +1,3 @@
+[*.cs]
+# Underscore used in Testnames is best practise
+dotnet_diagnostic.CA1707.severity = none

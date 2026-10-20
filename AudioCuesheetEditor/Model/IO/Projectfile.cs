@@ -18,49 +18,48 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace AudioCuesheetEditor.Model.IO
+namespace AudioCuesheetEditor.Model.IO;
+
+public class Projectfile(Cuesheet cuesheet)
 {
-    public class Projectfile(Cuesheet cuesheet)
+    public static readonly string DefaultFilename = "Project.ace";
+
+    public static readonly JsonSerializerOptions Options = new()
     {
-        public static readonly String DefaultFilename = "Project.ace";
-
-        public static readonly JsonSerializerOptions Options = new()
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        ReferenceHandler = ReferenceHandler.IgnoreCycles,
+        Converters =
         {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            ReferenceHandler = ReferenceHandler.IgnoreCycles,
-            Converters =
-            {
-                new JsonStringEnumConverter()
-            }
-        };
+            new JsonStringEnumConverter()
+        }
+    };
 
-        public static Cuesheet? ImportFile(string fileContent)
+    public static Cuesheet? ImportFile(string fileContent)
+    {
+        var cuesheet = JsonSerializer.Deserialize<Cuesheet>(fileContent, Options);
+        if (cuesheet != null)
         {
-            var cuesheet = JsonSerializer.Deserialize<Cuesheet>(fileContent, Options);
-            if (cuesheet != null)
+            foreach (var audiofile in cuesheet.Audiofiles)
             {
-                foreach (var audiofile in cuesheet.Audiofiles)
+                foreach (var track in audiofile.Tracks)
                 {
-                    foreach (var track in audiofile.Tracks)
-                    {
-                        track.Audiofile = audiofile;
-                        track.Cuesheet = cuesheet;
-                    }
+                    track.Audiofile = audiofile;
+                    track.Cuesheet = cuesheet;
                 }
             }
-            return cuesheet;
         }
+        return cuesheet;
+    }
 
-        public Cuesheet Cuesheet { get; private set; } = cuesheet;
+    public Cuesheet Cuesheet { get; private set; } = cuesheet;
 
-        /// <summary>
-        /// Generate a ProjectFile
-        /// </summary>
-        /// <returns>Byte array with project file content</returns>
-        public byte[] GenerateFile()
-        {
-            var json = JsonSerializer.Serialize(Cuesheet, Options);
-            return Encoding.UTF8.GetBytes(json);        
-        }
+    /// <summary>
+    /// Generate a ProjectFile
+    /// </summary>
+    /// <returns>Byte array with project file content</returns>
+    public byte[] GenerateFile()
+    {
+        var json = JsonSerializer.Serialize(Cuesheet, Options);
+        return Encoding.UTF8.GetBytes(json);        
     }
 }

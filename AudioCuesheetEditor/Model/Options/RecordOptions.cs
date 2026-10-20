@@ -13,10 +13,9 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-namespace AudioCuesheetEditor.Model.Options
+namespace AudioCuesheetEditor.Model.Options;
+
+public class RecordOptions : IOptions
 {
-    public class RecordOptions : IOptions
-    {
-        public uint RecordCountdownTimer { get; set; } = 5;
-    }
+    public uint RecordCountdownTimer { get; set; } = 5;
 }

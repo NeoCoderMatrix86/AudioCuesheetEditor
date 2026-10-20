@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -13,244 +13,243 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Components.Dialogs;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services.AudioCuesheet;
-using AudioCuesheetEditor.Shared.Dialogs;
 using MudBlazor;
 
-namespace AudioCuesheetEditor.Services.UI
+namespace AudioCuesheetEditor.Services.UI;
+
+public class DialogManager(IDialogService dialogService, ITraceChangeManager traceChangeManager, ITrackManager trackManager, ISessionStateContainer sessionStateContainer) : IDialogManager
 {
-    public class DialogManager(IDialogService dialogService, ITraceChangeManager traceChangeManager, ITrackManager trackManager, ISessionStateContainer sessionStateContainer) : IDialogManager
+    readonly IDialogService _dialogService = dialogService;
+    readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
+    readonly ITrackManager _trackManager = trackManager;
+    readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
+
+    IDialogReference? _loadingDialog;
+
+    public async Task ShowAndHandleModalEditDialogAsync(IEnumerable<Track> tracks)
     {
-        private readonly IDialogService _dialogService = dialogService;
-        private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
-        private readonly ITrackManager _trackManager = trackManager;
-        private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
-
-        private IDialogReference? _loadingDialog;
-
-        public async Task ShowAndHandleModalEditDialogAsync(IEnumerable<Track> tracks)
+        _traceChangeManager.BulkEdit = true;
+        if (tracks.Count() == 1)
         {
-            _traceChangeManager.BulkEdit = true;
-            if (tracks.Count() == 1)
-            {
-                var parameters = new DialogParameters<EditTrackModal> { { x => x.EditedTrack, _trackManager.Clone(tracks.First()) } };
-                var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true, CloseButton = true };
-                var dialog = await _dialogService.ShowAsync<EditTrackModal>(null, parameters, options);
-                var result = await dialog.Result;
-                if ((result?.Canceled == false) && (result.Data is Track editedTrack))
-                {
-                    _trackManager.CopyValues(editedTrack, tracks.First());
-                    _trackManager.RecalculateLinkedTracksProperties(tracks.First());
-                }
-            }
-            if (tracks.Count() > 1)
-            {
-                var parameters = new DialogParameters<EditMultipleTracksModal> { { x => x.EditedTrack, new() } };
-                var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true, CloseButton = true };
-                var dialog = await _dialogService.ShowAsync<EditMultipleTracksModal>(null, parameters, options);
-                var result = await dialog.Result;
-                if ((result?.Canceled == false) && (result.Data is EditMultipleTracksModalResult editMultipleTracksModalResult))
-                {
-                    foreach (var track in tracks)
-                    {
-                        var position = editMultipleTracksModalResult.EditedTrack.Position;
-                        var begin = editMultipleTracksModalResult.EditedTrack.Begin;
-                        var end = editMultipleTracksModalResult.EditedTrack.End;
-                        var length = editMultipleTracksModalResult.EditedTrack.Length;
-                        var preGap = editMultipleTracksModalResult.EditedTrack.PreGap;
-                        var postGap = editMultipleTracksModalResult.EditedTrack.PostGap;
-                        Boolean copyIsLinkedToPreviousTrack = editMultipleTracksModalResult.IsLinkedToPreviousTrackEditMode == DynamicEditValue.EnteredValueEquals;
-                        Boolean copyTrackArtist = editMultipleTracksModalResult.ArtistEditMode == DynamicEditValue.EnteredValueEquals;
-                        Boolean copyTrackTitle = editMultipleTracksModalResult.TitleEditMode == DynamicEditValue.EnteredValueEquals;
-                        Boolean copyTrackBegin = true;
-                        Boolean copyTrackEnd = true;
-                        Boolean copyTrackLength = true;
-                        Boolean copyTrackFlags = editMultipleTracksModalResult.FlagsEditMode == DynamicEditValue.EnteredValueEquals;
-                        Boolean copyTrackPreGap = true;
-                        Boolean copyTrackPostGap = true;
-                        //First process dynamic edit, because we need to increase each value separately
-                        switch (editMultipleTracksModalResult.BeginEditMode)
-                        {
-                            case DynamicEditValue.DoNotChange:
-                                copyTrackBegin = false;
-                                break;
-                            case DynamicEditValue.EnteredValueEquals:
-                                copyTrackBegin = true;
-                                break;
-                            case DynamicEditValue.EnteredValueAdd:
-                                var newValue = editMultipleTracksModalResult.EditedTrack.Begin + track.Begin;
-                                editMultipleTracksModalResult.EditedTrack.Begin = newValue;
-                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: copyTrackBegin, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false);
-                                copyTrackBegin = false;
-                                break;
-                            case DynamicEditValue.EnteredValueSubstract:
-                                newValue = track.Begin - editMultipleTracksModalResult.EditedTrack.Begin;
-                                editMultipleTracksModalResult.EditedTrack.Begin = newValue;
-                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: copyTrackBegin, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false);
-                                copyTrackBegin = false;
-                                break;
-                        }
-                        switch (editMultipleTracksModalResult.EndEditMode)
-                        {
-                            case DynamicEditValue.DoNotChange:
-                                copyTrackEnd = false;
-                                break;
-                            case DynamicEditValue.EnteredValueEquals:
-                                copyTrackEnd = true;
-                                break;
-                            case DynamicEditValue.EnteredValueAdd:
-                                var newValue = editMultipleTracksModalResult.EditedTrack.End + track.End;
-                                editMultipleTracksModalResult.EditedTrack.End = newValue;
-                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: copyTrackEnd, setLength: false, setFlags: false, setPreGap: false, setPostGap: false);
-                                copyTrackEnd = false;
-                                break;
-                            case DynamicEditValue.EnteredValueSubstract:
-                                newValue = track.End - editMultipleTracksModalResult.EditedTrack.End;
-                                editMultipleTracksModalResult.EditedTrack.End = newValue;
-                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: copyTrackEnd, setLength: false, setFlags: false, setPreGap: false, setPostGap: false);
-                                copyTrackEnd = false;
-                                break;
-                        }
-                        switch (editMultipleTracksModalResult.LengthEditMode)
-                        {
-                            case DynamicEditValue.DoNotChange:
-                                copyTrackLength = false;
-                                break;
-                            case DynamicEditValue.EnteredValueEquals:
-                                copyTrackLength = true;
-                                break;
-                            case DynamicEditValue.EnteredValueAdd:
-                                var newValue = editMultipleTracksModalResult.EditedTrack.Length + track.Length;
-                                editMultipleTracksModalResult.EditedTrack.Length = newValue;
-                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: copyTrackLength, setFlags: false, setPreGap: false, setPostGap: false);
-                                copyTrackLength = false;
-                                break;
-                            case DynamicEditValue.EnteredValueSubstract:
-                                newValue = track.Length - editMultipleTracksModalResult.EditedTrack.Length;
-                                editMultipleTracksModalResult.EditedTrack.Length = newValue;
-                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: copyTrackLength, setFlags: false, setPreGap: false, setPostGap: false);
-                                copyTrackLength = false;
-                                break;
-                        }
-                        switch (editMultipleTracksModalResult.PregapEditMode)
-                        {
-                            case DynamicEditValue.DoNotChange:
-                                copyTrackPreGap = false;
-                                break;
-                            case DynamicEditValue.EnteredValueEquals:
-                                copyTrackPreGap = true;
-                                break;
-                            case DynamicEditValue.EnteredValueAdd:
-                                var newValue = editMultipleTracksModalResult.EditedTrack.PreGap + track.PreGap;
-                                editMultipleTracksModalResult.EditedTrack.PreGap = newValue;
-                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: copyTrackPreGap, setPostGap: false);
-                                copyTrackPreGap = false;
-                                break;
-                            case DynamicEditValue.EnteredValueSubstract:
-                                newValue = track.PreGap - editMultipleTracksModalResult.EditedTrack.PreGap;
-                                editMultipleTracksModalResult.EditedTrack.PreGap = newValue;
-                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: copyTrackPreGap, setPostGap: false);
-                                copyTrackPreGap = false;
-                                break;
-                        }
-                        switch (editMultipleTracksModalResult.PostgapEditMode)
-                        {
-                            case DynamicEditValue.DoNotChange:
-                                copyTrackPostGap = false;
-                                break;
-                            case DynamicEditValue.EnteredValueEquals:
-                                copyTrackPostGap = true;
-                                break;
-                            case DynamicEditValue.EnteredValueAdd:
-                                var newValue = editMultipleTracksModalResult.EditedTrack.PostGap + track.PostGap;
-                                editMultipleTracksModalResult.EditedTrack.PostGap = newValue;
-                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: copyTrackPostGap);
-                                copyTrackPostGap = false;
-                                break;
-                            case DynamicEditValue.EnteredValueSubstract:
-                                newValue = track.PostGap - editMultipleTracksModalResult.EditedTrack.PostGap;
-                                editMultipleTracksModalResult.EditedTrack.PostGap = newValue;
-                                _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: copyTrackPostGap);
-                                copyTrackPostGap = false;
-                                break;
-                        }
-                        editMultipleTracksModalResult.EditedTrack.Position = position;
-                        editMultipleTracksModalResult.EditedTrack.Begin = begin;
-                        editMultipleTracksModalResult.EditedTrack.End = end;
-                        editMultipleTracksModalResult.EditedTrack.Length = length;
-                        editMultipleTracksModalResult.EditedTrack.PreGap = preGap;
-                        editMultipleTracksModalResult.EditedTrack.PostGap = postGap;
-                        //Now copy all values
-                        _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: copyIsLinkedToPreviousTrack, setPosition: false, setArtist: copyTrackArtist, setTitle: copyTrackTitle, setBegin: copyTrackBegin, setEnd: copyTrackEnd, setLength: copyTrackLength, setFlags: copyTrackFlags, setPreGap: copyTrackPreGap, setPostGap: copyTrackPostGap);
-                    }
-                }
-            }
-            _traceChangeManager.BulkEdit = false;
-        }
-
-        public async Task ShowLoadingDialogAsync()
-        {
-            if (_loadingDialog == null)
-            {
-                var options = new DialogOptions() { BackdropClick = false, FullWidth = true, MaxWidth = MaxWidth.ExtraSmall, NoHeader = true };
-                _loadingDialog = await _dialogService.ShowAsync<LoadingDialog>(options);
-                await Task.Delay(1);
-            }
-        }
-
-        public void HideLoadingDialog()
-        {
-            _loadingDialog?.Close();
-            _loadingDialog = null;
-        }
-
-        public async Task<Boolean> ShowImportAudiofilesDialogAsync()
-        {
-            var parameters = new DialogParameters<ImportAudiofilesDialog>
-            {
-                { x => x.MappedAudiofiles, _sessionStateContainer.ImportAudiofileMapping },
-                { x => x.ImportAudiofiles, _sessionStateContainer.ImportAudiofiles }
-            };
-            var options = new DialogOptions() { BackdropClick = false, FullWidth = true };
-            var dialog = await _dialogService.ShowAsync<ImportAudiofilesDialog>(null, parameters, options);
-            var result = await dialog.Result;
-            var canceled = result?.Canceled ?? true;
-            if (canceled == false)
-            {
-                if (result?.Data is Dictionary<Audiofile, Audiofile?> audiofileMapping)
-                {
-                    _sessionStateContainer.ImportAudiofileMapping = audiofileMapping;
-                }
-            }
-            return canceled;
-        }
-
-        /// <inheritdoc/>
-        public async Task<Result<T>> ShowInputDialogAsync<T>(string? title, string? placeholder, string? label, T initialValue, string? OkText = "Ok", string? OkButtonStartIcon = null)
-        {
-            var parameters = new DialogParameters<InputDialog<T>>
-            {
-                { x => x.Placeholder, placeholder },
-                { x => x.Label, label },
-                { x => x.InitialValue, initialValue },
-                { x => x.OkText, OkText },
-                { x => x.OkButtonStartIcon, OkButtonStartIcon }
-            };
+            var parameters = new DialogParameters<EditTrackModal> { { x => x.EditedTrack, _trackManager.Clone(tracks.First()) } };
             var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true, CloseButton = true };
-            var dialog = await _dialogService.ShowAsync<InputDialog<T>>(title, parameters, options);
+            var dialog = await _dialogService.ShowAsync<EditTrackModal>(null, parameters, options);
             var result = await dialog.Result;
-            if (result?.Canceled == false)
+            if ((result?.Canceled == false) && (result.Data is Track editedTrack))
             {
-                var value = (T)result.Data!;
-                return Result<T>.Success(value);
+                _trackManager.CopyValues(editedTrack, tracks.First());
+                _trackManager.RecalculateLinkedTracksProperties(tracks.First());
             }
-            else
+        }
+        if (tracks.Count() > 1)
+        {
+            var parameters = new DialogParameters<EditMultipleTracksModal> { { x => x.EditedTrack, new() } };
+            var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true, CloseButton = true };
+            var dialog = await _dialogService.ShowAsync<EditMultipleTracksModal>(null, parameters, options);
+            var result = await dialog.Result;
+            if ((result?.Canceled == false) && (result.Data is EditMultipleTracksModalResult editMultipleTracksModalResult))
             {
-                return Result<T>.Failure(new Error(ErrorType.Aborted, "User canceled the input dialog."));
+                foreach (var track in tracks)
+                {
+                    var position = editMultipleTracksModalResult.EditedTrack.Position;
+                    var begin = editMultipleTracksModalResult.EditedTrack.Begin;
+                    var end = editMultipleTracksModalResult.EditedTrack.Finish;
+                    var length = editMultipleTracksModalResult.EditedTrack.Length;
+                    var preGap = editMultipleTracksModalResult.EditedTrack.PreGap;
+                    var postGap = editMultipleTracksModalResult.EditedTrack.PostGap;
+                    var copyIsLinkedToPreviousTrack = editMultipleTracksModalResult.IsLinkedToPreviousTrackEditMode == DynamicEditValue.EnteredValueEquals;
+                    var copyTrackArtist = editMultipleTracksModalResult.ArtistEditMode == DynamicEditValue.EnteredValueEquals;
+                    var copyTrackTitle = editMultipleTracksModalResult.TitleEditMode == DynamicEditValue.EnteredValueEquals;
+                    var copyTrackBegin = true;
+                    var copyTrackEnd = true;
+                    var copyTrackLength = true;
+                    var copyTrackFlags = editMultipleTracksModalResult.FlagsEditMode == DynamicEditValue.EnteredValueEquals;
+                    var copyTrackPreGap = true;
+                    var copyTrackPostGap = true;
+                    //First process dynamic edit, because we need to increase each value separately
+                    switch (editMultipleTracksModalResult.BeginEditMode)
+                    {
+                        case DynamicEditValue.DoNotChange:
+                            copyTrackBegin = false;
+                            break;
+                        case DynamicEditValue.EnteredValueEquals:
+                            copyTrackBegin = true;
+                            break;
+                        case DynamicEditValue.EnteredValueAdd:
+                            var newValue = editMultipleTracksModalResult.EditedTrack.Begin + track.Begin;
+                            editMultipleTracksModalResult.EditedTrack.Begin = newValue;
+                            _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: copyTrackBegin, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false);
+                            copyTrackBegin = false;
+                            break;
+                        case DynamicEditValue.EnteredValueSubstract:
+                            newValue = track.Begin - editMultipleTracksModalResult.EditedTrack.Begin;
+                            editMultipleTracksModalResult.EditedTrack.Begin = newValue;
+                            _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: copyTrackBegin, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: false);
+                            copyTrackBegin = false;
+                            break;
+                    }
+                    switch (editMultipleTracksModalResult.EndEditMode)
+                    {
+                        case DynamicEditValue.DoNotChange:
+                            copyTrackEnd = false;
+                            break;
+                        case DynamicEditValue.EnteredValueEquals:
+                            copyTrackEnd = true;
+                            break;
+                        case DynamicEditValue.EnteredValueAdd:
+                            var newValue = editMultipleTracksModalResult.EditedTrack.Finish + track.Finish;
+                            editMultipleTracksModalResult.EditedTrack.Finish = newValue;
+                            _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: copyTrackEnd, setLength: false, setFlags: false, setPreGap: false, setPostGap: false);
+                            copyTrackEnd = false;
+                            break;
+                        case DynamicEditValue.EnteredValueSubstract:
+                            newValue = track.Finish - editMultipleTracksModalResult.EditedTrack.Finish;
+                            editMultipleTracksModalResult.EditedTrack.Finish = newValue;
+                            _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: copyTrackEnd, setLength: false, setFlags: false, setPreGap: false, setPostGap: false);
+                            copyTrackEnd = false;
+                            break;
+                    }
+                    switch (editMultipleTracksModalResult.LengthEditMode)
+                    {
+                        case DynamicEditValue.DoNotChange:
+                            copyTrackLength = false;
+                            break;
+                        case DynamicEditValue.EnteredValueEquals:
+                            copyTrackLength = true;
+                            break;
+                        case DynamicEditValue.EnteredValueAdd:
+                            var newValue = editMultipleTracksModalResult.EditedTrack.Length + track.Length;
+                            editMultipleTracksModalResult.EditedTrack.Length = newValue;
+                            _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: copyTrackLength, setFlags: false, setPreGap: false, setPostGap: false);
+                            copyTrackLength = false;
+                            break;
+                        case DynamicEditValue.EnteredValueSubstract:
+                            newValue = track.Length - editMultipleTracksModalResult.EditedTrack.Length;
+                            editMultipleTracksModalResult.EditedTrack.Length = newValue;
+                            _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: copyTrackLength, setFlags: false, setPreGap: false, setPostGap: false);
+                            copyTrackLength = false;
+                            break;
+                    }
+                    switch (editMultipleTracksModalResult.PregapEditMode)
+                    {
+                        case DynamicEditValue.DoNotChange:
+                            copyTrackPreGap = false;
+                            break;
+                        case DynamicEditValue.EnteredValueEquals:
+                            copyTrackPreGap = true;
+                            break;
+                        case DynamicEditValue.EnteredValueAdd:
+                            var newValue = editMultipleTracksModalResult.EditedTrack.PreGap + track.PreGap;
+                            editMultipleTracksModalResult.EditedTrack.PreGap = newValue;
+                            _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: copyTrackPreGap, setPostGap: false);
+                            copyTrackPreGap = false;
+                            break;
+                        case DynamicEditValue.EnteredValueSubstract:
+                            newValue = track.PreGap - editMultipleTracksModalResult.EditedTrack.PreGap;
+                            editMultipleTracksModalResult.EditedTrack.PreGap = newValue;
+                            _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: copyTrackPreGap, setPostGap: false);
+                            copyTrackPreGap = false;
+                            break;
+                    }
+                    switch (editMultipleTracksModalResult.PostgapEditMode)
+                    {
+                        case DynamicEditValue.DoNotChange:
+                            copyTrackPostGap = false;
+                            break;
+                        case DynamicEditValue.EnteredValueEquals:
+                            copyTrackPostGap = true;
+                            break;
+                        case DynamicEditValue.EnteredValueAdd:
+                            var newValue = editMultipleTracksModalResult.EditedTrack.PostGap + track.PostGap;
+                            editMultipleTracksModalResult.EditedTrack.PostGap = newValue;
+                            _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: copyTrackPostGap);
+                            copyTrackPostGap = false;
+                            break;
+                        case DynamicEditValue.EnteredValueSubstract:
+                            newValue = track.PostGap - editMultipleTracksModalResult.EditedTrack.PostGap;
+                            editMultipleTracksModalResult.EditedTrack.PostGap = newValue;
+                            _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: false, setLength: false, setFlags: false, setPreGap: false, setPostGap: copyTrackPostGap);
+                            copyTrackPostGap = false;
+                            break;
+                    }
+                    editMultipleTracksModalResult.EditedTrack.Position = position;
+                    editMultipleTracksModalResult.EditedTrack.Begin = begin;
+                    editMultipleTracksModalResult.EditedTrack.Finish = end;
+                    editMultipleTracksModalResult.EditedTrack.Length = length;
+                    editMultipleTracksModalResult.EditedTrack.PreGap = preGap;
+                    editMultipleTracksModalResult.EditedTrack.PostGap = postGap;
+                    //Now copy all values
+                    _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: copyIsLinkedToPreviousTrack, setPosition: false, setArtist: copyTrackArtist, setTitle: copyTrackTitle, setBegin: copyTrackBegin, setEnd: copyTrackEnd, setLength: copyTrackLength, setFlags: copyTrackFlags, setPreGap: copyTrackPreGap, setPostGap: copyTrackPostGap);
+                }
             }
+        }
+        _traceChangeManager.BulkEdit = false;
+    }
+
+    public async Task ShowLoadingDialogAsync()
+    {
+        if (_loadingDialog == null)
+        {
+            var options = new DialogOptions() { BackdropClick = false, FullWidth = true, MaxWidth = MaxWidth.ExtraSmall, NoHeader = true };
+            _loadingDialog = await _dialogService.ShowAsync<LoadingDialog>(options);
+            await Task.Delay(1);
+        }
+    }
+
+    public void HideLoadingDialog()
+    {
+        _loadingDialog?.Close();
+        _loadingDialog = null;
+    }
+
+    public async Task<bool> ShowImportAudiofilesDialogAsync()
+    {
+        var parameters = new DialogParameters<ImportAudiofilesDialog>
+        {
+            { x => x.MappedAudiofiles, _sessionStateContainer.ImportAudiofileMapping },
+            { x => x.ImportAudiofiles, _sessionStateContainer.ImportAudiofiles }
+        };
+        var options = new DialogOptions() { BackdropClick = false, FullWidth = true };
+        var dialog = await _dialogService.ShowAsync<ImportAudiofilesDialog>(null, parameters, options);
+        var result = await dialog.Result;
+        var canceled = result?.Canceled ?? true;
+        if (canceled == false)
+        {
+            if (result?.Data is Dictionary<Audiofile, Audiofile?> audiofileMapping)
+            {
+                _sessionStateContainer.ImportAudiofileMapping = audiofileMapping;
+            }
+        }
+        return canceled;
+    }
+
+    /// <inheritdoc/>
+    public async Task<Result<T>> ShowInputDialogAsync<T>(string? title, string? placeholder, string? label, T initialValue, string? okText = "Ok", string? okButtonStartIcon = null)
+    {
+        var parameters = new DialogParameters<InputDialog<T>>
+        {
+            { x => x.Placeholder, placeholder },
+            { x => x.Label, label },
+            { x => x.InitialValue, initialValue },
+            { x => x.OkText, okText },
+            { x => x.OkButtonStartIcon, okButtonStartIcon }
+        };
+        var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true, CloseButton = true };
+        var dialog = await _dialogService.ShowAsync<InputDialog<T>>(title, parameters, options);
+        var result = await dialog.Result;
+        if (result?.Canceled == false)
+        {
+            var value = (T)result.Data!;
+            return Result.Success(value);
+        }
+        else
+        {
+            return Result.Failure(new FailureDetails(ErrorType.Aborted, "User canceled the input dialog."));
         }
     }
 }

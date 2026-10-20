@@ -13,28 +13,27 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-namespace AudioCuesheetEditor.Model.Utility
+namespace AudioCuesheetEditor.Model.Utility;
+
+public class TimeSpanUtility
 {
-    public class TimeSpanUtility
+    public static TimeSpan? ParseTimeSpan(string input, TimeSpanFormat? timeSpanFormat = null)
     {
-        public static TimeSpan? ParseTimeSpan(String input, TimeSpanFormat? timeSpanFormat = null)
+        TimeSpan? result = null;
+        if (string.IsNullOrEmpty(input) == false)
         {
-            TimeSpan? result = null;
-            if (String.IsNullOrEmpty(input) == false)
+            if (string.IsNullOrEmpty(timeSpanFormat?.Scheme))
             {
-                if (String.IsNullOrEmpty(timeSpanFormat?.Scheme))
+                if (TimeSpan.TryParse(input, out var parsed))
                 {
-                    if (TimeSpan.TryParse(input, out var parsed))
-                    {
-                        result = parsed;
-                    }
-                }
-                else
-                {
-                    result = timeSpanFormat.ParseTimeSpan(input);
+                    result = parsed;
                 }
             }
-            return result;
+            else
+            {
+                result = timeSpanFormat.ParseTimeSpan(input);
+            }
         }
+        return result;
     }
 }

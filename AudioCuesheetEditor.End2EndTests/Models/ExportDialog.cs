@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -16,15 +16,11 @@
 using Microsoft.Playwright;
 using System.Text.RegularExpressions;
 
-namespace AudioCuesheetEditor.End2EndTests.Models
-{
-    internal class ExportDialog(IPage page)
-    {
-        private readonly IPage _page = page;
+namespace AudioCuesheetEditor.End2EndTests.Models;
 
-        internal async Task OpenSchemeMenuAsync(string schemeHeadMenuName = "Scheme head")
-        {
-            await _page.Locator("div").Filter(new() { HasTextRegex = new Regex($"^{schemeHeadMenuName}$") }).GetByRole(AriaRole.Button).Nth(1).ClickAsync();
-        }
-    }
+sealed class ExportDialog(IPage page)
+{
+    readonly IPage _page = page;
+
+    internal async Task OpenSchemeMenuAsync(string schemeHeadMenuName = "Scheme head") => await _page.Locator("div").Filter(new() { HasTextRegex = new Regex($"^{schemeHeadMenuName}$") }).GetByRole(AriaRole.Button).Nth(1).ClickAsync();
 }

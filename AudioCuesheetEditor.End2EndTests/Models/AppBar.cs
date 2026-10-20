@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -15,73 +15,66 @@
 //<http: //www.gnu.org/licenses />.
 using Microsoft.Playwright;
 
-namespace AudioCuesheetEditor.End2EndTests.Models
+namespace AudioCuesheetEditor.End2EndTests.Models;
+
+sealed class AppBar(IPage page)
 {
-    partial class AppBar(IPage page)
+    readonly IPage _page = page;
+    internal ILocator MenuButton => _page.GetByRole(AriaRole.Toolbar).GetByRole(AriaRole.Button, new() { Name = "More" });
+
+    internal ILocator UndoButton => _page.GetByRole(AriaRole.Button, new() { Name = "undo" });
+
+    internal ILocator RedoButton => _page.GetByRole(AriaRole.Button, new() { Name = "redo" });
+
+    internal ILocator HomeButton => _page.Locator(".mud-button-root").First;
+
+    internal async Task OpenSettingsAsync()
     {
-        private readonly IPage _page = page;
-        internal ILocator MenuButton => _page.GetByRole(AriaRole.Toolbar).GetByRole(AriaRole.Button, new() { Name = "More" });
+        await MenuButton.ClickAsync();
+        await _page.GetByText("Settings").ClickAsync();
+    }
 
-        internal ILocator UndoButton => _page.GetByRole(AriaRole.Button, new() { Name = "undo" });
+    internal async Task ChangeLanguageAsync(string language)
+    {
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Change language" }).ClickAsync();
+        await _page.GetByText(language).ClickAsync();
+        await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
+        _ = await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
+    }
 
-        internal ILocator RedoButton => _page.GetByRole(AriaRole.Button, new() { Name = "redo" });
+    internal async Task UndoAsync() => await UndoButton.ClickAsync();
 
-        internal ILocator HomeButton => _page.Locator(".mud-button-root").First;
+    internal async Task RedoAsync() => await RedoButton.ClickAsync();
 
-        internal async Task OpenSettingsAsync()
-        {
-            await MenuButton.ClickAsync();
-            await _page.GetByText("Settings").ClickAsync();
-        }
+    internal async Task OpenFileAsync(string file)
+    {
+        await OpenFileDialogAsync();
+        await _page.GetByLabel("Open file upload").SetInputFilesAsync(file);
+    }
 
-        internal async Task ChangeLanguageAsync(string language)
-        {
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Change language" }).ClickAsync();
-            await _page.GetByText(language).ClickAsync();
-            await _page.WaitForLoadStateAsync(LoadState.NetworkIdle);
-            await _page.WaitForFunctionAsync(@"() => window.Blazor !== undefined");
-        }
+    internal async Task OpenFileDialogAsync()
+    {
+        await _page.GetByRole(AriaRole.Toolbar).GetByRole(AriaRole.Button, new() { Name = "More" }).ClickAsync();
+        await _page.GetByRole(AriaRole.Menuitem, new() { Name = "Open file" }).ClickAsync();
+    }
 
-        internal async Task UndoAsync()
-        {
-            await UndoButton.ClickAsync();
-        }
+    internal async Task OpenExportDialogAsync(string exportType)
+    {
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Export menu" }).ClickAsync();
+        await _page.GetByText(exportType, new() { Exact = true }).ClickAsync();
+    }
 
-        internal async Task RedoAsync()
-        {
-            await RedoButton.ClickAsync();
-        }
+    internal async Task OpenDisplayHotkeysAsync()
+    {
+        await MenuButton.ClickAsync();
+        await _page.GetByText("Hotkeys").ClickAsync();
+    }
 
-        internal async Task OpenFileAsync(string file)
-        {
-            await OpenFileDialogAsync();
-            await _page.GetByLabel("Open file upload").SetInputFilesAsync(file);
-        }
-
-        internal async Task OpenFileDialogAsync()
-        {
-            await _page.GetByRole(AriaRole.Toolbar).GetByRole(AriaRole.Button, new() { Name = "More" }).ClickAsync();
-            await _page.GetByRole(AriaRole.Menuitem, new() { Name = "Open file" }).ClickAsync();
-        }
-
-        internal async Task OpenExportDialogAsync(string exportType)
-        {
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Export menu" }).ClickAsync();
-            await _page.GetByText(exportType, new() { Exact = true }).ClickAsync();
-        }
-
-        internal async Task OpenDisplayHotkeysAsync()
-        {
-            await MenuButton.ClickAsync();
-            await _page.GetByText("Hotkeys").ClickAsync();
-        }
-
-        internal async Task ResetCuesheetAsync()
-        {
-            await MenuButton.ClickAsync();
-            await _page.GetByRole(AriaRole.Menuitem, new() { Name = "Reset" }).ClickAsync();
-            await _page.GetByText("Reset cuesheet").ClickAsync();
-            await _page.GetByRole(AriaRole.Button, new() { Name = "Yes" }).ClickAsync();
-        }
+    internal async Task ResetCuesheetAsync()
+    {
+        await MenuButton.ClickAsync();
+        await _page.GetByRole(AriaRole.Menuitem, new() { Name = "Reset" }).ClickAsync();
+        await _page.GetByText("Reset cuesheet").ClickAsync();
+        await _page.GetByRole(AriaRole.Button, new() { Name = "Yes" }).ClickAsync();
     }
 }

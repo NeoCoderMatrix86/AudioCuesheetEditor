@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -22,238 +22,237 @@ using Microsoft.JSInterop;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace AudioCuesheetEditor.Services.AudioCuesheet
-{
-    public class AudiofileManager(IFileInputManager fileInputManager, ITraceChangeManager traceChangeManager, IJSRuntime jsRuntime, ITrackManager trackManager, ISessionStateContainer sessionStateContainer) : IAudiofileManager
-    {
-        private readonly IFileInputManager _fileInputManager = fileInputManager;
-        private readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
-        private readonly IJSRuntime _jsRuntime = jsRuntime;
-        private readonly ITrackManager _trackManager = trackManager;
-        private readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
-        
-        /// <inheritdoc/>
-        public event EventHandler<Audiofile>? AudiofileChanged;
+namespace AudioCuesheetEditor.Services.AudioCuesheet;
 
-        /// <inheritdoc/>
-        public async Task SetPropertiesAsync(Audiofile audiofile, IBrowserFile browserFile)
+public class AudiofileManager(IFileInputManager fileInputManager, ITraceChangeManager traceChangeManager, IJSRuntime jsRuntime, ITrackManager trackManager, ISessionStateContainer sessionStateContainer) : IAudiofileManager
+{
+    readonly IFileInputManager _fileInputManager = fileInputManager;
+    readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
+    readonly IJSRuntime _jsRuntime = jsRuntime;
+    readonly ITrackManager _trackManager = trackManager;
+    readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
+    
+    /// <inheritdoc/>
+    public event EventHandler<Audiofile>? AudiofileChanged;
+
+    /// <inheritdoc/>
+    public async Task SetPropertiesAsync(Audiofile audiofile, IBrowserFile browserFile)
+    {
+        _traceChangeManager.BulkEdit = true;
+        if (string.IsNullOrEmpty(audiofile.ObjectURL) == false)
+        {
+            await ClearPropertiesAsync(audiofile, false);
+        }
+        var codec = _fileInputManager.GetAudioCodec(browserFile.Name, browserFile.ContentType);
+        var objectUrl = await _fileInputManager.GetObjectUrlAsync(browserFile);
+        TimeSpan? duration = null;
+        if (string.IsNullOrEmpty(objectUrl) == false)
+        {
+            var durationSeconds = await _jsRuntime.InvokeAsync<double>("getAudioDurationFromFile", objectUrl);
+            duration = TimeSpan.FromSeconds(durationSeconds);
+        }
+        var codecChanged = SetValue(audiofile, x => x.AudioCodec, codec);
+        var nameChanged = SetValue(audiofile, x => x.Name, browserFile.Name);
+        var objectUrlChanged = SetValue(audiofile, x => x.ObjectURL, objectUrl);
+        var durationChanged = SetValue(audiofile, x => x.Duration, duration);
+        SetLastTrackEnd(audiofile);
+        _traceChangeManager.BulkEdit = false;
+        if (codecChanged || nameChanged || objectUrlChanged || durationChanged)
+        {
+            AudiofileChanged?.Invoke(this, audiofile);
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task ClearPropertiesAsync(Audiofile audiofile, bool setTracing = true)
+    {
+        if (setTracing)
         {
             _traceChangeManager.BulkEdit = true;
-            if (String.IsNullOrEmpty(audiofile.ObjectURL) == false)
-            {
-                await ClearPropertiesAsync(audiofile, false);
-            }
-            var codec = _fileInputManager.GetAudioCodec(browserFile.Name, browserFile.ContentType);
-            var objectUrl = await _fileInputManager.GetObjectUrlAsync(browserFile);
-            TimeSpan? duration = null;
-            if (String.IsNullOrEmpty(objectUrl) == false)
-            {
-                var durationSeconds = await _jsRuntime.InvokeAsync<double>("getAudioDurationFromFile", objectUrl);
-                duration = TimeSpan.FromSeconds(durationSeconds);
-            }
-            var codecChanged = SetValue(audiofile, x => x.AudioCodec, codec);
-            var nameChanged = SetValue(audiofile, x => x.Name, browserFile.Name);
-            var objectUrlChanged = SetValue(audiofile, x => x.ObjectURL, objectUrl);
-            var durationChanged = SetValue(audiofile, x => x.Duration, duration);
-            SetLastTrackEnd(audiofile);
+        }
+        if (string.IsNullOrEmpty(audiofile.ObjectURL) == false)
+        {
+            await _jsRuntime.InvokeVoidAsync("revokeAudioObjectURL", audiofile.ObjectURL);
+        }
+        var codecChanged = SetValue(audiofile, x => x.AudioCodec, null);
+        var nameChanged = SetValue(audiofile, x => x.Name, null);
+        var objectUrlChanged = SetValue(audiofile, x => x.ObjectURL, null);
+        var durationChanged = SetValue(audiofile, x => x.Duration, null);
+        if (setTracing)
+        {
             _traceChangeManager.BulkEdit = false;
             if (codecChanged || nameChanged || objectUrlChanged || durationChanged)
             {
                 AudiofileChanged?.Invoke(this, audiofile);
             }
         }
-
-        /// <inheritdoc/>
-        public async Task ClearPropertiesAsync(Audiofile audiofile, Boolean setTracing = true)
-        {
-            if (setTracing)
-            {
-                _traceChangeManager.BulkEdit = true;
-            }
-            if (string.IsNullOrEmpty(audiofile.ObjectURL) == false)
-            {
-                await _jsRuntime.InvokeVoidAsync("revokeAudioObjectURL", audiofile.ObjectURL);
-            }
-            var codecChanged = SetValue(audiofile, x => x.AudioCodec, null);
-            var nameChanged = SetValue(audiofile, x => x.Name, null);
-            var objectUrlChanged = SetValue(audiofile, x => x.ObjectURL, null);
-            var durationChanged = SetValue(audiofile, x => x.Duration, null);
-            if (setTracing)
-            {
-                _traceChangeManager.BulkEdit = false;
-                if (codecChanged || nameChanged || objectUrlChanged || durationChanged)
-                {
-                    AudiofileChanged?.Invoke(this, audiofile);
-                }
-            }
-        }
-
-        /// <inheritdoc/>
-        public void SetProperty<TProperty>(Audiofile audiofile, Expression<Func<Audiofile, TProperty>> propertyExpression, TProperty value)
-        {
-            var changed = SetValue(audiofile, propertyExpression, value);
-            SetLastTrackEnd(audiofile);
-            if (changed)
-            {
-                AudiofileChanged?.Invoke(this, audiofile);
-            }
-        }
-
-        /// <inheritdoc/>
-        public void AddTrack(Audiofile audiofile, Track track, Boolean setTracing = true)
-        {
-            if (setTracing)
-            {
-                _traceChangeManager.BulkEdit = true;
-            }
-            var cuesheet = _sessionStateContainer.ActiveCuesheet;
-            track.Cuesheet = cuesheet;
-            track.Audiofile = audiofile;
-            if ((cuesheet?.IsRecording == true) && cuesheet.Audiofiles.SelectMany(x => x.Tracks).Any(x => x.Position >= 1)) 
-            {
-                _trackManager.SetProperty(track, x => x.Begin, DateTime.UtcNow - cuesheet.RecordingStart);
-            }
-            var lastTrack = GetLastTrack(audiofile);
-            if ((audiofile.Duration.HasValue == true) && (lastTrack?.End.HasValue == true) && (lastTrack.End == audiofile.Duration))
-            {
-                _trackManager.SetProperty(lastTrack, x => x.End, null);
-            }
-            var newValue = new List<Track>(audiofile.Tracks)
-            {
-                track
-            };
-            var changed = SetValue(audiofile, x => x.Tracks, newValue);
-            RecalculateTrackProperties(cuesheet!);
-            if (setTracing)
-            {
-                _traceChangeManager.BulkEdit = false;
-            }
-            if (changed)
-            {
-                AudiofileChanged?.Invoke(this, audiofile);
-            }
-        }
-
-        /// <inheritdoc/>
-        public void RemoveTracks(Audiofile audiofile, IEnumerable<Track> tracksToRemove, Boolean setTracing = true)
-        {
-            var cuesheet = _sessionStateContainer.ActiveCuesheet;
-            var intersection = audiofile.Tracks.Intersect(tracksToRemove);
-            foreach (var track in intersection)
-            {
-                track.Audiofile = null;
-            }
-            ICollection<Track> newValue = [.. audiofile.Tracks.Except(intersection)];
-            if (setTracing)
-            {
-                _traceChangeManager.BulkEdit = true;
-            }
-            var changed = SetValue(audiofile, x => x.Tracks, newValue);
-            RecalculateTrackProperties(cuesheet!);
-            if (setTracing)
-            {
-                _traceChangeManager.BulkEdit = false;
-            }
-            if (changed)
-            {
-                AudiofileChanged?.Invoke(this, audiofile);
-            }
-        }
-
-        Boolean SetValue<TProperty>(Audiofile audiofile, Expression<Func<Audiofile, TProperty>> propertyExpression, TProperty value)
-        {
-            if (propertyExpression.Body is not MemberExpression memberExpression)
-            {
-                throw new ArgumentException("Expression must be a property");
-            }
-
-            if (memberExpression.Member is not PropertyInfo propertyInfo)
-            {
-                throw new ArgumentException("Member is not a property");
-            }
-
-            var previousValue = (TProperty?)propertyInfo.GetValue(audiofile);
-            if (Equals(previousValue, value))
-            {
-                return false;
-            }
-
-            propertyInfo.SetValue(audiofile, value);
-            _traceChangeManager.AddChange(new(audiofile, new(previousValue, propertyInfo.Name)));
-            return true;
-        }
-
-        void RecalculateTrackProperties(Cuesheet cuesheet)
-        {
-            // Unset first track begin
-            var firstTrack = GetFirstTrack(cuesheet);
-            if (firstTrack?.Begin == TimeSpan.Zero)
-            {
-                _trackManager.SetProperty(firstTrack, x => x.Begin, null);
-            }
-            // Recalculate position, begin and end ascending
-            ushort position = 1;
-            foreach (var audiofile in cuesheet.Audiofiles)
-            {
-                foreach (var track in audiofile.Tracks)
-                {
-                    if (track.Position != position)
-                    {
-                        _trackManager.SetProperty(track, x => x.Position, position);
-                    }
-                    var previousTrack = _trackManager.GetPreviousLinkedTrack(track);
-                    if (previousTrack?.End.HasValue == true)
-                    {
-                        _trackManager.SetProperty(track, x => x.Begin, previousTrack.End);
-                    }
-                    else
-                    {
-                        if (previousTrack != null)
-                        {
-                            _trackManager.SetProperty(previousTrack, x => x.End, track.Begin);
-                        }
-                    }
-                    position++;
-                }
-            }
-            // Set first track begin
-            firstTrack = GetFirstTrack(cuesheet);
-            if (firstTrack?.Begin.HasValue == false)
-            {
-                _trackManager.SetProperty(firstTrack, x => x.Begin, TimeSpan.Zero);
-            }
-            // Set track ends based on audiofile duration
-            foreach (var audiofile in cuesheet.Audiofiles)
-            {
-                SetLastTrackEnd(audiofile);
-            }
-        }
-
-        static Track? GetLastTrack(Audiofile audiofile)
-        {
-            return audiofile.Tracks.OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
-                .ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin)
-                .ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End)
-                .LastOrDefault();
-        }
-
-        void SetLastTrackEnd(Audiofile audiofile)
-        {
-            var lastTrack = GetLastTrack(audiofile);
-            if ((lastTrack?.End.HasValue == false) && (audiofile.Duration.HasValue == true))
-            {
-                _trackManager.SetProperty(lastTrack, x => x.End, audiofile.Duration);
-            }
-        }
-
-        static Track? GetFirstTrack(Cuesheet cuesheet)
-        {
-            return cuesheet.Audiofiles.SelectMany(x => x.Tracks)
-                .OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
-                .ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin)
-                .ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End)
-                .FirstOrDefault();
-        }
-
     }
+
+    /// <inheritdoc/>
+    public void SetProperty<TProperty>(Audiofile audiofile, Expression<Func<Audiofile, TProperty>> propertyExpression, TProperty value)
+    {
+        var changed = SetValue(audiofile, propertyExpression, value);
+        SetLastTrackEnd(audiofile);
+        if (changed)
+        {
+            AudiofileChanged?.Invoke(this, audiofile);
+        }
+    }
+
+    /// <inheritdoc/>
+    public void AddTrack(Audiofile audiofile, Track track, bool setTracing = true)
+    {
+        if (setTracing)
+        {
+            _traceChangeManager.BulkEdit = true;
+        }
+        var cuesheet = _sessionStateContainer.ActiveCuesheet;
+        track.Cuesheet = cuesheet;
+        track.Audiofile = audiofile;
+        if ((cuesheet?.IsRecording == true) && cuesheet.Audiofiles.SelectMany(x => x.Tracks).Any(x => x.Position >= 1)) 
+        {
+            _trackManager.SetProperty(track, x => x.Begin, DateTime.UtcNow - cuesheet.RecordingStart);
+        }
+        var lastTrack = GetLastTrack(audiofile);
+        if ((audiofile.Duration.HasValue == true) && (lastTrack?.Finish.HasValue == true) && (lastTrack.Finish == audiofile.Duration))
+        {
+            _trackManager.SetProperty(lastTrack, x => x.Finish, null);
+        }
+        var newValue = new List<Track>(audiofile.Tracks)
+        {
+            track
+        };
+        var changed = SetValue(audiofile, x => x.Tracks, newValue);
+        RecalculateTrackProperties(cuesheet!);
+        if (setTracing)
+        {
+            _traceChangeManager.BulkEdit = false;
+        }
+        if (changed)
+        {
+            AudiofileChanged?.Invoke(this, audiofile);
+        }
+    }
+
+    /// <inheritdoc/>
+    public void RemoveTracks(Audiofile audiofile, IEnumerable<Track> tracksToRemove, bool setTracing = true)
+    {
+        var cuesheet = _sessionStateContainer.ActiveCuesheet;
+        var intersection = audiofile.Tracks.Intersect(tracksToRemove);
+        foreach (var track in intersection)
+        {
+            track.Audiofile = null;
+        }
+        ICollection<Track> newValue = [.. audiofile.Tracks.Except(intersection)];
+        if (setTracing)
+        {
+            _traceChangeManager.BulkEdit = true;
+        }
+        var changed = SetValue(audiofile, x => x.Tracks, newValue);
+        RecalculateTrackProperties(cuesheet!);
+        if (setTracing)
+        {
+            _traceChangeManager.BulkEdit = false;
+        }
+        if (changed)
+        {
+            AudiofileChanged?.Invoke(this, audiofile);
+        }
+    }
+
+    bool SetValue<TProperty>(Audiofile audiofile, Expression<Func<Audiofile, TProperty>> propertyExpression, TProperty value)
+    {
+        if (propertyExpression.Body is not MemberExpression memberExpression)
+        {
+            throw new ArgumentException("Expression must be a property");
+        }
+
+        if (memberExpression.Member is not PropertyInfo propertyInfo)
+        {
+            throw new ArgumentException("Member is not a property");
+        }
+
+        var previousValue = (TProperty?)propertyInfo.GetValue(audiofile);
+        if (Equals(previousValue, value))
+        {
+            return false;
+        }
+
+        propertyInfo.SetValue(audiofile, value);
+        _traceChangeManager.AddChange(new(audiofile, new(previousValue, propertyInfo.Name)));
+        return true;
+    }
+
+    void RecalculateTrackProperties(Cuesheet cuesheet)
+    {
+        // Unset first track begin
+        var firstTrack = GetFirstTrack(cuesheet);
+        if (firstTrack?.Begin == TimeSpan.Zero)
+        {
+            _trackManager.SetProperty(firstTrack, x => x.Begin, null);
+        }
+        // Recalculate position, begin and end ascending
+        ushort position = 1;
+        foreach (var audiofile in cuesheet.Audiofiles)
+        {
+            foreach (var track in audiofile.Tracks)
+            {
+                if (track.Position != position)
+                {
+                    _trackManager.SetProperty(track, x => x.Position, position);
+                }
+                var previousTrack = _trackManager.GetPreviousLinkedTrack(track);
+                if (previousTrack?.Finish.HasValue == true)
+                {
+                    _trackManager.SetProperty(track, x => x.Begin, previousTrack.Finish);
+                }
+                else
+                {
+                    if (previousTrack != null)
+                    {
+                        _trackManager.SetProperty(previousTrack, x => x.Finish, track.Begin);
+                    }
+                }
+                position++;
+            }
+        }
+        // Set first track begin
+        firstTrack = GetFirstTrack(cuesheet);
+        if (firstTrack?.Begin.HasValue == false)
+        {
+            _trackManager.SetProperty(firstTrack, x => x.Begin, TimeSpan.Zero);
+        }
+        // Set track ends based on audiofile duration
+        foreach (var audiofile in cuesheet.Audiofiles)
+        {
+            SetLastTrackEnd(audiofile);
+        }
+    }
+
+    static Track? GetLastTrack(Audiofile audiofile)
+    {
+        return audiofile.Tracks.OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
+            .ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin)
+            .ThenByDescending(x => x.Finish.HasValue).ThenBy(x => x.Finish)
+            .LastOrDefault();
+    }
+
+    void SetLastTrackEnd(Audiofile audiofile)
+    {
+        var lastTrack = GetLastTrack(audiofile);
+        if ((lastTrack?.Finish.HasValue == false) && (audiofile.Duration.HasValue == true))
+        {
+            _trackManager.SetProperty(lastTrack, x => x.Finish, audiofile.Duration);
+        }
+    }
+
+    static Track? GetFirstTrack(Cuesheet cuesheet)
+    {
+        return cuesheet.Audiofiles.SelectMany(x => x.Tracks)
+            .OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
+            .ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin)
+            .ThenByDescending(x => x.Finish.HasValue).ThenBy(x => x.Finish)
+            .FirstOrDefault();
+    }
+
 }

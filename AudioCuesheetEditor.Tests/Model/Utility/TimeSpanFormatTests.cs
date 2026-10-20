@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -17,23 +17,22 @@ using AudioCuesheetEditor.Model.Utility;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace AudioCuesheetEditor.Tests.Model.Utility
+namespace AudioCuesheetEditor.Tests.Model.Utility;
+
+[TestClass()]
+public class TimeSpanFormatTests
 {
-    [TestClass()]
-    public class TimeSpanFormatTests
+    [TestMethod()]
+    public void ParseTimeSpan_WithScheme_ReturnsTimeSpan()
     {
-        [TestMethod()]
-        public void ParseTimeSpan_WithScheme_ReturnsTimeSpan()
+        //Arrange
+        var format = new TimeSpanFormat()
         {
-            //Arrange
-            var format = new TimeSpanFormat()
-            {
-                Scheme = $"{TimeSpanFormat.Minutes}:{TimeSpanFormat.Seconds}"
-            };
-            //Act
-            var timespan = format.ParseTimeSpan("63:12");
-            //Assert
-            Assert.AreEqual(new TimeSpan(1,3,12), timespan);
-        }
+            Scheme = $"{TimeSpanFormat.Minutes}:{TimeSpanFormat.Seconds}"
+        };
+        //Act
+        var timespan = format.ParseTimeSpan("63:12");
+        //Assert
+        Assert.AreEqual(new TimeSpan(1,3,12), timespan);
     }
 }

@@ -13,14 +13,13 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-namespace AudioCuesheetEditor.Model.IO
+namespace AudioCuesheetEditor.Model.IO;
+
+public class FileExtensions
 {
-    public class FileExtensions
-    {
-        public const string Text = ".txt";
-        public const string Projectfile = ".ace";
-        public const string Cuesheet = ".cue";
-        public const string CDTextfile = ".cdt";
-        public const string HTML = ".html";
-    }
+    public const string Text = ".txt";
+    public const string Projectfile = ".ace";
+    public const string Cuesheet = ".cue";
+    public const string CDTextfile = ".cdt";
+    public const string HTML = ".html";
 }

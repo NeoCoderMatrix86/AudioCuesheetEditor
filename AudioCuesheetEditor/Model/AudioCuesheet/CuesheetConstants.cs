@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -13,25 +13,25 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-namespace AudioCuesheetEditor.Model.AudioCuesheet
+namespace AudioCuesheetEditor.Model.AudioCuesheet;
+
+public class CuesheetConstants
 {
-    public class CuesheetConstants
-    {
-        public static readonly String CuesheetArtist = "PERFORMER";
-        public static readonly String CuesheetTitle = "TITLE";
-        public static readonly String CuesheetFileName = "FILE";
-        public static readonly String CuesheetTrack = "TRACK";
-        public static readonly String CuesheetTrackAudio = "AUDIO";
-        public static readonly String TrackArtist = "PERFORMER";
-        public static readonly String TrackTitle = "TITLE";
-        public static readonly String TrackIndex01 = "INDEX 01";
-        public static readonly String TrackFlags = "FLAGS";
-        public static readonly String TrackPreGap = "PREGAP";
-        public static readonly String TrackPostGap = "POSTGAP";
-        public static readonly String Tab = "\t";
-        public static readonly String CuesheetCDTextfile = "CDTEXTFILE";
-        public static readonly String CuesheetCatalogueNumber = "CATALOG";
-        public static readonly String MarkHTMLStart = "<Mark>";
-        public static readonly String RecognizedMarkHTML = MarkHTMLStart + "{0}" + "</Mark>";
-    }
+    public static readonly string CuesheetArtist = "PERFORMER";
+    public static readonly string CuesheetTitle = "TITLE";
+    public static readonly string CuesheetFileName = "FILE";
+    public static readonly string CuesheetTrack = "TRACK";
+    public static readonly string CuesheetTrackAudio = "AUDIO";
+    public static readonly string TrackArtist = "PERFORMER";
+    public static readonly string TrackTitle = "TITLE";
+    public static readonly string TrackIndex01 = "INDEX 01";
+    public static readonly string TrackFlags = "FLAGS";
+    public static readonly string TrackPreGap = "PREGAP";
+    public static readonly string TrackPostGap = "POSTGAP";
+    public static readonly string Tab = "\t";
+    public static readonly string CuesheetCDTextfile = "CDTEXTFILE";
+    public static readonly string CuesheetCatalogueNumber = "CATALOG";
+    public static readonly string MarkStart = "<Mark>";
+
+    public static string GetMarkedText(string text) => $"{MarkStart}{text}</Mark>";
 }

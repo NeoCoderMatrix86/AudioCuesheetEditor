@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -22,196 +22,197 @@ using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
+using System.Globalization;
 using System.Linq;
 
-namespace AudioCuesheetEditor.Tests.Services.IO
+namespace AudioCuesheetEditor.Tests.Services.IO;
+
+[TestClass()]
+public class CuesheetExportServiceTests
 {
-    [TestClass()]
-    public class CuesheetExportServiceTests
+    readonly Mock<ISessionStateContainer> _sessionStateContainerMock;
+    readonly Mock<IStringLocalizer<ValidationMessage>> _localizerMock;
+    readonly CuesheetExportService _cuesheetExportService;
+
+    public CuesheetExportServiceTests()
     {
-        private readonly Mock<ISessionStateContainer> _sessionStateContainerMock;
-        private readonly Mock<IStringLocalizer<ValidationMessage>> _localizerMock;
-        private readonly CuesheetExportService _cuesheetExportService;
+        _sessionStateContainerMock = new Mock<ISessionStateContainer>();
+        _localizerMock = new Mock<IStringLocalizer<ValidationMessage>>();
+        _cuesheetExportService = new CuesheetExportService(_sessionStateContainerMock.Object, _localizerMock.Object);
+    }
 
-        public CuesheetExportServiceTests()
+    [TestMethod]
+    public void CanGenerateExportfile_InvalidExtension_ReturnsValidationMessage()
+    {
+        // Arrange
+        var invalidFilename = "test.txt";
+        _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, new Cuesheet());
+        _ = _localizerMock.Setup(x => x["File extension is not '{0}'", It.IsAny<object[]>()]).Returns(new LocalizedString("File extension is not '{0}'", "File extension is not '{0}'"));
+
+        // Act
+        var result = _cuesheetExportService.CanGenerateExportfile(invalidFilename);
+
+        // Assert
+        Assert.IsFalse(result.IsSuccess);
+        Assert.IsTrue(result.FailureDetails?.Message.Contains("File extension is not"));
+    }
+
+    [TestMethod]
+    public void CanGenerateExportfile_InvalidAudiofileName_ReturnsValidationMessage()
+    {
+        // Arrange
+        _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, new Cuesheet()
         {
-            _sessionStateContainerMock = new Mock<ISessionStateContainer>();
-            _localizerMock = new Mock<IStringLocalizer<ValidationMessage>>();
-            _cuesheetExportService = new CuesheetExportService(_sessionStateContainerMock.Object, _localizerMock.Object);
-        }
+            Audiofiles = [new()]
+        });
+        _ = _localizerMock.Setup(x => x["{0} has no value!", It.IsAny<object[]>()]).Returns((string format, object[] args) => new LocalizedString(format, string.Format(CultureInfo.CurrentCulture, format, args)));
+        _ = _localizerMock.Setup(x => x[nameof(Audiofile.Name)]).Returns(new LocalizedString(nameof(Audiofile.Name), nameof(Audiofile.Name)));
 
-        [TestMethod]
-        public void CanGenerateExportfile_InvalidExtension_ReturnsValidationMessage()
+        // Act
+        var result = _cuesheetExportService.CanGenerateExportfile("test.cue");
+
+        // Assert
+        Assert.IsFalse(result.IsSuccess);
+        Assert.IsTrue(result.FailureDetails?.Message.Contains($"{nameof(Audiofile.Name)} has no value!"));
+    }
+
+    [TestMethod]
+    public void CanGenerateExportfile_InvalidCuesheeetTitle_ReturnsValidationMessage()
+    {
+        // Arrange
+        _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, new Cuesheet());
+        _ = _localizerMock.Setup(x => x["{0} has no value!", It.IsAny<object[]>()]).Returns((string format, object[] args) => new LocalizedString(format, string.Format(CultureInfo.CurrentCulture, format, args)));
+        _ = _localizerMock.Setup(x => x[nameof(Cuesheet.Title)]).Returns(new LocalizedString(nameof(Cuesheet.Title), nameof(Cuesheet.Title)));
+
+        // Act
+        var result = _cuesheetExportService.CanGenerateExportfile("test.cue");
+
+        // Assert
+        Assert.IsFalse(result.IsSuccess);
+        Assert.IsTrue(result.FailureDetails?.Message.Contains($"{nameof(Cuesheet.Title)} has no value!"));
+    }
+
+    [TestMethod]
+    public void CanGenerateExportfile_InvalidTrackEnd_ReturnsValidationMessage()
+    {
+        // Arrange
+        var cuesheet = new Cuesheet()
         {
-            // Arrange
-            string invalidFilename = "test.txt";
-            _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, new Cuesheet());
-            _localizerMock.Setup(x => x["File extension is not '{0}'", It.IsAny<object[]>()]).Returns(new LocalizedString("File extension is not '{0}'", "File extension is not '{0}'"));
+            Artist = "Test Artist",
+            Title = "Test Title",
+            Audiofiles =
+            [
+                new()
+                {
+                    Name = "Test audiofile.mp3",
+                    Tracks =
+                    [
+                        new()
+                        {
+                            Position = 1,
+                            Begin = TimeSpan.Zero
+                        }
+                    ]
+                }
+            ],
 
-            // Act
-            var result = _cuesheetExportService.CanGenerateExportfile(invalidFilename);
+        };
+        _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
+        _ = _localizerMock.Setup(x => x["{0} has no value!", It.IsAny<object[]>()]).Returns((string format, object[] args) => new LocalizedString(format, string.Format(CultureInfo.CurrentCulture, format, args)));
+        _ = _localizerMock.Setup(x => x[nameof(Track.Finish)]).Returns(new LocalizedString(nameof(Track.Finish), nameof(Track.Finish)));
 
-            // Assert
-            Assert.IsFalse(result.IsSuccess);
-            Assert.IsTrue(result.Error?.Message.Contains("File extension is not"));
-        }
+        // Act
+        var result = _cuesheetExportService.CanGenerateExportfile("test.cue");
 
-        [TestMethod]
-        public void CanGenerateExportfile_InvalidAudiofileName_ReturnsValidationMessage()
+        // Assert
+        Assert.IsFalse(result.IsSuccess);
+        Assert.IsTrue(result.FailureDetails?.Message.Contains($"{nameof(Track.Finish)} has no value!"));
+    }
+
+    [TestMethod]
+    public void CanGenerateExportfiles_ValidExtension_ReturnsSuccess()
+    {
+        // Arrange
+        var cuesheet = new Cuesheet()
         {
-            // Arrange
-            _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, new Cuesheet()
-            {
-                Audiofiles = [new()]
-            });
-            _localizerMock.Setup(x => x["{0} has no value!", It.IsAny<object[]>()]).Returns((string format, object[] args) => new LocalizedString(format, string.Format(format, args)));
-            _localizerMock.Setup(x => x[nameof(Audiofile.Name)]).Returns(new LocalizedString(nameof(Audiofile.Name), nameof(Audiofile.Name)));
+            Artist = "Test Artist",
+            Title = "Test Title",
+            Audiofiles = 
+            [
+                new()
+                {
+                    Name = "Test audiofile.mp3",
+                    AudioCodec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3"),
+                    Tracks = 
+                    [
+                        new()
+                        {
+                            Position = 1,
+                            Begin = TimeSpan.Zero,
+                            Finish = new TimeSpan(0, 3, 43)
+                        }
+                    ]
+                }
+            ],
 
-            // Act
-            var result = _cuesheetExportService.CanGenerateExportfile("test.cue");
+        };
+        _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
 
-            // Assert
-            Assert.IsFalse(result.IsSuccess);
-            Assert.IsTrue(result.Error?.Message.Contains($"{nameof(Audiofile.Name)} has no value!"));
-        }
+        // Act
+        var result = _cuesheetExportService.CanGenerateExportfile("test.cue");
 
-        [TestMethod]
-        public void CanGenerateExportfile_InvalidCuesheeetTitle_ReturnsValidationMessage()
+        // Assert
+        Assert.IsTrue(result.IsSuccess);
+    }
+
+    [TestMethod]
+    public void GenerateExportfiles_SingleAudiofile_ReturnsExportFile()
+    {
+        // Arrange
+        var filename = "Test valid Filename.cue";
+        var track1 = new Track()
         {
-            // Arrange
-            _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, new Cuesheet());
-            _localizerMock.Setup(x => x["{0} has no value!", It.IsAny<object[]>()]).Returns((string format, object[] args) => new LocalizedString(format, string.Format(format, args)));
-            _localizerMock.Setup(x => x[nameof(Cuesheet.Title)]).Returns(new LocalizedString(nameof(Cuesheet.Title), nameof(Cuesheet.Title)));
-
-            // Act
-            var result = _cuesheetExportService.CanGenerateExportfile("test.cue");
-
-            // Assert
-            Assert.IsFalse(result.IsSuccess);
-            Assert.IsTrue(result.Error?.Message.Contains($"{nameof(Cuesheet.Title)} has no value!"));
-        }
-
-        [TestMethod]
-        public void CanGenerateExportfile_InvalidTrackEnd_ReturnsValidationMessage()
+            Artist = "Test artist 1",
+            Title = "Test title 1",
+            Begin = TimeSpan.Zero,
+            Finish = new TimeSpan(0, 4, 12),
+            Position = 1
+        };
+        var track2 = new Track()
         {
-            // Arrange
-            var cuesheet = new Cuesheet()
-            {
-                Artist = "Test Artist",
-                Title = "Test Title",
-                Audiofiles =
-                [
-                    new()
-                    {
-                        Name = "Test audiofile.mp3",
-                        Tracks =
-                        [
-                            new()
-                            {
-                                Position = 1,
-                                Begin = TimeSpan.Zero
-                            }
-                        ]
-                    }
-                ],
-
-            };
-            _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
-            _localizerMock.Setup(x => x["{0} has no value!", It.IsAny<object[]>()]).Returns((string format, object[] args) => new LocalizedString(format, string.Format(format, args)));
-            _localizerMock.Setup(x => x[nameof(Track.End)]).Returns(new LocalizedString(nameof(Track.End), nameof(Track.End)));
-
-            // Act
-            var result = _cuesheetExportService.CanGenerateExportfile("test.cue");
-
-            // Assert
-            Assert.IsFalse(result.IsSuccess);
-            Assert.IsTrue(result.Error?.Message.Contains($"{nameof(Track.End)} has no value!"));
-        }
-
-        [TestMethod]
-        public void CanGenerateExportfiles_ValidExtension_ReturnsSuccess()
+            Artist = "Test artist 2",
+            Title = "Test title 2",
+            Begin = track1.Finish,
+            Finish = new TimeSpan(0, 8, 32),
+            Position = 2
+        };
+        var cuesheet = new Cuesheet()
         {
-            // Arrange
-            var cuesheet = new Cuesheet()
-            {
-                Artist = "Test Artist",
-                Title = "Test Title",
-                Audiofiles = 
-                [
-                    new()
-                    {
-                        Name = "Test audiofile.mp3",
-                        AudioCodec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3"),
-                        Tracks = 
-                        [
-                            new()
-                            {
-                                Position = 1,
-                                Begin = TimeSpan.Zero,
-                                End = new TimeSpan(0, 3, 43)
-                            }
-                        ]
-                    }
-                ],
+            Artist = "Test artist cuesheet",
+            Title = "Test title cuesheet",
+            Audiofiles = 
+            [
+                new()
+                {
+                    Name = "Test audiofile.mp3",
+                    AudioCodec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3"),
+                    Tracks = [track1, track2]
+                }
+            ]
+        };
+        track1.Cuesheet = cuesheet;
+        track2.Cuesheet = cuesheet;
+        _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
 
-            };
-            _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
+        // Act
+        var result = _cuesheetExportService.GenerateExportfile(filename);
 
-            // Act
-            var result = _cuesheetExportService.CanGenerateExportfile("test.cue");
-
-            // Assert
-            Assert.IsTrue(result.IsSuccess);
-        }
-
-        [TestMethod]
-        public void GenerateExportfiles_SingleAudiofile_ReturnsExportFile()
-        {
-            // Arrange
-            var filename = "Test valid Filename.cue";
-            var track1 = new Track()
-            {
-                Artist = "Test artist 1",
-                Title = "Test title 1",
-                Begin = TimeSpan.Zero,
-                End = new TimeSpan(0, 4, 12),
-                Position = 1
-            };
-            var track2 = new Track()
-            {
-                Artist = "Test artist 2",
-                Title = "Test title 2",
-                Begin = track1.End,
-                End = new TimeSpan(0, 8, 32),
-                Position = 2
-            };
-            var cuesheet = new Cuesheet()
-            {
-                Artist = "Test artist cuesheet",
-                Title = "Test title cuesheet",
-                Audiofiles = 
-                [
-                    new()
-                    {
-                        Name = "Test audiofile.mp3",
-                        AudioCodec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3"),
-                        Tracks = [track1, track2]
-                    }
-                ]
-            };
-            track1.Cuesheet = cuesheet;
-            track2.Cuesheet = cuesheet;
-            _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
-
-            // Act
-            var result = _cuesheetExportService.GenerateExportfile(filename);
-
-            // Assert
-            Assert.IsTrue(result.IsSuccess);
-            Assert.AreEqual(filename, result.Value!.Name);
-            var content = result.Value!.Content;
-            Assert.IsNotNull(content);
-            Assert.AreEqual(@"TITLE ""Test title cuesheet""
+        // Assert
+        Assert.IsTrue(result.IsSuccess);
+        Assert.AreEqual(filename, result.Value!.Name);
+        var content = result.Value!.Content;
+        Assert.IsNotNull(content);
+        Assert.AreEqual(@"TITLE ""Test title cuesheet""
 PERFORMER ""Test artist cuesheet""
 FILE ""Test audiofile.mp3"" MP3
 	TRACK 01 AUDIO
@@ -223,80 +224,80 @@ FILE ""Test audiofile.mp3"" MP3
 		PERFORMER ""Test artist 2""
 		INDEX 01 04:12:00
 ", content);
-        }
+    }
 
-        [TestMethod]
-        public void GenerateExportfiles_MultipleAudiofiles_ReturnsExportFile()
+    [TestMethod]
+    public void GenerateExportfiles_MultipleAudiofiles_ReturnsExportFile()
+    {
+        // Arrange
+        var filename = "Test valid Filename.cue";
+        var track1 = new Track()
         {
-            // Arrange
-            var filename = "Test valid Filename.cue";
-            var track1 = new Track()
-            {
-                Artist = "Test artist 1",
-                Title = "Test title 1",
-                Begin = TimeSpan.Zero,
-                End = new TimeSpan(0, 4, 12),
-                Position = 1
-            };
-            var track2 = new Track()
-            {
-                Artist = "Test artist 2",
-                Title = "Test title 2",
-                Begin = track1.End,
-                End = new TimeSpan(0, 8, 32),
-                Position = 2
-            };
-            var track3 = new Track()
-            {
-                Artist = "Test artist 3",
-                Title = "Test title 3",
-                Begin = track2.End,
-                End = new TimeSpan(0, 12, 43),
-                Position = 3
-            };
-            var track4 = new Track()
-            {
-                Artist = "Test artist 4",
-                Title = "Test title 4",
-                Begin = track3.End,
-                End = new TimeSpan(0, 15, 54),
-                Position = 4
-            };
-            var cuesheet = new Cuesheet()
-            {
-                Artist = "Test artist cuesheet",
-                Title = "Test title cuesheet",
-                Audiofiles =
-                [
-                    new()
-                    {
-                        Name = "Test audiofile.mp3",
-                        AudioCodec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3"),
-                        Tracks = [track1, track2]
-                    },
-                    new()
-                    {
-                        Name = "Test audiofile2.wav",
-                        AudioCodec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".wav"),
-                        Tracks = [track3, track4]
-                    }
-                ]
-            };
-            track1.Cuesheet = cuesheet;
-            track2.Cuesheet = cuesheet;
-            track3.Cuesheet = cuesheet;
-            track4.Cuesheet = cuesheet;
-            _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
+            Artist = "Test artist 1",
+            Title = "Test title 1",
+            Begin = TimeSpan.Zero,
+            Finish = new TimeSpan(0, 4, 12),
+            Position = 1
+        };
+        var track2 = new Track()
+        {
+            Artist = "Test artist 2",
+            Title = "Test title 2",
+            Begin = track1.Finish,
+            Finish = new TimeSpan(0, 8, 32),
+            Position = 2
+        };
+        var track3 = new Track()
+        {
+            Artist = "Test artist 3",
+            Title = "Test title 3",
+            Begin = track2.Finish,
+            Finish = new TimeSpan(0, 12, 43),
+            Position = 3
+        };
+        var track4 = new Track()
+        {
+            Artist = "Test artist 4",
+            Title = "Test title 4",
+            Begin = track3.Finish,
+            Finish = new TimeSpan(0, 15, 54),
+            Position = 4
+        };
+        var cuesheet = new Cuesheet()
+        {
+            Artist = "Test artist cuesheet",
+            Title = "Test title cuesheet",
+            Audiofiles =
+            [
+                new()
+                {
+                    Name = "Test audiofile.mp3",
+                    AudioCodec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".mp3"),
+                    Tracks = [track1, track2]
+                },
+                new()
+                {
+                    Name = "Test audiofile2.wav",
+                    AudioCodec = Audiofile.AudioCodecs.First(x => x.FileExtension == ".wav"),
+                    Tracks = [track3, track4]
+                }
+            ]
+        };
+        track1.Cuesheet = cuesheet;
+        track2.Cuesheet = cuesheet;
+        track3.Cuesheet = cuesheet;
+        track4.Cuesheet = cuesheet;
+        _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
 
-            // Act
-            var result = _cuesheetExportService.GenerateExportfile(filename);
+        // Act
+        var result = _cuesheetExportService.GenerateExportfile(filename);
 
-            // Assert
-            Assert.IsTrue(result.IsSuccess);
-            Assert.AreEqual(filename, result.Value!.Name);
-            var content = result.Value!.Content;
-            Assert.IsNotNull(content);
-            Assert.AreEqual(@"TITLE ""Test title cuesheet""
+        // Assert
+        Assert.IsTrue(result.IsSuccess);
+        Assert.AreEqual(filename, result.Value!.Name);
+        var content = result.Value!.Content;
+        Assert.IsNotNull(content);
+        Assert.AreEqual(@"TITLE ""Test title cuesheet""
 PERFORMER ""Test artist cuesheet""
 FILE ""Test audiofile.mp3"" MP3
 	TRACK 01 AUDIO
@@ -317,43 +318,42 @@ FILE ""Test audiofile2.wav"" WAV
 		PERFORMER ""Test artist 4""
 		INDEX 01 12:43:00
 ", content);
-        }
+    }
 
-        [TestMethod]
-        public void GenerateExportfiles_WithInvalidTracks_ReturnsFailure()
+    [TestMethod]
+    public void GenerateExportfiles_WithInvalidTracks_ReturnsFailure()
+    {
+        // Arrange
+        var cuesheet = new Cuesheet()
         {
-            // Arrange
-            var cuesheet = new Cuesheet()
-            {
-                Artist = "Test Artist",
-                Title = "Test Title",
-                Audiofiles = 
-                [
-                    new ()
-                    {
-                        Name = "Audio.mp3",
-                        Tracks = 
-                        [
-                            new()
-                            {
-                                Position = 1,
-                                Begin = TimeSpan.Zero,
-                            },
-                            new()
-                            {
-                                Position = 2,
-                            }
-                        ]
-                    }
-                ]
-            };
-            _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
+            Artist = "Test Artist",
+            Title = "Test Title",
+            Audiofiles = 
+            [
+                new ()
+                {
+                    Name = "Audio.mp3",
+                    Tracks = 
+                    [
+                        new()
+                        {
+                            Position = 1,
+                            Begin = TimeSpan.Zero,
+                        },
+                        new()
+                        {
+                            Position = 2,
+                        }
+                    ]
+                }
+            ]
+        };
+        _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
 
-            // Act
-            var result = _cuesheetExportService.GenerateExportfile("test.cue");
+        // Act
+        var result = _cuesheetExportService.GenerateExportfile("test.cue");
 
-            // Assert
-            Assert.IsFalse(result.IsSuccess);
-        }
+        // Assert
+        Assert.IsFalse(result.IsSuccess);
     }
 }

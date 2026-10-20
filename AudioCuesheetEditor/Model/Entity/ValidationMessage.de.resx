@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -132,9 +132,6 @@
   <data name="CuesheetFilename" xml:space="preserve">
     <value>Cuesheetdateiname</value>
   </data>
-  <data name="End" xml:space="preserve">
-    <value>Ende</value>
-  </data>
   <data name="Filename" xml:space="preserve">
     <value>Dateiname</value>
   </data>
@@ -218,5 +215,11 @@
   </data>
   <data name="AudioCodec" xml:space="preserve">
     <value>Audio codec</value>
+  </data>
+  <data name="Finish" xml:space="preserve">
+    <value>Ende</value>
+  </data>
+  <data name="ProjectFilename" xml:space="preserve">
+    <value>Projekt Dateiname</value>
   </data>
 </root>

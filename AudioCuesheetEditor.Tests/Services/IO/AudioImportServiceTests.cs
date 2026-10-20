@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -23,98 +23,97 @@ using Moq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace AudioCuesheetEditor.Tests.Services.IO
+namespace AudioCuesheetEditor.Tests.Services.IO;
+
+[TestClass]
+public class AudioImportServiceTests
 {
-    [TestClass]
-    public class AudioImportServiceTests
+    readonly AudioImportService _service;
+    readonly Mock<IDialogManager> _dialogManager;
+    readonly Mock<ISessionStateContainer> _sessionStateContainer;
+    readonly Mock<ICuesheetManager> _cuesheetManager;
+
+    public AudioImportServiceTests()
     {
-        private readonly AudioImportService _service;
-        private readonly Mock<IDialogManager> _dialogManager;
-        private readonly Mock<ISessionStateContainer> _sessionStateContainer;
-        private readonly Mock<ICuesheetManager> _cuesheetManager;
+        _dialogManager = new();
+        _sessionStateContainer = new();
+        _cuesheetManager = new();
+        _service = new(_dialogManager.Object, _sessionStateContainer.Object, _cuesheetManager.Object);
+    }
 
-        public AudioImportServiceTests()
-        {
-            _dialogManager = new();
-            _sessionStateContainer = new();
-            _cuesheetManager = new();
-            _service = new(_dialogManager.Object, _sessionStateContainer.Object, _cuesheetManager.Object);
-        }
+    [TestMethod]
+    public async Task MapAudioImportAsync_WhenMappingIsNotRequired_ReturnsTrueAsync()
+    {
+        // Arrange
+        var cuesheet = new Cuesheet();
+        var importAudiofileMapping = new Dictionary<Audiofile, Audiofile?>();
+        _ = _dialogManager.Setup(x => x.ShowImportAudiofilesDialogAsync()).ReturnsAsync(true);
+        _ = _sessionStateContainer.SetupGet(x => x.ImportAudiofileMapping).Returns(importAudiofileMapping);
+        _ = _sessionStateContainer.SetupSet(x => x.ImportAudiofileMapping = It.IsAny<Dictionary<Audiofile, Audiofile?>>()).Callback<Dictionary<Audiofile, Audiofile?>>(cs => importAudiofileMapping = cs);
+        _ = _sessionStateContainer.SetupGet(x => x.ImportAudiofiles).Returns([]);
+        _ = _sessionStateContainer.SetupGet(x => x.ActiveCuesheet).Returns(cuesheet);
+        // Act
+        var result = await _service.MapAudioImportAsync();
+        // Assert
+        Assert.IsTrue(result);
+    }
 
-        [TestMethod]
-        public async Task MapAudioImportAsync_WhenMappingIsNotRequired_ReturnsTrueAsync()
+    [TestMethod]
+    public async Task MapAudioImportAsync_WhenMappingIsRequiredAndDoneAutomatically_ReturnsTrueAsync()
+    {
+        // Arrange
+        var cuesheet = new Cuesheet()
         {
-            // Arrange
-            var cuesheet = new Cuesheet();
-            var importAudiofileMapping = new Dictionary<Audiofile, Audiofile?>();
-            _dialogManager.Setup(x => x.ShowImportAudiofilesDialogAsync()).ReturnsAsync(true);
-            _sessionStateContainer.SetupGet(x => x.ImportAudiofileMapping).Returns(importAudiofileMapping);
-            _sessionStateContainer.SetupSet(x => x.ImportAudiofileMapping = It.IsAny<Dictionary<Audiofile, Audiofile?>>()).Callback<Dictionary<Audiofile, Audiofile?>>(cs => importAudiofileMapping = cs);
-            _sessionStateContainer.SetupGet(x => x.ImportAudiofiles).Returns([]);
-            _sessionStateContainer.SetupGet(x => x.ActiveCuesheet).Returns(cuesheet);
-            // Act
-            var result = await _service.MapAudioImportAsync();
-            // Assert
-            Assert.IsTrue(result);
-        }
-
-        [TestMethod]
-        public async Task MapAudioImportAsync_WhenMappingIsRequiredAndDoneAutomatically_ReturnsTrueAsync()
-        {
-            // Arrange
-            var cuesheet = new Cuesheet()
-            {
-                Audiofiles = [
-                    new()
-                ]
-            };
-            var importAudiofileMapping = new Dictionary<Audiofile, Audiofile?>
-            {
-                { new(), null }
-            };
-            var importAudioFiles = new List<Audiofile>
-            {
+            Audiofiles = [
                 new()
-            };
-            _dialogManager.Setup(x => x.ShowImportAudiofilesDialogAsync()).ReturnsAsync(true);
-            _sessionStateContainer.SetupGet(x => x.ImportAudiofileMapping).Returns(importAudiofileMapping);
-            _sessionStateContainer.SetupSet(x => x.ImportAudiofileMapping = It.IsAny<Dictionary<Audiofile, Audiofile?>>()).Callback<Dictionary<Audiofile, Audiofile?>>(cs => importAudiofileMapping = cs);
-            _sessionStateContainer.SetupGet(x => x.ImportAudiofiles).Returns(importAudioFiles);
-            _sessionStateContainer.SetupGet(x => x.ActiveCuesheet).Returns(cuesheet);
-            // Act
-            var result = await _service.MapAudioImportAsync();
-            // Assert
-            Assert.IsTrue(result);
-        }
-
-        [TestMethod]
-        public async Task MapAudioImportAsync_WhenMappingIsRequiredAndCannotBeDoneAutomatically_ReturnsDialogResultAsync()
+            ]
+        };
+        var importAudiofileMapping = new Dictionary<Audiofile, Audiofile?>
         {
-            // Arrange
-            var cuesheet = new Cuesheet()
-            {
-                Audiofiles = [
-                    new()
-                ]
-            };
-            var importAudiofileMapping = new Dictionary<Audiofile, Audiofile?>
-            {
-                { new(), null }
-            };
-            var importAudioFiles = new List<Audiofile>
-            {
-                new(), new()
-            };
-            var dialogResultAborted = true;
-            _dialogManager.Setup(x => x.ShowImportAudiofilesDialogAsync()).ReturnsAsync(dialogResultAborted);
-            _sessionStateContainer.SetupGet(x => x.ImportAudiofileMapping).Returns(importAudiofileMapping);
-            _sessionStateContainer.SetupSet(x => x.ImportAudiofileMapping = It.IsAny<Dictionary<Audiofile, Audiofile?>>()).Callback<Dictionary<Audiofile, Audiofile?>>(cs => importAudiofileMapping = cs);
-            _sessionStateContainer.SetupGet(x => x.ImportAudiofiles).Returns(importAudioFiles);
-            _sessionStateContainer.SetupGet(x => x.ActiveCuesheet).Returns(cuesheet);
-            // Act
-            var result = await _service.MapAudioImportAsync();
-            // Assert
-            Assert.AreEqual(!dialogResultAborted, result);
-        }
+            { new(), null }
+        };
+        var importAudioFiles = new List<Audiofile>
+        {
+            new()
+        };
+        _ = _dialogManager.Setup(x => x.ShowImportAudiofilesDialogAsync()).ReturnsAsync(true);
+        _ = _sessionStateContainer.SetupGet(x => x.ImportAudiofileMapping).Returns(importAudiofileMapping);
+        _ = _sessionStateContainer.SetupSet(x => x.ImportAudiofileMapping = It.IsAny<Dictionary<Audiofile, Audiofile?>>()).Callback<Dictionary<Audiofile, Audiofile?>>(cs => importAudiofileMapping = cs);
+        _ = _sessionStateContainer.SetupGet(x => x.ImportAudiofiles).Returns(importAudioFiles);
+        _ = _sessionStateContainer.SetupGet(x => x.ActiveCuesheet).Returns(cuesheet);
+        // Act
+        var result = await _service.MapAudioImportAsync();
+        // Assert
+        Assert.IsTrue(result);
+    }
+
+    [TestMethod]
+    public async Task MapAudioImportAsync_WhenMappingIsRequiredAndCannotBeDoneAutomatically_ReturnsDialogResultAsync()
+    {
+        // Arrange
+        var cuesheet = new Cuesheet()
+        {
+            Audiofiles = [
+                new()
+            ]
+        };
+        var importAudiofileMapping = new Dictionary<Audiofile, Audiofile?>
+        {
+            { new(), null }
+        };
+        var importAudioFiles = new List<Audiofile>
+        {
+            new(), new()
+        };
+        var dialogResultAborted = true;
+        _ = _dialogManager.Setup(x => x.ShowImportAudiofilesDialogAsync()).ReturnsAsync(dialogResultAborted);
+        _ = _sessionStateContainer.SetupGet(x => x.ImportAudiofileMapping).Returns(importAudiofileMapping);
+        _ = _sessionStateContainer.SetupSet(x => x.ImportAudiofileMapping = It.IsAny<Dictionary<Audiofile, Audiofile?>>()).Callback<Dictionary<Audiofile, Audiofile?>>(cs => importAudiofileMapping = cs);
+        _ = _sessionStateContainer.SetupGet(x => x.ImportAudiofiles).Returns(importAudioFiles);
+        _ = _sessionStateContainer.SetupGet(x => x.ActiveCuesheet).Returns(cuesheet);
+        // Act
+        var result = await _service.MapAudioImportAsync();
+        // Assert
+        Assert.AreEqual(!dialogResultAborted, result);
     }
 }

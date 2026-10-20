@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -20,144 +20,139 @@ using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Services.Options;
 using Microsoft.JSInterop;
 
-namespace AudioCuesheetEditor.Services.UI
+namespace AudioCuesheetEditor.Services.UI;
+
+public class SessionStateContainer : ISessionStateContainer, IDisposable
 {
-    public class SessionStateContainer : ISessionStateContainer, IDisposable
+    readonly ILocalStorageOptionsProvider _localStorageOptionsProvider;
+    readonly IJSRuntime _jsRuntime;
+    ViewOptions? _viewOptions;
+    bool _disposedValue;
+
+    public event EventHandler? CuesheetChanged;
+    public event EventHandler? ActiveCuesheetChanged;
+
+    public SessionStateContainer(ILocalStorageOptionsProvider localStorageOptionsProvider, IJSRuntime jsRuntime)
     {
-        private readonly ILocalStorageOptionsProvider _localStorageOptionsProvider;
-        private readonly IJSRuntime _jsRuntime;
+        _localStorageOptionsProvider = localStorageOptionsProvider;
+        _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+        _jsRuntime = jsRuntime;
+    }
 
-        private Cuesheet _cuesheet = new();
-        private Cuesheet? _importCuesheet;
-        private Cuesheet? _activeCuesheet;
-        private ViewOptions? _viewOptions;
-        private bool disposedValue;
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
 
-        public event EventHandler? CuesheetChanged;
-        public event EventHandler? ActiveCuesheetChanged;
-
-        public SessionStateContainer(ILocalStorageOptionsProvider localStorageOptionsProvider, IJSRuntime jsRuntime)
+    public Cuesheet Cuesheet 
+    {
+        get;
+        set
         {
-            _localStorageOptionsProvider = localStorageOptionsProvider;
-            _localStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
-            _jsRuntime = jsRuntime;
+            field = value;
+            SetActiveCuesheet();
+            CuesheetChanged?.Invoke(this, EventArgs.Empty);
         }
-
-        public void Dispose()
+    } = new();
+    public Cuesheet? ImportCuesheet 
+    {
+        get;
+        set
         {
-            Dispose(disposing: true);
-            GC.SuppressFinalize(this);
-        }
-
-        public Cuesheet Cuesheet 
-        {
-            get => _cuesheet;
-            set
-            {
-                _cuesheet = value;
-                SetActiveCuesheet();
-                CuesheetChanged?.Invoke(this, EventArgs.Empty);
-            }
-        }
-        public Cuesheet? ImportCuesheet 
-        {
-            get => _importCuesheet;
-            set
-            {
-                _importCuesheet = value;
-                SetActiveCuesheet();
-            }
-        }
-        public IList<Audiofile> ImportAudiofiles { get; set; } = [];
-        public Dictionary<Audiofile, Audiofile?> ImportAudiofileMapping { get; set; } = [];
-        public IImportfile? Importfile { get; set; }
-        public Boolean ImportIsAnalyzed { get; set; } = false;
-
-        /// <inheritdoc/>
-        public async Task InitializeAsync()
-        {
-            _viewOptions ??= await _localStorageOptionsProvider.GetOptionsAsync<ViewOptions>();
+            field = value;
             SetActiveCuesheet();
         }
-
-        public async Task ResetImportAsync(Boolean revokeObjectURLs)
-        {
-            Importfile = null;
-            await ResetAudioImportAsync(revokeObjectURLs);
-            ImportCuesheet = null;
-            ImportIsAnalyzed = false;
-        }
-
-        public async Task ResetAudioImportAsync(bool revokeObjectURLs)
-        {
-            if (revokeObjectURLs)
-            {
-                foreach (var audiofile in ImportAudiofiles)
-                {
-                    if (!string.IsNullOrEmpty(audiofile.ObjectURL))
-                    {
-                        await _jsRuntime.InvokeVoidAsync("revokeAudioObjectURL", audiofile.ObjectURL);
-                    }
-                }
-                foreach (var audiofile in ImportAudiofileMapping.Values.Where(x => x != null))
-                {
-                    if (!string.IsNullOrEmpty(audiofile!.ObjectURL))
-                    {
-                        await _jsRuntime.InvokeVoidAsync("revokeAudioObjectURL", audiofile.ObjectURL);
-                    }
-                }
-            }
-            ImportAudiofileMapping = [];
-            ImportAudiofiles = [];
-        }
-
-        /// <inheritdoc/>
-        public Cuesheet? ActiveCuesheet => _activeCuesheet;
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                if (disposing)
-                {
-                    _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
-                }
-                disposedValue = true;
-            }
-        }
-
-        void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
-        {
-            if (options is ViewOptions viewOptions)
-            {
-                _viewOptions = viewOptions;
-                SetActiveCuesheet();
-            }
-        }
-
-        void SetActiveCuesheet()
-        {
-            if (_viewOptions == null)
-            {
-                throw new InvalidOperationException("Not initialized!");
-            }
-            if (_viewOptions.ActiveTab == ViewMode.ImportView)
-            {
-                if (_activeCuesheet != ImportCuesheet)
-                {
-                    _activeCuesheet = ImportCuesheet;
-                    ActiveCuesheetChanged?.Invoke(this, EventArgs.Empty);
-                }
-            }
-            else
-            {
-                if (_activeCuesheet != Cuesheet)
-                {
-                    _activeCuesheet = Cuesheet;
-                    ActiveCuesheetChanged?.Invoke(this, EventArgs.Empty);
-                }
-            }
-        }
-
     }
+    public IList<Audiofile> ImportAudiofiles { get; set; } = [];
+    public Dictionary<Audiofile, Audiofile?> ImportAudiofileMapping { get; set; } = [];
+    public IImportfile? Importfile { get; set; }
+    public bool ImportIsAnalyzed { get; set; }
+
+    /// <inheritdoc/>
+    public async Task InitializeAsync()
+    {
+        _viewOptions ??= await _localStorageOptionsProvider.GetOptionsAsync<ViewOptions>();
+        SetActiveCuesheet();
+    }
+
+    public async Task ResetImportAsync(bool revokeObjectURLs)
+    {
+        Importfile = null;
+        await ResetAudioImportAsync(revokeObjectURLs);
+        ImportCuesheet = null;
+        ImportIsAnalyzed = false;
+    }
+
+    public async Task ResetAudioImportAsync(bool revokeObjectURLs)
+    {
+        if (revokeObjectURLs)
+        {
+            foreach (var audiofile in ImportAudiofiles)
+            {
+                if (!string.IsNullOrEmpty(audiofile.ObjectURL))
+                {
+                    await _jsRuntime.InvokeVoidAsync("revokeAudioObjectURL", audiofile.ObjectURL);
+                }
+            }
+            foreach (var audiofile in ImportAudiofileMapping.Values.Where(x => x != null))
+            {
+                if (!string.IsNullOrEmpty(audiofile!.ObjectURL))
+                {
+                    await _jsRuntime.InvokeVoidAsync("revokeAudioObjectURL", audiofile.ObjectURL);
+                }
+            }
+        }
+        ImportAudiofileMapping = [];
+        ImportAudiofiles = [];
+    }
+
+    /// <inheritdoc/>
+    public Cuesheet? ActiveCuesheet { get; private set; }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                _localStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+            }
+            _disposedValue = true;
+        }
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions options)
+    {
+        if (options is ViewOptions viewOptions)
+        {
+            _viewOptions = viewOptions;
+            SetActiveCuesheet();
+        }
+    }
+
+    void SetActiveCuesheet()
+    {
+        if (_viewOptions == null)
+        {
+            throw new InvalidOperationException("Not initialized!");
+        }
+        if (_viewOptions.ActiveTab == ViewMode.ImportView)
+        {
+            if (ActiveCuesheet != ImportCuesheet)
+            {
+                ActiveCuesheet = ImportCuesheet;
+                ActiveCuesheetChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+        else
+        {
+            if (ActiveCuesheet != Cuesheet)
+            {
+                ActiveCuesheet = Cuesheet;
+                ActiveCuesheetChanged?.Invoke(this, EventArgs.Empty);
+            }
+        }
+    }
+
 }

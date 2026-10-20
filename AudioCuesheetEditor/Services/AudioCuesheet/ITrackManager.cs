@@ -16,59 +16,58 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using System.Linq.Expressions;
 
-namespace AudioCuesheetEditor.Services.AudioCuesheet
+namespace AudioCuesheetEditor.Services.AudioCuesheet;
+
+/// <summary>
+/// Manages track interactions
+/// </summary>
+public interface ITrackManager
 {
     /// <summary>
-    /// Manages track interactions
+    /// Set property value for track
     /// </summary>
-    public interface ITrackManager
-    {
-        /// <summary>
-        /// Set property value for track
-        /// </summary>
-        /// <typeparam name="TProperty"></typeparam>
-        /// <param name="track"></param>
-        /// <param name="propertyExpression"></param>
-        /// <param name="value"></param>
-        void SetProperty<TProperty>(Track track, Expression<Func<Track, TProperty>> propertyExpression, TProperty value);
-        /// <summary>
-        /// Copies values from a track to another
-        /// </summary>
-        /// <param name="source"></param>
-        /// <param name="target"></param>
-        /// <param name="setIsLinkedToPreviousTrack"></param>
-        /// <param name="setPosition"></param>
-        /// <param name="setArtist"></param>
-        /// <param name="setTitle"></param>
-        /// <param name="setBegin"></param>
-        /// <param name="setEnd"></param>
-        /// <param name="setLength"></param>
-        /// <param name="setFlags"></param>
-        /// <param name="setPreGap"></param>
-        /// <param name="setPostGap"></param>
-        void CopyValues(ITrack source, Track target, Boolean setIsLinkedToPreviousTrack = true, Boolean setPosition = true, Boolean setArtist = true, Boolean setTitle = true, Boolean setBegin = true, Boolean setEnd = true, Boolean setLength = true, Boolean setFlags = true, Boolean setPreGap = true, Boolean setPostGap = true);
-        /// <summary>
-        /// Create a clone of a track
-        /// </summary>
-        /// <param name="track"></param>
-        /// <returns></returns>
-        Track Clone(ITrack track);
-        /// <summary>
-        /// Get the previous linked track of a track object
-        /// </summary>
-        /// <param name="track">Track object to get the previous link to</param>
-        /// <returns>Previous linked track or null (if not linked)</returns>
-        Track? GetPreviousLinkedTrack(Track track);
-        /// <summary>
-        /// Get next linked track that is linked to the parameter track
-        /// </summary>
-        /// <param name="track"></param>
-        /// <returns></returns>
-        Track? GetNextLinkedTrack(Track track);
-        /// <summary>
-        /// Recalculates properties of linked tracks (previous and next track)
-        /// </summary>
-        /// <param name="track"></param>
-        void RecalculateLinkedTracksProperties(Track track);
-    }
+    /// <typeparam name="TProperty"></typeparam>
+    /// <param name="track"></param>
+    /// <param name="propertyExpression"></param>
+    /// <param name="value"></param>
+    void SetProperty<TProperty>(Track track, Expression<Func<Track, TProperty>> propertyExpression, TProperty value);
+    /// <summary>
+    /// Copies values from a track to another
+    /// </summary>
+    /// <param name="source"></param>
+    /// <param name="target"></param>
+    /// <param name="setIsLinkedToPreviousTrack"></param>
+    /// <param name="setPosition"></param>
+    /// <param name="setArtist"></param>
+    /// <param name="setTitle"></param>
+    /// <param name="setBegin"></param>
+    /// <param name="setEnd"></param>
+    /// <param name="setLength"></param>
+    /// <param name="setFlags"></param>
+    /// <param name="setPreGap"></param>
+    /// <param name="setPostGap"></param>
+    void CopyValues(ITrack source, Track target, bool setIsLinkedToPreviousTrack = true, bool setPosition = true, bool setArtist = true, bool setTitle = true, bool setBegin = true, bool setEnd = true, bool setLength = true, bool setFlags = true, bool setPreGap = true, bool setPostGap = true);
+    /// <summary>
+    /// Create a clone of a track
+    /// </summary>
+    /// <param name="track"></param>
+    /// <returns></returns>
+    Track Clone(ITrack track);
+    /// <summary>
+    /// Get the previous linked track of a track object
+    /// </summary>
+    /// <param name="track">Track object to get the previous link to</param>
+    /// <returns>Previous linked track or null (if not linked)</returns>
+    Track? GetPreviousLinkedTrack(Track track);
+    /// <summary>
+    /// Get next linked track that is linked to the parameter track
+    /// </summary>
+    /// <param name="track"></param>
+    /// <returns></returns>
+    Track? GetNextLinkedTrack(Track track);
+    /// <summary>
+    /// Recalculates properties of linked tracks (previous and next track)
+    /// </summary>
+    /// <param name="track"></param>
+    void RecalculateLinkedTracksProperties(Track track);
 }
