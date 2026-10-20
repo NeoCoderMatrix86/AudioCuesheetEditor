@@ -21,7 +21,7 @@ using Microsoft.JSInterop;
 
 namespace AudioCuesheetEditor.Services.IO;
 
-public class FileInputManager(IJSRuntime jsRuntime, ILogger<FileInputManager> logger) : IFileInputManager
+public partial class FileInputManager(IJSRuntime jsRuntime, ILogger<FileInputManager> logger) : IFileInputManager
 {
     readonly IJSRuntime _jsRuntime = jsRuntime;
     readonly ILogger<FileInputManager> _logger = logger;
@@ -52,10 +52,7 @@ public class FileInputManager(IJSRuntime jsRuntime, ILogger<FileInputManager> lo
 
     public bool CheckFileMimeType(string? fileContentType, string fileName, string mimeType, IEnumerable<string> fileExtensions)
     {
-        if (_logger.IsEnabled(LogLevel.Debug))
-        {
-            _logger.LogDebug("CheckFileMimeType called with file: file.Name: '{FileName}', file.ContentType: '{ContentType}', mimeType: '{MimeType}', fileExtensions: '{fileExtensions}'", fileName, fileContentType, mimeType, fileExtensions);
-        }
+        LogCheckFileMimeTypeCalled(fileContentType, fileName, mimeType, fileExtensions);
         var fileMimeTypeMatches = false;
         if (string.IsNullOrEmpty(mimeType) == false)
         {
@@ -153,4 +150,7 @@ public class FileInputManager(IJSRuntime jsRuntime, ILogger<FileInputManager> lo
         }
         return fileUploads;
     }
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "CheckFileMimeType called with file: file.Name: '{FileName}', file.ContentType: '{ContentType}', mimeType: '{MimeType}', fileExtensions: '{fileExtensions}'")]
+    partial void LogCheckFileMimeTypeCalled(string? contentType, string fileName, string mimeType, IEnumerable<string> fileExtensions);
 }

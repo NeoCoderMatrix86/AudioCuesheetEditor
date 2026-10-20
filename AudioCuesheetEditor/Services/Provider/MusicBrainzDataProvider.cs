@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ public class MusicBrainzTrack
     public TimeSpan? Length { get; init; }
     public string? Disambiguation { get; init; }
 }
-public class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> logger)
+public partial class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> logger)
 {
     readonly ILogger<MusicBrainzDataProvider> _logger = logger;
 
@@ -55,7 +55,7 @@ public class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> logger)
         }
         catch (HttpRequestException hre)
         {
-            _logger.LogError(hre, "Error getting response from MusicBrainz");
+            LogErrorGettingResponseFromMusicBrainz(hre);
         }
         return artistSearchResult.AsReadOnly();
     }
@@ -104,7 +104,7 @@ public class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> logger)
         }
         catch (HttpRequestException hre)
         {
-            _logger.LogError(hre, "Error getting response from MusicBrainz");
+            LogErrorGettingResponseFromMusicBrainz(hre);
         }
         return titleSearchResult.AsReadOnly();
     }
@@ -124,4 +124,7 @@ public class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> logger)
             return field;
         }
     }
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "Error getting response from MusicBrainz")]
+    partial void LogErrorGettingResponseFromMusicBrainz(HttpRequestException hre);
 }

@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ public enum ImportFileType
     Textfile,
     Audiofile
 }
-public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService, ITrackManager trackManager, IAudioImportService audioImportService, ILogger<ImportManager> logger)
+public partial class ImportManager(ISessionStateContainer sessionStateContainer, ITraceChangeManager traceChangeManager, IFileInputManager fileInputManager, ITextImportService textImportService, ITrackManager trackManager, IAudioImportService audioImportService, ILogger<ImportManager> logger)
 {
     public event EventHandler<IEnumerable<string>>? UploadFilesFinished;
 
@@ -55,10 +55,7 @@ public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceC
             FileType = ImportFileType.Textfile
         };
         stopwatch.Stop();
-        if (_logger.IsEnabled(LogLevel.Debug))
-        {
-            _logger.LogDebug("ImportData duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
-        }
+        LogImportDataFinished(stopwatch.Elapsed);
     }
     
     public async Task<bool> AnalyseImportfile()
@@ -98,10 +95,7 @@ public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceC
         }
         var cancelImport = await _audioImportService.MapAudioImportAsync();
         stopwatch.Stop();
-        if (_logger.IsEnabled(LogLevel.Debug))
-        {
-            _logger.LogDebug("AnalyseImportfile duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
-        }
+        LogAnalyseImportfileFinished(stopwatch.Elapsed);
         return cancelImport;
     }
     
@@ -119,10 +113,7 @@ public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceC
         }
         await _sessionStateContainer.ResetImportAsync(false);
         stopwatch.Stop();
-        if (_logger.IsEnabled(LogLevel.Debug))
-        {
-            _logger.LogDebug("ImportCuesheet duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
-        }
+        LogImportCuesheetFinished(stopwatch.Elapsed);
     }
 
     public async Task UploadFilesAsync(IEnumerable<FileUpload> files)
@@ -179,10 +170,7 @@ public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceC
         }
         UploadFilesFinished?.Invoke(this, invalidFiles);
         stopwatch.Stop();
-        if (_logger.IsEnabled(LogLevel.Debug))
-        {
-            _logger.LogDebug("UploadFilesAsync duration: {stopwatch.Elapsed}", stopwatch.Elapsed);
-        }
+        LogImportCuesheetFinished(stopwatch.Elapsed);
     }
 
     void CopyCuesheet(Cuesheet target, ICuesheet cuesheetToCopy)
@@ -316,4 +304,13 @@ public class ImportManager(ISessionStateContainer sessionStateContainer, ITraceC
             _traceChangeManager.RemoveTracedChanges([_sessionStateContainer.ImportCuesheet, .. _sessionStateContainer.ImportCuesheet.Audiofiles, .. _sessionStateContainer.ImportCuesheet.Audiofiles.SelectMany(x => x.Tracks)]);
         }
     }
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "ImportData duration: {Duration}")]
+    partial void LogImportDataFinished(TimeSpan duration);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "AnalyseImportfile duration: {Duration}")]
+    partial void LogAnalyseImportfileFinished(TimeSpan duration);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "ImportCuesheet duration: {Duration}")]
+    partial void LogImportCuesheetFinished(TimeSpan duration);
 }

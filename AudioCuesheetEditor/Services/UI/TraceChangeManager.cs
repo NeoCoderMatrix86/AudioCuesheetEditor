@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -18,7 +18,7 @@ using AudioCuesheetEditor.Model.UI;
 namespace AudioCuesheetEditor.Services.UI;
 
 /// <inheritdoc />
-public class TraceChangeManager(ILogger<TraceChangeManager> logger) : ITraceChangeManager
+public partial class TraceChangeManager(ILogger<TraceChangeManager> logger) : ITraceChangeManager
 {
     readonly ILogger<TraceChangeManager> _logger = logger;
 
@@ -45,7 +45,7 @@ public class TraceChangeManager(ILogger<TraceChangeManager> logger) : ITraceChan
 
     public void Undo()
     {
-        _logger.LogDebug("Undo called");
+        LogUndoCalled();
         if (CanUndo)
         {
             TracedChanges? changes = null;
@@ -66,10 +66,7 @@ public class TraceChangeManager(ILogger<TraceChangeManager> logger) : ITraceChan
                     var change = changes.Changes.ElementAt(i);
                     var tracedObject = change?.TraceableObject;
                     var traceAbleChange = change?.TraceableChange;
-                    if (_logger.IsEnabled(LogLevel.Debug))
-                    {
-                        _logger.LogDebug("tracedObject = {tracedObject}, traceAbleChange = {traceAbleChange}", tracedObject, traceAbleChange);
-                    }
+                    LogTracedObjectAndTracableChange(tracedObject, traceAbleChange);
                     if (tracedObject != null && traceAbleChange != null)
                     {
                         var propertyInfo = tracedObject.GetType().GetProperty(traceAbleChange.PropertyName);
@@ -77,10 +74,7 @@ public class TraceChangeManager(ILogger<TraceChangeManager> logger) : ITraceChan
                         {
                             var currentValue = propertyInfo.GetValue(tracedObject);
                             redoChanges.Add(new TracedChange(tracedObject, new(currentValue, traceAbleChange.PropertyName)));
-                            if (_logger.IsEnabled(LogLevel.Debug))
-                            {
-                                _logger.LogDebug("Setting {PropertyName} on {tracedObject} from {currentValue} to {PreviousValue}", traceAbleChange.PropertyName, tracedObject, currentValue, traceAbleChange.PreviousValue);
-                            }
+                            LogSettingProperty(traceAbleChange.PropertyName, tracedObject, currentValue, traceAbleChange.PreviousValue);
                             propertyInfo.SetValue(tracedObject, traceAbleChange.PreviousValue);
                         }
                         else
@@ -102,7 +96,7 @@ public class TraceChangeManager(ILogger<TraceChangeManager> logger) : ITraceChan
 
     public void Redo()
     {
-        _logger.LogDebug("Redo called");
+        LogRedoCalled();
         if (CanRedo)
         {
             TracedChanges? changes = null;
@@ -123,10 +117,7 @@ public class TraceChangeManager(ILogger<TraceChangeManager> logger) : ITraceChan
                     var change = changes.Changes.ElementAt(i);
                     var tracedObject = change?.TraceableObject;
                     var traceAbleChange = change?.TraceableChange;
-                    if (_logger.IsEnabled(LogLevel.Debug))
-                    {
-                        _logger.LogDebug("tracedObject = {tracedObject}, traceAbleChange = {traceAbleChange}", tracedObject, traceAbleChange);
-                    }
+                    LogTracedObjectAndTracableChange(tracedObject, traceAbleChange);
                     if (tracedObject != null && traceAbleChange != null)
                     {
                         var propertyInfo = tracedObject.GetType().GetProperty(traceAbleChange.PropertyName);
@@ -134,10 +125,7 @@ public class TraceChangeManager(ILogger<TraceChangeManager> logger) : ITraceChan
                         {
                             var currentValue = propertyInfo.GetValue(tracedObject);
                             undoChanges.Add(new TracedChange(tracedObject, new(currentValue, traceAbleChange.PropertyName)));
-                            if (_logger.IsEnabled(LogLevel.Debug))
-                            {
-                                _logger.LogDebug("Setting {PropertyName} on {tracedObject} from {currentValue} to {PreviousValue}", traceAbleChange.PropertyName, tracedObject, currentValue, traceAbleChange.PreviousValue);
-                            }
+                            LogSettingProperty(traceAbleChange.PropertyName, tracedObject, currentValue, traceAbleChange.PreviousValue);
                             propertyInfo.SetValue(tracedObject, traceAbleChange.PreviousValue);
                         }
                         else
@@ -162,10 +150,7 @@ public class TraceChangeManager(ILogger<TraceChangeManager> logger) : ITraceChan
         get => _bulkEditTracedChanges != null;
         set
         {
-            if (_logger.IsEnabled(LogLevel.Debug))
-            {
-                _logger.LogDebug("Set BulkEdit called with {value}", value);
-            }
+            LogSetBulkEdit(value);
             if (value)
             {
                 _bulkEditTracedChanges ??= [];
@@ -185,10 +170,7 @@ public class TraceChangeManager(ILogger<TraceChangeManager> logger) : ITraceChan
 
     public void AddChange(TracedChange tracedChange)
     {
-        if (_logger.IsEnabled(LogLevel.Debug))
-        {
-            _logger.LogDebug("AddChange: {tracedChange.TraceableObject}, {tracedChange.TraceableChange.PropertyName}, {tracedChange.TraceableChange.PreviousValue}", tracedChange.TraceableObject, tracedChange.TraceableChange.PropertyName, tracedChange.TraceableChange.PreviousValue);
-        }
+        LogAddChange(tracedChange.TraceableObject, tracedChange.TraceableChange.PropertyName, tracedChange.TraceableChange.PreviousValue);
         if (BulkEdit == false)
         {
             //Single change
@@ -211,4 +193,22 @@ public class TraceChangeManager(ILogger<TraceChangeManager> logger) : ITraceChan
         _ = _redoStack.RemoveAll(x => x.Changes.Any(y => traceables.Contains(y.TraceableObject)));
         TracedObjectHistoryChanged?.Invoke(this, EventArgs.Empty);
     }
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Undo called")]
+    partial void LogUndoCalled();
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Redo called")]
+    partial void LogRedoCalled();
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "tracedObject = {tracedObject}, traceAbleChange = {traceAbleChange}")]
+    partial void LogTracedObjectAndTracableChange(object? tracedObject, object? traceAbleChange);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Setting {PropertyName} on {tracedObject} from {currentValue} to {PreviousValue}")]
+    partial void LogSettingProperty(string propertyName, object? tracedObject, object? currentValue, object? previousValue);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "Set BulkEdit called with {value}")]
+    partial void LogSetBulkEdit(bool value);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "AddChange: {TraceableObject}, {PropertyName}, {PreviousValue}")]
+    partial void LogAddChange(object? traceableObject, string? propertyName, object? previousValue);
 }
