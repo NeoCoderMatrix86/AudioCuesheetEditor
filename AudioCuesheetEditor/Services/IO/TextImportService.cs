@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -90,7 +90,7 @@ public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsP
             foreach (var (RelIndex, Length, Value, Key) in groupInfos)
             {
                 _ = sb.Remove(RelIndex, Length);
-                _ = sb.Insert(RelIndex, string.Format(CuesheetConstants.RecognizedMarkHTML, Value));
+                _ = sb.Insert(RelIndex, CuesheetConstants.GetMarkedText(Value));
             }
             return sb.ToString();
         });
@@ -244,7 +244,7 @@ public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsP
             {
                 var stopSearch = false;
                 // Check if this line is already analyzed
-                if (line.Contains(CuesheetConstants.MarkHTMLStart) == false)
+                if (line.Contains(CuesheetConstants.MarkStart) == false)
                 {
                     var entity = entityCreation.Invoke();
                     var markedLine = ApplyRegexAndMarkGroups(entity, regex, line, importProfile.TimeSpanFormat);

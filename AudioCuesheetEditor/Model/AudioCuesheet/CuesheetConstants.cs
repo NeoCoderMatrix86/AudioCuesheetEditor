@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ public class CuesheetConstants
     public static readonly string Tab = "\t";
     public static readonly string CuesheetCDTextfile = "CDTEXTFILE";
     public static readonly string CuesheetCatalogueNumber = "CATALOG";
-    public static readonly string MarkHTMLStart = "<Mark>";
-    public static readonly string RecognizedMarkHTML = MarkHTMLStart + "{0}" + "</Mark>";
+    public static readonly string MarkStart = "<Mark>";
+
+    public static string GetMarkedText(string text) => $"{MarkStart}{text}</Mark>";
 }

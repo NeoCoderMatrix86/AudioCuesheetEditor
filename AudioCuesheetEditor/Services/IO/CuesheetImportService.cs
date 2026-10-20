@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -67,7 +67,7 @@ public class CuesheetImportService
                     if ((regexCuesheetArtist.IsMatch(line) == true) && (track == null))
                     {
                         var match = regexCuesheetArtist.Match(line);
-                        recognizedLine = line.Replace(match.Value, string.Format(CuesheetConstants.RecognizedMarkHTML, match.Value));
+                        recognizedLine = line.Replace(match.Value, CuesheetConstants.GetMarkedText(match.Value));
                         var matchGroup = match.Groups.GetValueOrDefault(cuesheetArtistGroupName);
                         if (matchGroup != null)
                         {
@@ -82,7 +82,7 @@ public class CuesheetImportService
                     if ((regexCuesheetTitle.IsMatch(line) == true) && (track == null))
                     {
                         var match = regexCuesheetTitle.Match(line);
-                        recognizedLine = line.Replace(match.Value, string.Format(CuesheetConstants.RecognizedMarkHTML, match.Value));
+                        recognizedLine = line.Replace(match.Value, CuesheetConstants.GetMarkedText(match.Value));
                         var matchGroup = match.Groups.GetValueOrDefault(cuesheetTitleGroupName);
                         if (matchGroup != null)
                         {
@@ -97,7 +97,7 @@ public class CuesheetImportService
                     if (regexCuesheetFile.IsMatch(line) == true)
                     {
                         var match = regexCuesheetFile.Match(line);
-                        recognizedLine = line.Replace(match.Value, string.Format(CuesheetConstants.RecognizedMarkHTML, match.Value));
+                        recognizedLine = line.Replace(match.Value, CuesheetConstants.GetMarkedText(match.Value));
                         var matchGroup = match.Groups.GetValueOrDefault(cuesheetFileNameGroupName);
                         if (matchGroup != null)
                         {
@@ -112,7 +112,7 @@ public class CuesheetImportService
                     if (regexCDTextfile.IsMatch(line) == true)
                     {
                         var match = regexCDTextfile.Match(line);
-                        recognizedLine = line.Replace(match.Value, string.Format(CuesheetConstants.RecognizedMarkHTML, match.Value));
+                        recognizedLine = line.Replace(match.Value, CuesheetConstants.GetMarkedText(match.Value));
                         var matchGroup = match.Groups.GetValueOrDefault(cuesheetCDTextfileGroupName);
                         if (matchGroup != null)
                         {
@@ -127,7 +127,7 @@ public class CuesheetImportService
                     if (regexCatalogueNumber.IsMatch(line) == true)
                     {
                         var match = regexCatalogueNumber.Match(line);
-                        recognizedLine = line.Replace(match.Value, string.Format(CuesheetConstants.RecognizedMarkHTML, match.Value));
+                        recognizedLine = line.Replace(match.Value, CuesheetConstants.GetMarkedText(match.Value));
                         var matchGroup = match.Groups.GetValueOrDefault(cuesheetCatalogueNumberGroupName);
                         if (matchGroup != null)
                         {
@@ -142,12 +142,12 @@ public class CuesheetImportService
                     if (regexTrackBegin.IsMatch(line) == true)
                     {
                         track = new ImportTrack();
-                        recognizedLine = string.Format(CuesheetConstants.RecognizedMarkHTML, line);
+                        recognizedLine = CuesheetConstants.GetMarkedText(line);
                     }
                     if ((regexTrackArtist.IsMatch(line) == true) && (track != null))
                     {
                         var match = regexTrackArtist.Match(line);
-                        recognizedLine = line.Replace(match.Value, string.Format(CuesheetConstants.RecognizedMarkHTML, match.Value));
+                        recognizedLine = line.Replace(match.Value, CuesheetConstants.GetMarkedText(match.Value));
                         var matchGroup = match.Groups.GetValueOrDefault(trackArtistGroupName);
                         if (matchGroup != null)
                         {
@@ -162,7 +162,7 @@ public class CuesheetImportService
                     if ((regexTrackTitle.IsMatch(line) == true) && (track != null))
                     {
                         var match = regexTrackTitle.Match(line);
-                        recognizedLine = line.Replace(match.Value, string.Format(CuesheetConstants.RecognizedMarkHTML, match.Value));
+                        recognizedLine = line.Replace(match.Value, CuesheetConstants.GetMarkedText(match.Value));
                         var matchGroup = match.Groups.GetValueOrDefault(trackTitleGroupName);
                         if (matchGroup != null)
                         {
@@ -177,7 +177,7 @@ public class CuesheetImportService
                     if (regexTrackFlags.IsMatch(line) == true)
                     {
                         var match = regexTrackFlags.Match(line);
-                        recognizedLine = line.Replace(match.Value, string.Format(CuesheetConstants.RecognizedMarkHTML, match.Value));
+                        recognizedLine = line.Replace(match.Value, CuesheetConstants.GetMarkedText(match.Value));
                         var matchGroup = match.Groups.GetValueOrDefault(trackFlagsGroupName);
                         if (matchGroup != null)
                         {
@@ -200,7 +200,7 @@ public class CuesheetImportService
                     if (regexTrackPreGap.IsMatch(line) == true)
                     {
                         var match = regexTrackPreGap.Match(line);
-                        recognizedLine = line.Replace(match.Value, string.Format(CuesheetConstants.RecognizedMarkHTML, match.Value));
+                        recognizedLine = line.Replace(match.Value, CuesheetConstants.GetMarkedText(match.Value));
                         var matchGroup = match.Groups.GetValueOrDefault(trackPreGapGroupName);
                         if (matchGroup != null)
                         {
@@ -224,7 +224,7 @@ public class CuesheetImportService
                     if (regexTrackIndex.IsMatch(line) == true)
                     {
                         var match = regexTrackIndex.Match(line);
-                        recognizedLine = line.Replace(match.Value, string.Format(CuesheetConstants.RecognizedMarkHTML, match.Value));
+                        recognizedLine = line.Replace(match.Value, CuesheetConstants.GetMarkedText(match.Value));
                         var matchGroup = match.Groups.GetValueOrDefault(trackIndex01GroupName);
                         if (matchGroup != null)
                         {
@@ -249,7 +249,7 @@ public class CuesheetImportService
                     if (regexTrackPostGap.IsMatch(line) == true)
                     {
                         var match = regexTrackPostGap.Match(line);
-                        recognizedLine = line.Replace(match.Value, string.Format(CuesheetConstants.RecognizedMarkHTML, match.Value));
+                        recognizedLine = line.Replace(match.Value, CuesheetConstants.GetMarkedText(match.Value));
                         var matchGroup = match.Groups.GetValueOrDefault(trackPostGapGroupName);
                         if (matchGroup != null)
                         {

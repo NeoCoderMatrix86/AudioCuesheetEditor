@@ -116,8 +116,8 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         Assert.IsEmpty(importFile.AnalyzedCuesheet.Audiofiles);
         var lines = importFile.FileContentRecognized!.Split(Environment.NewLine);
         Assert.AreEqual(string.Format("{0} - {1}",
-            string.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetArtist"),
-            string.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetTitle\t\t\t\tc:\\tmp\\Testfile.mp3")), lines.First());
+            CuesheetConstants.GetMarkedText("CuesheetArtist"),
+            CuesheetConstants.GetMarkedText("CuesheetTitle\t\t\t\tc:\\tmp\\Testfile.mp3")), lines.First());
         Assert.AreEqual("Sample Artist 8 - Sample Title 8\t\t\t\t01:15:54", lines.Last());
     }
 
@@ -516,8 +516,8 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         Assert.IsNotNull(importFile.FileContentRecognized);
         var lines = importFile.FileContentRecognized.Split(Environment.NewLine);
         Assert.AreEqual(string.Format("{0} - {1}",
-            string.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetArtist"),
-            string.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetTitle")), lines.First());
+            CuesheetConstants.GetMarkedText("CuesheetArtist"),
+            CuesheetConstants.GetMarkedText("CuesheetTitle")), lines.First());
         Assert.AreEqual("CuesheetArtist", importFile.AnalyzedCuesheet.Artist);
         Assert.AreEqual("CuesheetTitle", importFile.AnalyzedCuesheet.Title);
         Assert.HasCount(0, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks);
@@ -572,9 +572,9 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         Assert.AreEqual(new TimeSpan(0, 5, 0), importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).End);
         var lines = importFile.FileContentRecognized.Split(Environment.NewLine);
         Assert.AreEqual(string.Format("{0} - {1}				{2}",
-            string.Format(CuesheetConstants.RecognizedMarkHTML, "Sample Artist 8"),
-            string.Format(CuesheetConstants.RecognizedMarkHTML, "Sample Title 8"),
-            string.Format(CuesheetConstants.RecognizedMarkHTML, "01:15:54")), lines.Last());
+            CuesheetConstants.GetMarkedText("Sample Artist 8"),
+            CuesheetConstants.GetMarkedText("Sample Title 8"),
+            CuesheetConstants.GetMarkedText("01:15:54")), lines.Last());
     }
 
     [TestMethod()]
@@ -601,9 +601,9 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         Assert.IsNotNull(importFile.FileContentRecognized);
         var lines = importFile.FileContentRecognized.Split(Environment.NewLine);
         Assert.AreEqual(string.Format("{0} - {1}\t\t\t\t\t\t\t\t{2}",
-            string.Format(CuesheetConstants.RecognizedMarkHTML, "Age Of Love"),
-            string.Format(CuesheetConstants.RecognizedMarkHTML, "The Age Of Love (Charlotte De Witte & Enrico Sangiuliano Remix)"),
-            string.Format(CuesheetConstants.RecognizedMarkHTML, "04:29:28")), lines.ElementAt(53));
+            CuesheetConstants.GetMarkedText("Age Of Love"),
+            CuesheetConstants.GetMarkedText("The Age Of Love (Charlotte De Witte & Enrico Sangiuliano Remix)"),
+            CuesheetConstants.GetMarkedText("04:29:28")), lines.ElementAt(53));
     }
 
     [TestMethod()]
@@ -640,8 +640,8 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         Assert.AreEqual("Andale (MONTA (TN) Remix)", importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.Last().Title);
         Assert.AreEqual(new DateTime(2025, 1, 29, 22, 30, 3), importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.Last().StartDateTime);
         Assert.IsNotNull(importFile.FileContentRecognized);
-        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "Sasha Fashion"), importFile.FileContentRecognized);
-        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "2025/1/29 21:48:55"), importFile.FileContentRecognized);
+        Assert.Contains(CuesheetConstants.GetMarkedText("Sasha Fashion"), importFile.FileContentRecognized);
+        Assert.Contains(CuesheetConstants.GetMarkedText("2025/1/29 21:48:55"), importFile.FileContentRecognized);
     }
 
     [TestMethod()]
@@ -678,13 +678,13 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         Assert.AreEqual("Chasing the Sun (Original Mix)", importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.Last().Title);
         Assert.IsNull(importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.Last().Begin);
         Assert.IsNotNull(importFile.FileContentRecognized);
-        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "DJFreezeT"), importFile.FileContentRecognized);
-        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "Rabbit Hole Mix"), importFile.FileContentRecognized);
-        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "0123456789123"), importFile.FileContentRecognized);
-        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "Nikolay Kirov"), importFile.FileContentRecognized);
-        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "Chasing the Sun (Original Mix)"), importFile.FileContentRecognized);
-        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "SHDW & Obscure Shape"), importFile.FileContentRecognized);
-        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "Wächter der Nacht (Original Mix)"), importFile.FileContentRecognized);
+        Assert.Contains(CuesheetConstants.GetMarkedText("DJFreezeT"), importFile.FileContentRecognized);
+        Assert.Contains(CuesheetConstants.GetMarkedText("Rabbit Hole Mix"), importFile.FileContentRecognized);
+        Assert.Contains(CuesheetConstants.GetMarkedText("0123456789123"), importFile.FileContentRecognized);
+        Assert.Contains(CuesheetConstants.GetMarkedText("Nikolay Kirov"), importFile.FileContentRecognized);
+        Assert.Contains(CuesheetConstants.GetMarkedText("Chasing the Sun (Original Mix)"), importFile.FileContentRecognized);
+        Assert.Contains(CuesheetConstants.GetMarkedText("SHDW & Obscure Shape"), importFile.FileContentRecognized);
+        Assert.Contains(CuesheetConstants.GetMarkedText("Wächter der Nacht (Original Mix)"), importFile.FileContentRecognized);
     }
 
     [TestMethod()]
@@ -782,9 +782,9 @@ Local Singles~Voices~{new DateTime(2024, 8, 14, 22, 25, 59)}";
         Assert.AreEqual("c:\\AudioFile.mp3", importFile.AnalyzedCuesheet.Audiofiles.First().Name);
         Assert.HasCount(8, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks);
         Assert.IsNotNull(importFile.FileContentRecognized);
-        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetArtist"), importFile.FileContentRecognized);
-        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "CuesheetTitle"), importFile.FileContentRecognized);
-        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "c:\\AudioFile.mp3"), importFile.FileContentRecognized);
-        Assert.Contains(string.Format(CuesheetConstants.RecognizedMarkHTML, "Sample Artist 8"), importFile.FileContentRecognized);
+        Assert.Contains(CuesheetConstants.GetMarkedText("CuesheetArtist"), importFile.FileContentRecognized);
+        Assert.Contains(CuesheetConstants.GetMarkedText("CuesheetTitle"), importFile.FileContentRecognized);
+        Assert.Contains(CuesheetConstants.GetMarkedText("c:\\AudioFile.mp3"), importFile.FileContentRecognized);
+        Assert.Contains(CuesheetConstants.GetMarkedText("Sample Artist 8"), importFile.FileContentRecognized);
     }
 }
