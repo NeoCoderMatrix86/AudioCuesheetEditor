@@ -92,10 +92,6 @@ public class CuesheetExportService(ISessionStateContainer sessionStateContainer,
                     var begin = track.Begin.Value;
                     _ = builder.AppendLine(CultureInfo.CurrentCulture, $"{CuesheetConstants.Tab}{CuesheetConstants.Tab}{CuesheetConstants.TrackIndex01} {Math.Floor(begin.TotalMinutes):00}:{begin.Seconds:00}:{begin.Milliseconds * 75 / 1000:00}");
                 }
-                else
-                {
-                    throw new NullReferenceException($"{nameof(Track.Begin)} may not be null!");
-                }
                 if (track.PostGap.HasValue)
                 {
                     _ = builder.AppendLine(CultureInfo.CurrentCulture, $"{CuesheetConstants.Tab}{CuesheetConstants.Tab}{CuesheetConstants.TrackPostGap} {Math.Floor(track.PostGap.Value.TotalMinutes):00}:{track.PostGap.Value.Seconds:00}:{track.PostGap.Value.Milliseconds * 75 / 1000:00}");

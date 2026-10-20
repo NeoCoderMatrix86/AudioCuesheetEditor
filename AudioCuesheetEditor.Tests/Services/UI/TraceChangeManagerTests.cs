@@ -16,18 +16,22 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Services.UI;
-using AudioCuesheetEditor.Tests.Utility;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.Extensions.Logging;
+using Moq;
 
 namespace AudioCuesheetEditor.Tests.Services.UI;
 
 [TestClass()]
 public class TraceChangeManagerTests
 {
-    readonly TraceChangeManager _traceChangeManager = new(TestHelper.CreateLogger<TraceChangeManager>());
+    readonly Mock<ILogger<TraceChangeManager>> _logger = new();
+
+    readonly TraceChangeManager _traceChangeManager;
+
+    public TraceChangeManagerTests()
+    {
+        _traceChangeManager = new(_logger.Object);
+    }
 
     [TestMethod()]
     public void AddChange_SingleChange_EnablesUndo()

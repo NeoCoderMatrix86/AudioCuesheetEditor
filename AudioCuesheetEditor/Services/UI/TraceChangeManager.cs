@@ -70,17 +70,10 @@ public partial class TraceChangeManager(ILogger<TraceChangeManager> logger) : IT
                     if (tracedObject != null && traceAbleChange != null)
                     {
                         var propertyInfo = tracedObject.GetType().GetProperty(traceAbleChange.PropertyName);
-                        if (propertyInfo != null)
-                        {
-                            var currentValue = propertyInfo.GetValue(tracedObject);
-                            redoChanges.Add(new TracedChange(tracedObject, new(currentValue, traceAbleChange.PropertyName)));
-                            LogSettingProperty(traceAbleChange.PropertyName, tracedObject, currentValue, traceAbleChange.PreviousValue);
-                            propertyInfo.SetValue(tracedObject, traceAbleChange.PreviousValue);
-                        }
-                        else
-                        {
-                            throw new NullReferenceException($"Property {traceAbleChange.PropertyName} could not be found!");
-                        }
+                        var currentValue = propertyInfo!.GetValue(tracedObject);
+                        redoChanges.Add(new TracedChange(tracedObject, new(currentValue, traceAbleChange.PropertyName)));
+                        LogSettingProperty(traceAbleChange.PropertyName, tracedObject, currentValue, traceAbleChange.PreviousValue);
+                        propertyInfo.SetValue(tracedObject, traceAbleChange.PreviousValue);
                     }
                     if (change != null)
                     {
@@ -121,17 +114,10 @@ public partial class TraceChangeManager(ILogger<TraceChangeManager> logger) : IT
                     if (tracedObject != null && traceAbleChange != null)
                     {
                         var propertyInfo = tracedObject.GetType().GetProperty(traceAbleChange.PropertyName);
-                        if (propertyInfo != null)
-                        {
-                            var currentValue = propertyInfo.GetValue(tracedObject);
-                            undoChanges.Add(new TracedChange(tracedObject, new(currentValue, traceAbleChange.PropertyName)));
-                            LogSettingProperty(traceAbleChange.PropertyName, tracedObject, currentValue, traceAbleChange.PreviousValue);
-                            propertyInfo.SetValue(tracedObject, traceAbleChange.PreviousValue);
-                        }
-                        else
-                        {
-                            throw new NullReferenceException($"Property {traceAbleChange.PropertyName} could not be found!");
-                        }
+                        var currentValue = propertyInfo!.GetValue(tracedObject);
+                        undoChanges.Add(new TracedChange(tracedObject, new(currentValue, traceAbleChange.PropertyName)));
+                        LogSettingProperty(traceAbleChange.PropertyName, tracedObject, currentValue, traceAbleChange.PreviousValue);
+                        propertyInfo.SetValue(tracedObject, traceAbleChange.PreviousValue);
                     }
                     if (change != null)
                     {

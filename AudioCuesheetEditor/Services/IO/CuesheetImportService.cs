@@ -175,7 +175,7 @@ public class CuesheetImportService
                             throw new ArgumentException($"Group '{trackTitleGroupName}' was null!");
                         }
                     }
-                    if (regexTrackFlags.IsMatch(line) == true)
+                    if ((regexTrackFlags.IsMatch(line) == true) && (track != null))
                     {
                         var match = regexTrackFlags.Match(line);
                         recognizedLine = line.Replace(match.Value, CuesheetConstants.GetMarkedText(match.Value));
@@ -184,21 +184,14 @@ public class CuesheetImportService
                         {
                             var flags = matchGroup.Value;
                             var flagList = Flag.AvailableFlags.Where(x => flags.Contains(x.CuesheetLabel));
-                            if (track != null)
-                            {
-                                track.Flags = flagList;
-                            }
-                            else
-                            {
-                                throw new NullReferenceException($"Track was null during input {line}");
-                            }
+                            track.Flags = flagList;
                         }
                         else
                         {
                             throw new ArgumentException($"Group '{trackFlagsGroupName}' was null!");
                         }
                     }
-                    if (regexTrackPreGap.IsMatch(line) == true)
+                    if ((regexTrackPreGap.IsMatch(line) == true) && (track != null))
                     {
                         var match = regexTrackPreGap.Match(line);
                         recognizedLine = line.Replace(match.Value, CuesheetConstants.GetMarkedText(match.Value));
@@ -208,21 +201,14 @@ public class CuesheetImportService
                             var minutes = int.Parse(matchGroup.Value[..matchGroup.Value.IndexOf(':')], CultureInfo.CurrentCulture);
                             var seconds = int.Parse(matchGroup.Value.AsSpan(matchGroup.Value.IndexOf(':') + 1, 2), CultureInfo.CurrentCulture);
                             var frames = int.Parse(matchGroup.Value[(matchGroup.Value.LastIndexOf(':') + 1)..], CultureInfo.CurrentCulture);
-                            if (track != null)
-                            {
-                                track.PreGap = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32(frames / 75.0 * 1000));
-                            }
-                            else
-                            {
-                                throw new NullReferenceException($"Track was null during input {line}");
-                            }
+                            track.PreGap = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32(frames / 75.0 * 1000));
                         }
                         else
                         {
                             throw new ArgumentException($"Group '{trackPreGapGroupName}' was null!");
                         }
                     }
-                    if (regexTrackIndex.IsMatch(line) == true)
+                    if ((regexTrackIndex.IsMatch(line) == true) && (track != null))
                     {
                         var match = regexTrackIndex.Match(line);
                         recognizedLine = line.Replace(match.Value, CuesheetConstants.GetMarkedText(match.Value));
@@ -232,14 +218,7 @@ public class CuesheetImportService
                             var minutes = int.Parse(matchGroup.Value[..matchGroup.Value.IndexOf(':')], CultureInfo.CurrentCulture);
                             var seconds = int.Parse(matchGroup.Value.AsSpan(matchGroup.Value.IndexOf(':') + 1, 2), CultureInfo.CurrentCulture);
                             var frames = int.Parse(matchGroup.Value[(matchGroup.Value.LastIndexOf(':') + 1)..], CultureInfo.CurrentCulture);
-                            if (track != null)
-                            {
-                                track.Begin = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32(frames / 75.0 * 1000));
-                            }
-                            else
-                            {
-                                throw new NullReferenceException($"Track was null during input {line}");
-                            }
+                            track.Begin = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32(frames / 75.0 * 1000));
                         }
                         else
                         {
@@ -247,7 +226,7 @@ public class CuesheetImportService
                         }
                         audiofile?.Tracks.Add(track);
                     }
-                    if (regexTrackPostGap.IsMatch(line) == true)
+                    if ((regexTrackPostGap.IsMatch(line) == true) && (track != null))
                     {
                         var match = regexTrackPostGap.Match(line);
                         recognizedLine = line.Replace(match.Value, CuesheetConstants.GetMarkedText(match.Value));
@@ -257,14 +236,7 @@ public class CuesheetImportService
                             var minutes = int.Parse(matchGroup.Value[..matchGroup.Value.IndexOf(':')], CultureInfo.CurrentCulture);
                             var seconds = int.Parse(matchGroup.Value.AsSpan(matchGroup.Value.IndexOf(':') + 1, 2), CultureInfo.CurrentCulture);
                             var frames = int.Parse(matchGroup.Value[(matchGroup.Value.LastIndexOf(':') + 1)..], CultureInfo.CurrentCulture);
-                            if (track != null)
-                            {
-                                track.PostGap = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32(frames / 75.0 * 1000));
-                            }
-                            else
-                            {
-                                throw new NullReferenceException($"Track was null during input {line}");
-                            }
+                            track.PostGap = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32(frames / 75.0 * 1000));
                         }
                         else
                         {

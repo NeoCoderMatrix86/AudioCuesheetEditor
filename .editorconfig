@@ -15,9 +15,6 @@ indent_size = 2
 indent_size = 4
 tab_width = 4
 
-#TODO: Enable all of these
-dotnet_diagnostic.CA2201.severity = suggestion
-
 # Organize usings
 dotnet_separate_import_directive_groups = false
 dotnet_sort_system_directives_first = true

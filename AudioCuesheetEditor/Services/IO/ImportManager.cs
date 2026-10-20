@@ -199,8 +199,8 @@ public partial class ImportManager(ISessionStateContainer sessionStateContainer,
     {
         foreach (var audiofile in audiofiles)
         {
-            Audiofile? targetAudiofile = null;
-            IEnumerable<ITrack>? tracks = null;
+            Audiofile targetAudiofile = default!;
+            IEnumerable<ITrack> tracks = default!;
             // Map uploaded import audiofiles by name
             var importAudiofileFound = _sessionStateContainer.ImportAudiofiles.FirstOrDefault(x => x.Name == audiofile.Name);
             if (importAudiofileFound != null)
@@ -209,7 +209,7 @@ public partial class ImportManager(ISessionStateContainer sessionStateContainer,
             }
             if (audiofile is ImportAudiofile importAudiofile)
             {
-                targetAudiofile ??= new Audiofile()
+                targetAudiofile = new Audiofile()
                 {
                     Name = importAudiofile.Name,
                     AudioCodec = string.IsNullOrEmpty(importAudiofile.Name) == false ? _fileInputManager.GetAudioCodec(importAudiofile.Name) : null
@@ -218,12 +218,8 @@ public partial class ImportManager(ISessionStateContainer sessionStateContainer,
             }
             if (audiofile is Audiofile sourceAudiofile)
             {
-                targetAudiofile ??= new Audiofile(sourceAudiofile.Name, sourceAudiofile.ObjectURL, sourceAudiofile.AudioCodec, sourceAudiofile.Duration);
+                targetAudiofile = new Audiofile(sourceAudiofile.Name, sourceAudiofile.ObjectURL, sourceAudiofile.AudioCodec, sourceAudiofile.Duration);
                 tracks = sourceAudiofile.Tracks;
-            }
-            if (targetAudiofile == null || tracks == null)
-            {
-                throw new NullReferenceException();
             }
             IOrderedEnumerable<ITrack> sortedTracks;
             if (tracks.All(x => x.Position.HasValue))
