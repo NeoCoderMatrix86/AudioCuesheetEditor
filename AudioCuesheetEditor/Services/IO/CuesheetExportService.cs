@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -63,42 +63,42 @@ public class CuesheetExportService(ISessionStateContainer sessionStateContainer,
         var builder = new StringBuilder();
         if (string.IsNullOrEmpty(_sessionStateContainer.Cuesheet.Cataloguenumber) == false)
         {
-            _ = builder.AppendLine(string.Format("{0} {1}", CuesheetConstants.CuesheetCatalogueNumber, _sessionStateContainer.Cuesheet.Cataloguenumber));
+            _ = builder.AppendLine(CultureInfo.CurrentCulture, $"{CuesheetConstants.CuesheetCatalogueNumber} {_sessionStateContainer.Cuesheet.Cataloguenumber}");
         }
         if (_sessionStateContainer.Cuesheet.CDTextfile != null)
         {
-            _ = builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetCDTextfile, _sessionStateContainer.Cuesheet.CDTextfile.Name));
+            _ = builder.AppendLine(CultureInfo.CurrentCulture, $"{CuesheetConstants.CuesheetCDTextfile} \"{_sessionStateContainer.Cuesheet.CDTextfile.Name}\"");
         }
-        _ = builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetTitle, _sessionStateContainer.Cuesheet.Title));
-        _ = builder.AppendLine(string.Format("{0} \"{1}\"", CuesheetConstants.CuesheetArtist, _sessionStateContainer.Cuesheet.Artist));
+        _ = builder.AppendLine(CultureInfo.CurrentCulture, $"{CuesheetConstants.CuesheetTitle} \"{_sessionStateContainer.Cuesheet.Title}\"");
+        _ = builder.AppendLine(CultureInfo.CurrentCulture, $"{CuesheetConstants.CuesheetArtist} \"{_sessionStateContainer.Cuesheet.Artist}\"");
         foreach (var audiofile in _sessionStateContainer.Cuesheet.Audiofiles)
         {
-            _ = builder.AppendLine(string.Format("{0} \"{1}\" {2}", CuesheetConstants.CuesheetFileName, audiofile.Name, audiofile.AudioCodec?.FileExtension.Replace(".", string.Empty).ToUpper(CultureInfo.InvariantCulture)));
+            _ = builder.AppendLine(CultureInfo.CurrentCulture, $"{CuesheetConstants.CuesheetFileName} \"{audiofile.Name}\" {audiofile.AudioCodec?.FileExtension.Replace(".", string.Empty).ToUpper(CultureInfo.InvariantCulture)}");
             foreach(var track in audiofile.Tracks)
             {
-                _ = builder.AppendLine(string.Format("{0}{1} {2:00} {3}", CuesheetConstants.Tab, CuesheetConstants.CuesheetTrack, track.Position, CuesheetConstants.CuesheetTrackAudio));
-                _ = builder.AppendLine(string.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackTitle, track.Title));
-                _ = builder.AppendLine(string.Format("{0}{1}{2} \"{3}\"", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackArtist, track.Artist));
+                _ = builder.AppendLine(CultureInfo.CurrentCulture, $"{CuesheetConstants.Tab}{CuesheetConstants.CuesheetTrack} {track.Position:00} {CuesheetConstants.CuesheetTrackAudio}");
+                _ = builder.AppendLine(CultureInfo.CurrentCulture, $"{CuesheetConstants.Tab}{CuesheetConstants.Tab}{CuesheetConstants.TrackTitle} \"{track.Title}\"");
+                _ = builder.AppendLine(CultureInfo.CurrentCulture, $"{CuesheetConstants.Tab}{CuesheetConstants.Tab}{CuesheetConstants.TrackArtist} \"{track.Artist}\"");
                 if (track.Flags.Any())
                 {
-                    _ = builder.AppendLine(string.Format("{0}{1}{2} {3}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackFlags, string.Join(" ", track.Flags.Select(x => x.CuesheetLabel))));
+                    _ = builder.AppendLine(CultureInfo.CurrentCulture, $"{CuesheetConstants.Tab}{CuesheetConstants.Tab}{CuesheetConstants.TrackFlags} {string.Join(" ", track.Flags.Select(x => x.CuesheetLabel))}");
                 }
                 if (track.PreGap.HasValue)
                 {
-                    _ = builder.AppendLine(string.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackPreGap, Math.Floor(track.PreGap.Value.TotalMinutes), track.PreGap.Value.Seconds, track.PreGap.Value.Milliseconds * 75 / 1000));
+                    _ = builder.AppendLine(CultureInfo.CurrentCulture, $"{CuesheetConstants.Tab}{CuesheetConstants.Tab}{CuesheetConstants.TrackPreGap} {Math.Floor(track.PreGap.Value.TotalMinutes):00}:{track.PreGap.Value.Seconds:00}:{track.PreGap.Value.Milliseconds * 75 / 1000:00}");
                 }
                 if (track.Begin.HasValue)
                 {
                     var begin = track.Begin.Value;
-                    _ = builder.AppendLine(string.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackIndex01, Math.Floor(begin.TotalMinutes), begin.Seconds, begin.Milliseconds * 75 / 1000));
+                    _ = builder.AppendLine(CultureInfo.CurrentCulture, $"{CuesheetConstants.Tab}{CuesheetConstants.Tab}{CuesheetConstants.TrackIndex01} {Math.Floor(begin.TotalMinutes):00}:{begin.Seconds:00}:{begin.Milliseconds * 75 / 1000:00}");
                 }
                 else
                 {
-                    throw new NullReferenceException(string.Format("{0} may not be null!", nameof(Track.Begin)));
+                    throw new NullReferenceException($"{nameof(Track.Begin)} may not be null!");
                 }
                 if (track.PostGap.HasValue)
                 {
-                    _ = builder.AppendLine(string.Format("{0}{1}{2} {3:00}:{4:00}:{5:00}", CuesheetConstants.Tab, CuesheetConstants.Tab, CuesheetConstants.TrackPostGap, Math.Floor(track.PostGap.Value.TotalMinutes), track.PostGap.Value.Seconds, track.PostGap.Value.Milliseconds * 75 / 1000));
+                    _ = builder.AppendLine(CultureInfo.CurrentCulture, $"{CuesheetConstants.Tab}{CuesheetConstants.Tab}{CuesheetConstants.TrackPostGap} {Math.Floor(track.PostGap.Value.TotalMinutes):00}:{track.PostGap.Value.Seconds:00}:{track.PostGap.Value.Milliseconds * 75 / 1000:00}");
                 }
             }
         }

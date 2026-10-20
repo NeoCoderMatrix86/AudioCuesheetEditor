@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -19,6 +19,7 @@ using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.Extensions.Localization;
 using System.Data;
+using System.Globalization;
 using System.Text;
 
 namespace AudioCuesheetEditor.Services.IO;
@@ -63,7 +64,7 @@ public class ExportfileGenerator(ISessionStateContainer sessionStateContainer, I
                 .Replace(Exportprofile.SchemeCuesheetCDTextfile, _sessionStateContainer.Cuesheet.CDTextfile?.Name)
                 .Replace(Exportprofile.SchemeCuesheetCatalogueNumber, _sessionStateContainer.Cuesheet.Cataloguenumber)
                 .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
-                .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString())
+                .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString(CultureInfo.CurrentCulture))
                 .Replace(Exportprofile.SchemeTime, DateTime.Now.ToLongTimeString());
             _ = builder.AppendLine(header);
             foreach (var audiofile in _sessionStateContainer.Cuesheet.Audiofiles)
@@ -79,7 +80,7 @@ public class ExportfileGenerator(ISessionStateContainer sessionStateContainer, I
                         var trackLine = exportprofile.SchemeTracks
                             .Replace(Exportprofile.SchemeTrackArtist, track.Artist)
                             .Replace(Exportprofile.SchemeTrackTitle, track.Title)
-                            .Replace(Exportprofile.SchemeTrackPosition, track.Position.ToString())
+                            .Replace(Exportprofile.SchemeTrackPosition, track.Position?.ToString(CultureInfo.CurrentCulture))
                             .Replace(Exportprofile.SchemeTrackBegin, track.Begin.ToString())
                             .Replace(Exportprofile.SchemeTrackEnd, track.End.ToString())
                             .Replace(Exportprofile.SchemeTrackLength, track.Length.ToString())
@@ -87,7 +88,7 @@ public class ExportfileGenerator(ISessionStateContainer sessionStateContainer, I
                             .Replace(Exportprofile.SchemeTrackPreGap, track.PreGap != null ? track.PreGap.Value.ToString() : string.Empty)
                             .Replace(Exportprofile.SchemeTrackPostGap, track.PostGap != null ? track.PostGap.Value.ToString() : string.Empty)
                             .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
-                            .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString())
+                            .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString(CultureInfo.CurrentCulture))
                             .Replace(Exportprofile.SchemeTime, DateTime.Now.ToLongTimeString());
                         _ = builder.AppendLine(trackLine);
                     }
@@ -100,7 +101,7 @@ public class ExportfileGenerator(ISessionStateContainer sessionStateContainer, I
                 .Replace(Exportprofile.SchemeCuesheetCDTextfile, _sessionStateContainer.Cuesheet.CDTextfile?.Name)
                 .Replace(Exportprofile.SchemeCuesheetCatalogueNumber, _sessionStateContainer.Cuesheet.Cataloguenumber)
                 .Replace(Exportprofile.SchemeDate, DateTime.Now.ToShortDateString())
-                .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString())
+                .Replace(Exportprofile.SchemeDateTime, DateTime.Now.ToString(CultureInfo.CurrentCulture))
                 .Replace(Exportprofile.SchemeTime, DateTime.Now.ToLongTimeString());
             _ = builder.AppendLine(footer);
         }

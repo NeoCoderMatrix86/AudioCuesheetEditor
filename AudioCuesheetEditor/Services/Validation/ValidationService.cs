@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ public class ValidationService(IStringLocalizer<ValidationMessage> localizer)
             }
             else
             {
-                throw new NotSupportedException(string.Format("Model was not of supposed type '{0}'", nameof(IValidateable)));
+                throw new NotSupportedException($"Model was not of supposed type '{nameof(IValidateable)}'");
             }
         }
         return errors;

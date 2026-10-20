@@ -49,8 +49,8 @@ public class ProjectfileTests
             var track = new Track
             {
                 Position = i,
-                Artist = string.Format("Artist {0}", i),
-                Title = string.Format("Title {0}", i),
+                Artist = $"Artist {i}",
+                Title = $"Title {i}",
                 Begin = begin
             };
             var rand = new Random();

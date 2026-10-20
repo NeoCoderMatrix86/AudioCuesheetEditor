@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -16,6 +16,7 @@
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.Utility;
 using AudioCuesheetEditor.Services.Options;
+using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -69,7 +70,7 @@ public class ApplicationOptionsTimeSpanParser
         {
             try
             {
-                formatted = timeSpan.Value.ToString(_applicationOptions?.DisplayTimeSpanFormat);
+                formatted = timeSpan.Value.ToString(_applicationOptions?.DisplayTimeSpanFormat, CultureInfo.CurrentCulture);
             }
             catch (FormatException)
             {

@@ -75,7 +75,7 @@ public partial class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> lo
                 }
                 else
                 {
-                    findRecordingsResult = await query.FindRecordingsAsync(string.Format("{0} AND artistname:{1}", searchString, artist), cancellationToken: token);
+                    findRecordingsResult = await query.FindRecordingsAsync($"{searchString} AND artistname:{artist}", cancellationToken: token);
                 }
                 foreach (var result in findRecordingsResult.Results)
                 {

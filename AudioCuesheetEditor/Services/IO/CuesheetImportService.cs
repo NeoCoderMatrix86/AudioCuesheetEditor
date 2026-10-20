@@ -16,6 +16,7 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Model.IO.Import;
+using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -76,7 +77,7 @@ public class CuesheetImportService
                         }
                         else
                         {
-                            throw new ArgumentException(string.Format("Group '{0}' was null!", cuesheetArtistGroupName));
+                            throw new ArgumentException($"Group '{cuesheetArtistGroupName}' was null!");
                         }
                     }
                     if ((regexCuesheetTitle.IsMatch(line) == true) && (track == null))
@@ -91,7 +92,7 @@ public class CuesheetImportService
                         }
                         else
                         {
-                            throw new ArgumentException(string.Format("Group '{0}' was null!", cuesheetTitleGroupName));
+                            throw new ArgumentException($"Group '{cuesheetTitleGroupName}' was null!");
                         }
                     }
                     if (regexCuesheetFile.IsMatch(line) == true)
@@ -106,7 +107,7 @@ public class CuesheetImportService
                         }
                         else
                         {
-                            throw new ArgumentException(string.Format("Group '{0}' was null!", cuesheetFileNameGroupName));
+                            throw new ArgumentException($"Group '{cuesheetFileNameGroupName}' was null!");
                         }
                     }
                     if (regexCDTextfile.IsMatch(line) == true)
@@ -121,7 +122,7 @@ public class CuesheetImportService
                         }
                         else
                         {
-                            throw new ArgumentException(string.Format("Group '{0}' was null!", cuesheetCDTextfileGroupName));
+                            throw new ArgumentException($"Group '{cuesheetCDTextfileGroupName}' was null!");
                         }
                     }
                     if (regexCatalogueNumber.IsMatch(line) == true)
@@ -136,7 +137,7 @@ public class CuesheetImportService
                         }
                         else
                         {
-                            throw new ArgumentException(string.Format("Group '{0}' was null!", cuesheetCatalogueNumberGroupName));
+                            throw new ArgumentException($"Group '{cuesheetCatalogueNumberGroupName}' was null!");
                         }
                     }
                     if (regexTrackBegin.IsMatch(line) == true)
@@ -156,7 +157,7 @@ public class CuesheetImportService
                         }
                         else
                         {
-                            throw new ArgumentException(string.Format("Group '{0}' was null!", trackArtistGroupName));
+                            throw new ArgumentException($"Group '{trackArtistGroupName}' was null!");
                         }
                     }
                     if ((regexTrackTitle.IsMatch(line) == true) && (track != null))
@@ -171,7 +172,7 @@ public class CuesheetImportService
                         }
                         else
                         {
-                            throw new ArgumentException(string.Format("Group '{0}' was null!", trackTitleGroupName));
+                            throw new ArgumentException($"Group '{trackTitleGroupName}' was null!");
                         }
                     }
                     if (regexTrackFlags.IsMatch(line) == true)
@@ -189,12 +190,12 @@ public class CuesheetImportService
                             }
                             else
                             {
-                                throw new NullReferenceException(string.Format("Track was null during input {0}", line));
+                                throw new NullReferenceException($"Track was null during input {line}");
                             }
                         }
                         else
                         {
-                            throw new ArgumentException(string.Format("Group '{0}' was null!", trackFlagsGroupName));
+                            throw new ArgumentException($"Group '{trackFlagsGroupName}' was null!");
                         }
                     }
                     if (regexTrackPreGap.IsMatch(line) == true)
@@ -204,21 +205,21 @@ public class CuesheetImportService
                         var matchGroup = match.Groups.GetValueOrDefault(trackPreGapGroupName);
                         if (matchGroup != null)
                         {
-                            var minutes = int.Parse(matchGroup.Value[..matchGroup.Value.IndexOf(':')]);
-                            var seconds = int.Parse(matchGroup.Value.Substring(matchGroup.Value.IndexOf(':') + 1, 2));
-                            var frames = int.Parse(matchGroup.Value[(matchGroup.Value.LastIndexOf(':') + 1)..]);
+                            var minutes = int.Parse(matchGroup.Value[..matchGroup.Value.IndexOf(':')], CultureInfo.CurrentCulture);
+                            var seconds = int.Parse(matchGroup.Value.AsSpan(matchGroup.Value.IndexOf(':') + 1, 2), CultureInfo.CurrentCulture);
+                            var frames = int.Parse(matchGroup.Value[(matchGroup.Value.LastIndexOf(':') + 1)..], CultureInfo.CurrentCulture);
                             if (track != null)
                             {
                                 track.PreGap = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32(frames / 75.0 * 1000));
                             }
                             else
                             {
-                                throw new NullReferenceException(string.Format("Track was null during input {0}", line));
+                                throw new NullReferenceException($"Track was null during input {line}");
                             }
                         }
                         else
                         {
-                            throw new ArgumentException(string.Format("Group '{0}' was null!", trackPreGapGroupName));
+                            throw new ArgumentException($"Group '{trackPreGapGroupName}' was null!");
                         }
                     }
                     if (regexTrackIndex.IsMatch(line) == true)
@@ -228,21 +229,21 @@ public class CuesheetImportService
                         var matchGroup = match.Groups.GetValueOrDefault(trackIndex01GroupName);
                         if (matchGroup != null)
                         {
-                            var minutes = int.Parse(matchGroup.Value[..matchGroup.Value.IndexOf(':')]);
-                            var seconds = int.Parse(matchGroup.Value.Substring(matchGroup.Value.IndexOf(':') + 1, 2));
-                            var frames = int.Parse(matchGroup.Value[(matchGroup.Value.LastIndexOf(':') + 1)..]);
+                            var minutes = int.Parse(matchGroup.Value[..matchGroup.Value.IndexOf(':')], CultureInfo.CurrentCulture);
+                            var seconds = int.Parse(matchGroup.Value.AsSpan(matchGroup.Value.IndexOf(':') + 1, 2), CultureInfo.CurrentCulture);
+                            var frames = int.Parse(matchGroup.Value[(matchGroup.Value.LastIndexOf(':') + 1)..], CultureInfo.CurrentCulture);
                             if (track != null)
                             {
                                 track.Begin = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32(frames / 75.0 * 1000));
                             }
                             else
                             {
-                                throw new NullReferenceException(string.Format("Track was null during input {0}", line));
+                                throw new NullReferenceException($"Track was null during input {line}");
                             }
                         }
                         else
                         {
-                            throw new ArgumentException(string.Format("Group '{0}' was null!", trackIndex01GroupName));
+                            throw new ArgumentException($"Group '{trackIndex01GroupName}' was null!");
                         }
                         audiofile?.Tracks.Add(track);
                     }
@@ -253,21 +254,21 @@ public class CuesheetImportService
                         var matchGroup = match.Groups.GetValueOrDefault(trackPostGapGroupName);
                         if (matchGroup != null)
                         {
-                            var minutes = int.Parse(matchGroup.Value[..matchGroup.Value.IndexOf(':')]);
-                            var seconds = int.Parse(matchGroup.Value.Substring(matchGroup.Value.IndexOf(':') + 1, 2));
-                            var frames = int.Parse(matchGroup.Value[(matchGroup.Value.LastIndexOf(':') + 1)..]);
+                            var minutes = int.Parse(matchGroup.Value[..matchGroup.Value.IndexOf(':')], CultureInfo.CurrentCulture);
+                            var seconds = int.Parse(matchGroup.Value.AsSpan(matchGroup.Value.IndexOf(':') + 1, 2), CultureInfo.CurrentCulture);
+                            var frames = int.Parse(matchGroup.Value[(matchGroup.Value.LastIndexOf(':') + 1)..], CultureInfo.CurrentCulture);
                             if (track != null)
                             {
                                 track.PostGap = new TimeSpan(0, 0, minutes, seconds, Convert.ToInt32(frames / 75.0 * 1000));
                             }
                             else
                             {
-                                throw new NullReferenceException(string.Format("Track was null during input {0}", line));
+                                throw new NullReferenceException($"Track was null during input {line}");
                             }
                         }
                         else
                         {
-                            throw new ArgumentException(string.Format("Group '{0}' was null!", trackPostGapGroupName));
+                            throw new ArgumentException($"Group '{trackPostGapGroupName}' was null!");
                         }
                     }
                 }

@@ -14,6 +14,7 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
 namespace AudioCuesheetEditor.Model.Utility;
@@ -61,19 +62,19 @@ public class TimeSpanFormat : Validateable
                     switch (groupName)
                     {
                         case nameof(Days):
-                            days = Convert.ToInt32(match.Groups[groupName].Value);
+                            days = Convert.ToInt32(match.Groups[groupName].Value, CultureInfo.CurrentCulture);
                             break;
                         case nameof(Hours):
-                            hours = Convert.ToInt32(match.Groups[groupName].Value);
+                            hours = Convert.ToInt32(match.Groups[groupName].Value, CultureInfo.CurrentCulture);
                             break;
                         case nameof(Minutes):
-                            minutes = Convert.ToInt32(match.Groups[groupName].Value);
+                            minutes = Convert.ToInt32(match.Groups[groupName].Value, CultureInfo.CurrentCulture);
                             break;
                         case nameof(Seconds):
-                            seconds = Convert.ToInt32(match.Groups[groupName].Value);
+                            seconds = Convert.ToInt32(match.Groups[groupName].Value, CultureInfo.CurrentCulture);
                             break;
                         case nameof(Milliseconds):
-                            milliseconds = Convert.ToInt32(match.Groups[groupName].Value);
+                            milliseconds = Convert.ToInt32(match.Groups[groupName].Value, CultureInfo.CurrentCulture);
                             break;
                     }
                 }

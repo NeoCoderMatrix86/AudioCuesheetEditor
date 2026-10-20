@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@ using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.Options;
 using Microsoft.Extensions.Localization;
 using Microsoft.JSInterop;
+using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.Json;
@@ -93,7 +94,7 @@ public class LocalStorageOptionsProvider(IJSRuntime jsRuntime, IStringLocalizer<
 
         if (propertyInfo != null && targetObject != null)
         {
-            propertyInfo.SetValue(targetObject, Convert.ChangeType(value, propertyInfo.PropertyType));
+            propertyInfo.SetValue(targetObject, Convert.ChangeType(value, propertyInfo.PropertyType, CultureInfo.CurrentCulture));
         }
         else
         {
@@ -114,7 +115,7 @@ public class LocalStorageOptionsProvider(IJSRuntime jsRuntime, IStringLocalizer<
         var nestedProperty = typeof(T).GetProperty(memberExpression.Member.Name) ?? throw new ArgumentException("The provided nested property expression does not reference a valid property.");
         var nestedInstance = nestedProperty.GetValue(options) ?? throw new InvalidOperationException("The nested property is null.");
         var valueProperty = ResolveNestedProperty(valuePropertyExpression.Body as MemberExpression, ref nestedInstance) ?? throw new ArgumentException("The provided value property expression does not reference a valid property.");
-        valueProperty.SetValue(nestedInstance, Convert.ChangeType(value, valueProperty.PropertyType));
+        valueProperty.SetValue(nestedInstance, Convert.ChangeType(value, valueProperty.PropertyType, CultureInfo.CurrentCulture));
 
         _ = await SaveOptionsAsync(options);
     }

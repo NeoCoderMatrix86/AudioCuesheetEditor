@@ -74,7 +74,7 @@ public class Audiofile() : Validateable, IAudiofile
             if ((field != null) && (Name?.EndsWith(field.FileExtension, StringComparison.CurrentCultureIgnoreCase) == false))
             {
                 //Replace file ending
-                Name = string.Format("{0}{1}", Path.GetFileNameWithoutExtension(Name), field.FileExtension);
+                Name = $"{Path.GetFileNameWithoutExtension(Name)}{field.FileExtension}";
             }
         }
     }

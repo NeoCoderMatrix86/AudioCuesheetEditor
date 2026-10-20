@@ -22,6 +22,7 @@ using Microsoft.Extensions.Localization;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
+using System.Globalization;
 using System.Linq;
 
 namespace AudioCuesheetEditor.Tests.Services.IO;
@@ -64,7 +65,7 @@ public class CuesheetExportServiceTests
         {
             Audiofiles = [new()]
         });
-        _ = _localizerMock.Setup(x => x["{0} has no value!", It.IsAny<object[]>()]).Returns((string format, object[] args) => new LocalizedString(format, string.Format(format, args)));
+        _ = _localizerMock.Setup(x => x["{0} has no value!", It.IsAny<object[]>()]).Returns((string format, object[] args) => new LocalizedString(format, string.Format(CultureInfo.CurrentCulture, format, args)));
         _ = _localizerMock.Setup(x => x[nameof(Audiofile.Name)]).Returns(new LocalizedString(nameof(Audiofile.Name), nameof(Audiofile.Name)));
 
         // Act
@@ -80,7 +81,7 @@ public class CuesheetExportServiceTests
     {
         // Arrange
         _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, new Cuesheet());
-        _ = _localizerMock.Setup(x => x["{0} has no value!", It.IsAny<object[]>()]).Returns((string format, object[] args) => new LocalizedString(format, string.Format(format, args)));
+        _ = _localizerMock.Setup(x => x["{0} has no value!", It.IsAny<object[]>()]).Returns((string format, object[] args) => new LocalizedString(format, string.Format(CultureInfo.CurrentCulture, format, args)));
         _ = _localizerMock.Setup(x => x[nameof(Cuesheet.Title)]).Returns(new LocalizedString(nameof(Cuesheet.Title), nameof(Cuesheet.Title)));
 
         // Act
@@ -117,7 +118,7 @@ public class CuesheetExportServiceTests
 
         };
         _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
-        _ = _localizerMock.Setup(x => x["{0} has no value!", It.IsAny<object[]>()]).Returns((string format, object[] args) => new LocalizedString(format, string.Format(format, args)));
+        _ = _localizerMock.Setup(x => x["{0} has no value!", It.IsAny<object[]>()]).Returns((string format, object[] args) => new LocalizedString(format, string.Format(CultureInfo.CurrentCulture, format, args)));
         _ = _localizerMock.Setup(x => x[nameof(Track.End)]).Returns(new LocalizedString(nameof(Track.End), nameof(Track.End)));
 
         // Act

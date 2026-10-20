@@ -23,23 +23,23 @@ public class Exportprofile : Validateable
 {
     public static readonly string DefaultFileName = "Export.txt";
 
-    public static readonly string SchemeCuesheetArtist = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Artist), SchemeCharacter);
-    public static readonly string SchemeCuesheetTitle = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Title), SchemeCharacter);
-    public static readonly string SchemeAudiofileName = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Audiofile), nameof(Audiofile.Name), SchemeCharacter);
-    public static readonly string SchemeCuesheetCDTextfile = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.CDTextfile), SchemeCharacter);
-    public static readonly string SchemeCuesheetCatalogueNumber = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Cuesheet), nameof(Cuesheet.Cataloguenumber), SchemeCharacter);
-    public static readonly string SchemeTrackArtist = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Artist), SchemeCharacter);
-    public static readonly string SchemeTrackTitle = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Title), SchemeCharacter);
-    public static readonly string SchemeTrackBegin = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Begin), SchemeCharacter);
-    public static readonly string SchemeTrackEnd = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.End), SchemeCharacter);
-    public static readonly string SchemeTrackLength = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Length), SchemeCharacter);
-    public static readonly string SchemeTrackPosition = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Position), SchemeCharacter);
-    public static readonly string SchemeTrackFlags = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.Flags), SchemeCharacter);
-    public static readonly string SchemeTrackPreGap = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.PreGap), SchemeCharacter);
-    public static readonly string SchemeTrackPostGap = string.Format("{0}{1}.{2}{3}", SchemeCharacter, nameof(Track), nameof(Track.PostGap), SchemeCharacter);
-    public static readonly string SchemeDate = string.Format("{0}Date{1}", SchemeCharacter, SchemeCharacter);
-    public static readonly string SchemeDateTime = string.Format("{0}DateTime{1}", SchemeCharacter, SchemeCharacter);
-    public static readonly string SchemeTime = string.Format("{0}Time{1}", SchemeCharacter, SchemeCharacter);
+    public static readonly string SchemeCuesheetArtist = $"{SchemeCharacter}{nameof(Cuesheet)}.{nameof(Cuesheet.Artist)}{SchemeCharacter}";
+    public static readonly string SchemeCuesheetTitle = $"{SchemeCharacter}{nameof(Cuesheet)}.{nameof(Cuesheet.Title)}{SchemeCharacter}";
+    public static readonly string SchemeAudiofileName = $"{SchemeCharacter}{nameof(Audiofile)}.{nameof(Audiofile.Name)}{SchemeCharacter}";
+    public static readonly string SchemeCuesheetCDTextfile = $"{SchemeCharacter}{nameof(Cuesheet)}.{nameof(Cuesheet.CDTextfile)}{SchemeCharacter}";
+    public static readonly string SchemeCuesheetCatalogueNumber = $"{SchemeCharacter}{nameof(Cuesheet)}.{nameof(Cuesheet.Cataloguenumber)}{SchemeCharacter}";
+    public static readonly string SchemeTrackArtist = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Artist)}{SchemeCharacter}";
+    public static readonly string SchemeTrackTitle = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Title)}{SchemeCharacter}";
+    public static readonly string SchemeTrackBegin = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Begin)}{SchemeCharacter}";
+    public static readonly string SchemeTrackEnd = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.End)}{SchemeCharacter}";
+    public static readonly string SchemeTrackLength = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Length)}{SchemeCharacter}";
+    public static readonly string SchemeTrackPosition = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Position)}{SchemeCharacter}";
+    public static readonly string SchemeTrackFlags = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Flags)}{SchemeCharacter}";
+    public static readonly string SchemeTrackPreGap = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.PreGap)}{SchemeCharacter}";
+    public static readonly string SchemeTrackPostGap = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.PostGap)}{SchemeCharacter}";
+    public static readonly string SchemeDate = $"{SchemeCharacter}Date{SchemeCharacter}";
+    public static readonly string SchemeDateTime = $"{SchemeCharacter}DateTime{SchemeCharacter}";
+    public static readonly string SchemeTime = $"{SchemeCharacter}Time{SchemeCharacter}";
 
     public static readonly Dictionary<string, string> AvailableCuesheetSchemes = new()
     {
@@ -75,7 +75,6 @@ public class Exportprofile : Validateable
     string _schemeTracks;
     string _schemeFooter;
     string _filename;
-    string _name;
 
     public Exportprofile()
     {
@@ -86,13 +85,13 @@ public class Exportprofile : Validateable
         _schemeFooter = string.Empty;
         _filename = DefaultFileName;
         var random = new Random();
-        _name = string.Format("{0}_{1}", nameof(Exportprofile), random.Next(1, 100));
+        Name = $"{nameof(Exportprofile)}_{random.Next(1, 100)}";
     }
     public Guid Id { get; init; }
     public string Name 
     {
-        get => _name;
-        set { _name = value; OnValidateablePropertyChanged(); }
+        get;
+        set { field = value; OnValidateablePropertyChanged(); }
     }
     public string SchemeHead 
     {

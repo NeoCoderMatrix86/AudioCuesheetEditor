@@ -79,7 +79,7 @@ public partial class TraceChangeManager(ILogger<TraceChangeManager> logger) : IT
                         }
                         else
                         {
-                            throw new NullReferenceException(string.Format("Property {0} could not be found!", traceAbleChange.PropertyName));
+                            throw new NullReferenceException($"Property {traceAbleChange.PropertyName} could not be found!");
                         }
                     }
                     if (change != null)
@@ -130,7 +130,7 @@ public partial class TraceChangeManager(ILogger<TraceChangeManager> logger) : IT
                         }
                         else
                         {
-                            throw new NullReferenceException(string.Format("Property {0} could not be found!", traceAbleChange.PropertyName));
+                            throw new NullReferenceException($"Property {traceAbleChange.PropertyName} could not be found!");
                         }
                     }
                     if (change != null)

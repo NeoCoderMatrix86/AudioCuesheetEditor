@@ -21,6 +21,7 @@ using AudioCuesheetEditor.Model.IO.Import;
 using AudioCuesheetEditor.Model.Options;
 using AudioCuesheetEditor.Model.Utility;
 using AudioCuesheetEditor.Services.Options;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -71,7 +72,7 @@ public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsP
             {
                 var group = match.Groups[matchCounter];
                 var groupName = regex.GroupNameFromNumber(matchCounter);
-                if (!string.IsNullOrEmpty(groupName) && groupName != matchCounter.ToString())
+                if (!string.IsNullOrEmpty(groupName) && groupName != matchCounter.ToString(CultureInfo.InvariantCulture))
                 {
                     var property = entity.GetType().GetProperty(groupName, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
                     if (property != null)
@@ -278,7 +279,7 @@ public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsP
         }
         if (property.PropertyType == typeof(ushort?))
         {
-            property.SetValue(entity, Convert.ToUInt16(value));
+            property.SetValue(entity, Convert.ToUInt16(value, CultureInfo.CurrentCulture));
         }
         if (property.PropertyType == typeof(string))
         {
@@ -339,11 +340,11 @@ public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsP
                 var isLast = i == parts.Count - 1 || parts.Skip(i + 1).All(p => !fieldNames.Contains(p));
                 if (isLast)
                 {
-                    _ = regexBuilder.Append($@"(?<{part}>.+)");
+                    _ = regexBuilder.Append(CultureInfo.CurrentCulture, $@"(?<{part}>.+)");
                 }
                 else
                 {
-                    _ = regexBuilder.Append($@"(?<{part}>.+?)");
+                    _ = regexBuilder.Append(CultureInfo.CurrentCulture, $@"(?<{part}>.+?)");
                 }
             }
             else
