@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@ public class Importprofile : Validateable
 
     public static readonly IEnumerable<string> AvailableSchemeAudiofiles = [nameof(ImportAudiofile.Name)];
 
-    public static readonly IEnumerable<string> AvailableSchemesTrack = [nameof(ImportTrack.Artist), nameof(ImportTrack.Title), nameof(ImportTrack.Begin), nameof(ImportTrack.End), nameof(ImportTrack.Length), nameof(ImportTrack.Position), nameof(ImportTrack.Flags), nameof(ImportTrack.PreGap), nameof(ImportTrack.PostGap), nameof(ImportTrack.StartDateTime)];
+    public static readonly IEnumerable<string> AvailableSchemesTrack = [nameof(ImportTrack.Artist), nameof(ImportTrack.Title), nameof(ImportTrack.Begin), nameof(ImportTrack.Finish), nameof(ImportTrack.Length), nameof(ImportTrack.Position), nameof(ImportTrack.Flags), nameof(ImportTrack.PreGap), nameof(ImportTrack.PostGap), nameof(ImportTrack.StartDateTime)];
 
     public Guid Id { get; init; } = Guid.NewGuid();
     public string? Name { get; set; }
@@ -34,11 +34,11 @@ public class Importprofile : Validateable
     public string? SchemeAudiofiles { get; set; }
     public string? SchemeTracks { get; set; }
     public TimeSpanFormat? TimeSpanFormat { get; set; }
-    public override ValidationResult Validate(string property)
+    public override ValidationResult Validate(string propertyName)
     {
         var validationStatus = ValidationStatus.NoValidation;
         List<ValidationMessage>? validationMessages = null;
-        switch (property)
+        switch (propertyName)
         {
             case nameof(SchemeCuesheet):
                 validationStatus = ValidationStatus.Success;

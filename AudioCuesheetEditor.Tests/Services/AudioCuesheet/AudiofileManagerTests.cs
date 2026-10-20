@@ -69,7 +69,7 @@ public class AudiofileManagerTests
             }
             if (track.Begin.HasValue)
             {
-                return track.Cuesheet?.Audiofiles.SelectMany(x => x.Tracks).OrderBy(x => x.End).LastOrDefault(x => x.End <= track.Begin && Equals(x, track) == false);
+                return track.Cuesheet?.Audiofiles.SelectMany(x => x.Tracks).OrderBy(x => x.Finish).LastOrDefault(x => x.Finish <= track.Begin && Equals(x, track) == false);
             }
             return null;
         });
@@ -167,12 +167,12 @@ public class AudiofileManagerTests
         {
             Position = 1,
             Begin = TimeSpan.FromSeconds(0),
-            End = TimeSpan.FromSeconds(30)
+            Finish = TimeSpan.FromSeconds(30)
         };
         var track2 = new Track()
         {
             Position = 2,
-            Begin = track1.End
+            Begin = track1.Finish
         };
         var audiofile = new Audiofile()
         {
@@ -194,7 +194,7 @@ public class AudiofileManagerTests
         Assert.AreEqual(filename, audiofile.Name);
         Assert.AreEqual(objectUrl, audiofile.ObjectURL);
         Assert.AreEqual(TimeSpan.FromSeconds(90), audiofile.Duration);
-        Assert.AreEqual(TimeSpan.FromSeconds(90), track2.End);
+        Assert.AreEqual(TimeSpan.FromSeconds(90), track2.Finish);
         Assert.AreEqual(1, audiofileChangedFired);
         _fileInputManager.Verify(f => f.GetAudioCodec(filename, "audio/mpeg"), Times.Once);
         _fileInputManager.Verify(f => f.GetObjectUrlAsync(browserFile.Object), Times.Once);
@@ -332,12 +332,12 @@ public class AudiofileManagerTests
         {
             Position = 1,
             Begin = TimeSpan.FromSeconds(0),
-            End = TimeSpan.FromSeconds(30)
+            Finish = TimeSpan.FromSeconds(30)
         };
         var track2 = new Track()
         {
             Position = 2,
-            Begin = track1.End
+            Begin = track1.Finish
         };
         var audiofile = new Audiofile
         {
@@ -358,7 +358,7 @@ public class AudiofileManagerTests
 
         // Assert
         Assert.AreEqual(duration, audiofile.Duration);
-        Assert.AreEqual(duration, track2.End);
+        Assert.AreEqual(duration, track2.Finish);
         Assert.AreEqual(1, audiofileChangedFired);
     }
 
@@ -390,7 +390,7 @@ public class AudiofileManagerTests
         Assert.AreEqual(1, audiofileChangedFired);
         Assert.AreEqual((ushort)1, audiofile.Tracks.First().Position);
         Assert.AreEqual(TimeSpan.Zero, audiofile.Tracks.First().Begin);
-        Assert.AreEqual(duration, audiofile.Tracks.First().End);
+        Assert.AreEqual(duration, audiofile.Tracks.First().Finish);
         _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == audiofile && ((ICollection<Track>)y.TraceableChange.PreviousValue!).Count == 0 && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Once);
     }
 
@@ -405,7 +405,7 @@ public class AudiofileManagerTests
             {
                 Position = 1,
                 Begin = TimeSpan.Zero,
-                End = duration,
+                Finish = duration,
                 IsLinkedToPreviousTrack = true
             }
         };
@@ -435,8 +435,8 @@ public class AudiofileManagerTests
         // Assert
         Assert.HasCount(2, audiofile.Tracks);
         Assert.AreEqual((ushort)2, audiofile.Tracks.Last().Position);
-        Assert.IsFalse(audiofile.Tracks.First().End.HasValue);
-        Assert.AreEqual(duration, audiofile.Tracks.Last().End);
+        Assert.IsFalse(audiofile.Tracks.First().Finish.HasValue);
+        Assert.AreEqual(duration, audiofile.Tracks.Last().Finish);
         Assert.AreEqual(cuesheet, track.Cuesheet);
         Assert.AreEqual(audiofile, track.Audiofile);
         Assert.AreEqual(1, audiofileChangedFired);
@@ -487,7 +487,7 @@ public class AudiofileManagerTests
         Assert.AreEqual(1, audiofileChangedFired);
         Assert.HasCount(2, audiofile.Tracks);
         Assert.AreEqual((ushort)2, audiofile.Tracks.Last().Position);
-        Assert.IsNotNull(audiofile.Tracks.First().End);
+        Assert.IsNotNull(audiofile.Tracks.First().Finish);
         Assert.IsNotNull(audiofile.Tracks.Last().Begin);
         Assert.AreEqual(cuesheet, track.Cuesheet);
         Assert.AreEqual(audiofile, track.Audiofile);
@@ -524,7 +524,7 @@ public class AudiofileManagerTests
         Assert.HasCount(1, audiofile.Tracks);
         Assert.AreEqual((ushort)1, audiofile.Tracks.First().Position);
         Assert.AreEqual(TimeSpan.Zero, audiofile.Tracks.First().Begin);
-        Assert.AreEqual(duration, audiofile.Tracks.First().End);
+        Assert.AreEqual(duration, audiofile.Tracks.First().Finish);
         Assert.AreEqual(importCuesheet, track.Cuesheet);
         Assert.AreEqual(audiofile, track.Audiofile);
         _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == audiofile && ((ICollection<Track>) y.TraceableChange.PreviousValue!).Count == 0 && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Once);
@@ -540,28 +540,28 @@ public class AudiofileManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 3, 12),
+            Finish = new TimeSpan(0, 3, 12),
             IsLinkedToPreviousTrack = true
         };
         var track2 = new Track()
         {
             Position = 2,
             Begin = new TimeSpan(0, 3, 12),
-            End = new TimeSpan(0, 7, 34),
+            Finish = new TimeSpan(0, 7, 34),
             IsLinkedToPreviousTrack = true
         };
         var track3 = new Track()
         {
             Position = 3,
             Begin = new TimeSpan(0, 7, 34),
-            End = new TimeSpan(0, 10, 4),
+            Finish = new TimeSpan(0, 10, 4),
             IsLinkedToPreviousTrack = true
         };
         var track4 = new Track()
         {
             Position = 4,
             Begin = new TimeSpan(0, 10, 4),
-            End = new TimeSpan(0, 14, 54),
+            Finish = new TimeSpan(0, 14, 54),
             IsLinkedToPreviousTrack = true
         };
         var track5 = new Track()
@@ -604,11 +604,11 @@ public class AudiofileManagerTests
         Assert.AreEqual(1, audiofileChangedFired);
         Assert.AreEqual((ushort)1, track1.Position);
         Assert.AreEqual(TimeSpan.Zero, track1.Begin);
-        Assert.AreEqual(track1.End, track3.Begin);
+        Assert.AreEqual(track1.Finish, track3.Begin);
         Assert.AreEqual((ushort)2, track3.Position);
-        Assert.AreEqual(track5.Begin, track3.End);
+        Assert.AreEqual(track5.Begin, track3.Finish);
         Assert.AreEqual((ushort)3, track5.Position);
-        Assert.AreEqual(duration, track5.End);
+        Assert.AreEqual(duration, track5.Finish);
         _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == audiofile && y.TraceableChange.PreviousValue == previousValue && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Once);
         _traceChangeManager.VerifySet(t => t.BulkEdit = true, Times.Once);
         _traceChangeManager.VerifySet(t => t.BulkEdit = false, Times.Once);
@@ -622,28 +622,28 @@ public class AudiofileManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 3, 12),
+            Finish = new TimeSpan(0, 3, 12),
             IsLinkedToPreviousTrack = true
         };
         var track2 = new Track()
         {
             Position = 2,
             Begin = new TimeSpan(0, 3, 12),
-            End = new TimeSpan(0, 7, 34),
+            Finish = new TimeSpan(0, 7, 34),
             IsLinkedToPreviousTrack = true
         };
         var track3 = new Track()
         {
             Position = 3,
             Begin = new TimeSpan(0, 7, 34),
-            End = new TimeSpan(0, 10, 4),
+            Finish = new TimeSpan(0, 10, 4),
             IsLinkedToPreviousTrack = true
         };
         var track4 = new Track()
         {
             Position = 4,
             Begin = new TimeSpan(0, 10, 4),
-            End = new TimeSpan(0, 14, 54),
+            Finish = new TimeSpan(0, 14, 54),
             IsLinkedToPreviousTrack = true
         };
         var track5 = new Track()
@@ -690,12 +690,12 @@ public class AudiofileManagerTests
         Assert.Contains(track5, audiofile.Tracks);
         Assert.AreEqual((ushort)1, track1.Position);
         Assert.AreEqual(TimeSpan.Zero, track1.Begin);
-        Assert.AreEqual(track1.End, track3.Begin);
+        Assert.AreEqual(track1.Finish, track3.Begin);
         Assert.AreEqual((ushort)2, track3.Position);
-        Assert.AreEqual(track5.Begin, track3.End);
+        Assert.AreEqual(track5.Begin, track3.Finish);
         Assert.AreEqual((ushort)3, track5.Position);
         Assert.AreEqual(1, audiofileChangedFired);
-        Assert.AreEqual(duration, track5.End);
+        Assert.AreEqual(duration, track5.Finish);
         _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == audiofile && y.TraceableChange.PreviousValue == previousValue && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Once);
         _traceChangeManager.VerifySet(t => t.BulkEdit = true, Times.Once);
         _traceChangeManager.VerifySet(t => t.BulkEdit = false, Times.Once);

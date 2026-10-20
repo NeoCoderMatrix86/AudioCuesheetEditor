@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -25,15 +25,15 @@ public class Track : Validateable, ITrack
     public string? Artist { get; set; }
     public string? Title { get; set; }
     public TimeSpan? Begin { get; set; }        
-    public TimeSpan? End { get; set; }
+    public TimeSpan? Finish { get; set; }
     [JsonIgnore]
     public TimeSpan? Length 
     {
         get
         {
-            if ((Begin.HasValue == true) && (End.HasValue == true) && (Begin.Value <= End.Value))
+            if ((Begin.HasValue == true) && (Finish.HasValue == true) && (Begin.Value <= Finish.Value))
             {
-                return End - Begin;
+                return Finish - Begin;
             }
             else
             {
@@ -42,25 +42,25 @@ public class Track : Validateable, ITrack
         }
         set
         {
-            if ((Begin.HasValue == false) && (End.HasValue == false))
+            if ((Begin.HasValue == false) && (Finish.HasValue == false))
             {
-                End = value;
+                Finish = value;
             }
             else
             {
-                if ((Begin.HasValue == true) && (End.HasValue == true))
+                if ((Begin.HasValue == true) && (Finish.HasValue == true))
                 {
-                    End = Begin.Value + value;
+                    Finish = Begin.Value + value;
                 }
                 else
                 {
-                    if ((End.HasValue == false) && (Begin.HasValue))
+                    if ((Finish.HasValue == false) && (Begin.HasValue))
                     {
-                        End = Begin.Value + value;
+                        Finish = Begin.Value + value;
                     }
-                    if ((Begin.HasValue == false) && (End.HasValue))
+                    if ((Begin.HasValue == false) && (Finish.HasValue))
                     {
-                        Begin = End.Value - value;
+                        Begin = Finish.Value - value;
                     }
                 }
             }
@@ -81,11 +81,11 @@ public class Track : Validateable, ITrack
     [JsonIgnore]
     public Audiofile? Audiofile { get; set; }
 
-    public override ValidationResult Validate(string property)
+    public override ValidationResult Validate(string propertyName)
     {
         var validationStatus = ValidationStatus.NoValidation;
         List<ValidationMessage>? validationMessages = null;
-        switch (property)
+        switch (propertyName)
         {
             case nameof(Position):
                 validationStatus = ValidationStatus.Success;
@@ -110,7 +110,7 @@ public class Track : Validateable, ITrack
                             if (positionTrackShouldHave != Position)
                             {
                                 validationMessages ??= [];
-                                validationMessages.Add(new ValidationMessage("Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!", Position, Artist ?? string.Empty, Title ?? string.Empty, Begin != null ? Begin : string.Empty, End != null ? End : string.Empty, positionTrackShouldHave));
+                                validationMessages.Add(new ValidationMessage("Track({0},{1},{2},{3},{4}) does not have the correct position '{5}'!", Position, Artist ?? string.Empty, Title ?? string.Empty, Begin != null ? Begin : string.Empty, Finish != null ? Finish : string.Empty, positionTrackShouldHave));
                             }
                         }
                     }
@@ -130,31 +130,31 @@ public class Track : Validateable, ITrack
                         validationMessages ??= [];
                         validationMessages.Add(new ValidationMessage("{0} must be equal or greater zero!", nameof(Begin)));
                     }
-                    if (Begin > End)
+                    if (Begin > Finish)
                     {
                         validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("{0} should be less than or equal '{1}'!", nameof(Begin), nameof(End)));
+                        validationMessages.Add(new ValidationMessage("{0} should be less than or equal '{1}'!", nameof(Begin), nameof(Finish)));
                     }
                 }
                 break;
-            case nameof(End):
+            case nameof(Finish):
                 validationStatus = ValidationStatus.Success;
-                if (End == null)
+                if (Finish == null)
                 {
                     validationMessages ??= [];
-                    validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(End)));
+                    validationMessages.Add(new ValidationMessage("{0} has no value!", nameof(Finish)));
                 }
                 else
                 {
-                    if (End < TimeSpan.Zero)
+                    if (Finish < TimeSpan.Zero)
                     {
                         validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("{0} must be equal or greater zero!", nameof(End)));
+                        validationMessages.Add(new ValidationMessage("{0} must be equal or greater zero!", nameof(Finish)));
                     }
-                    if (End < Begin)
+                    if (Finish < Begin)
                     {
                         validationMessages ??= [];
-                        validationMessages.Add(new ValidationMessage("{0} should be greater than or equal '{1}'!", nameof(End), nameof(Begin)));
+                        validationMessages.Add(new ValidationMessage("{0} should be greater than or equal '{1}'!", nameof(Finish), nameof(Begin)));
                     }
                 }
                 break;

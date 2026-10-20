@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -27,7 +27,7 @@ public class ImportOptions : IOptions
         UseRegularExpression = false,
         SchemeCuesheet = $"{nameof(ImportCuesheet.Artist)} - {nameof(ImportCuesheet.Title)}",
         SchemeAudiofiles = $"- {nameof(ImportAudiofile.Name)}",
-        SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.End)}"
+        SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.Finish)}"
     };
 
     public static readonly ICollection<Importprofile> DefaultImportprofiles =
@@ -37,7 +37,7 @@ public class ImportOptions : IOptions
         {
             Name = "Textfile (just track data)",
             UseRegularExpression = false,
-            SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.End)}"
+            SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.Finish)}"
         },
         new()
         {

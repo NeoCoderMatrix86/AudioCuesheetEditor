@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -17,7 +17,7 @@ using AudioCuesheetEditor.Services.Options;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.AspNetCore.Components;
 
-namespace AudioCuesheetEditor.Shared;
+namespace AudioCuesheetEditor.Components;
 
 public abstract class BaseLocalizedComponent : ComponentBase, IDisposable
 {

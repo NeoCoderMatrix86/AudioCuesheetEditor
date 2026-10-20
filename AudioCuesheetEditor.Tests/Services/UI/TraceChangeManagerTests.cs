@@ -314,7 +314,7 @@ public class TraceChangeManagerTests
         {
             Artist = "Track 1 Artist",
             Title = "Track 1 Title",
-            End = new TimeSpan(0, 2, 30)
+            Finish = new TimeSpan(0, 2, 30)
         };
         var cuesheet = new Cuesheet()
         {
@@ -325,7 +325,7 @@ public class TraceChangeManagerTests
             ]
         };
         _traceChangeManager.AddChange(new(cuesheet.Audiofiles.First(), new(Enumerable.Empty<Track>(), nameof(Audiofile.Tracks))));
-        _traceChangeManager.AddChange(new(track, new(null, nameof(Track.End))));
+        _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Finish))));
         _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Title))));
         _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Artist))));
         _traceChangeManager.Undo();

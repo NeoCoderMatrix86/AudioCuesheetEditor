@@ -37,11 +37,11 @@ public class ValidateableTestClass : Validateable
             OnValidateablePropertyChanged();
         }
     }
-    public override ValidationResult Validate(string property)
+    public override ValidationResult Validate(string propertyName)
     {
         var validationStatus = ValidationStatus.NoValidation;
         List<ValidationMessage>? validationMessages = null;
-        switch (property)
+        switch (propertyName)
         {
             case nameof(TestProperty):
                 validationStatus = ValidationStatus.Success;

@@ -1,4 +1,4 @@
-﻿<!--
+<!--
 This file is part of AudioCuesheetEditor.
 
 AudioCuesheetEditor is free software: you can redistribute it and/or modify
@@ -71,8 +71,8 @@ along with Foobar.  If not, see
             </MudAutocomplete>
             <MudTextField Label="@_localizer["Begin"]" Variant="Variant.Outlined" Value="@EditedTrack.Begin.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Begin, value)" 
                           Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Begin)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Begin))" />
-            <MudTextField Label="@_localizer["End"]" Variant="Variant.Outlined" Value="@EditedTrack.End.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.End, value)"
-                          Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.End)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.End))" />
+            <MudTextField Label="@_localizer["End"]" Variant="Variant.Outlined" Value="@EditedTrack.Finish.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Finish, value)"
+                          Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Finish)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Finish))" />
             <MudTextField Label="@_localizer["Length"]" Variant="Variant.Outlined" Value="@EditedTrack.Length.ToString()" ValueChanged="(string value) => _applicationOptionsTimeSpanParser.TimespanTextChanged<Track, TimeSpan?>(EditedTrack, x => x.Length, value)"
                           Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Length)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Length))" />
             <MudField Label="@_localizer["Flags"]" Variant="Variant.Outlined" Error="!String.IsNullOrEmpty(GetValidationErrorMessage(EditedTrack, nameof(Track.Flags)))" ErrorText="@GetValidationErrorMessage(EditedTrack, nameof(Track.Flags))">

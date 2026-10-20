@@ -241,7 +241,7 @@ public class CuesheetManagerTests
                         new() {
                             Position = 1,
                             Begin = TimeSpan.Zero,
-                            End = new TimeSpan(0, 3, 12)
+                            Finish = new TimeSpan(0, 3, 12)
                         },
                         new() {
                             Position = 2,
@@ -263,7 +263,7 @@ public class CuesheetManagerTests
         Assert.IsFalse(cuesheet.IsRecording);
         Assert.IsNull(cuesheet.RecordingStart);
         Assert.IsTrue(isRecordingChanged);
-        Assert.IsNotNull(cuesheet.Audiofiles.First().Tracks.Last().End);
+        Assert.IsNotNull(cuesheet.Audiofiles.First().Tracks.Last().Finish);
     }
 
     [TestMethod]
@@ -278,7 +278,7 @@ public class CuesheetManagerTests
                         new() {
                             Position = 1,
                             Begin = TimeSpan.Zero,
-                            End = new TimeSpan(0, 3, 12)
+                            Finish = new TimeSpan(0, 3, 12)
                         },
                         new() {
                             Position = 2,
@@ -298,7 +298,7 @@ public class CuesheetManagerTests
         _cuesheetManager.StopRecording();
         // Assert
         Assert.IsFalse(isRecordingChanged);
-        Assert.IsNull(cuesheet.Audiofiles.First().Tracks.Last().End);
+        Assert.IsNull(cuesheet.Audiofiles.First().Tracks.Last().Finish);
     }
 
     [TestMethod]
@@ -309,21 +309,21 @@ public class CuesheetManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 3, 12),
+            Finish = new TimeSpan(0, 3, 12),
             IsLinkedToPreviousTrack = true
         };
         var track2 = new Track()
         {
             Position = 2,
             Begin = new TimeSpan(0, 3, 12),
-            End = new TimeSpan(0, 7, 34),
+            Finish = new TimeSpan(0, 7, 34),
             IsLinkedToPreviousTrack = true
         };
         var track3 = new Track()
         {
             Position = 3,
             Begin = new TimeSpan(0, 7, 34),
-            End = new TimeSpan(0, 10, 4),
+            Finish = new TimeSpan(0, 10, 4),
             IsLinkedToPreviousTrack = true
         };
         var cuesheet = new Cuesheet()
@@ -351,21 +351,21 @@ public class CuesheetManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 3, 12),
+            Finish = new TimeSpan(0, 3, 12),
             IsLinkedToPreviousTrack = true
         };
         var track2 = new Track()
         {
             Position = 2,
             Begin = new TimeSpan(0, 3, 12),
-            End = new TimeSpan(0, 7, 34),
+            Finish = new TimeSpan(0, 7, 34),
             IsLinkedToPreviousTrack = true
         };
         var track3 = new Track()
         {
             Position = 3,
             Begin = new TimeSpan(0, 7, 34),
-            End = new TimeSpan(0, 10, 4),
+            Finish = new TimeSpan(0, 10, 4),
             IsLinkedToPreviousTrack = true
         };
         var cuesheet = new Cuesheet()
@@ -449,21 +449,21 @@ public class CuesheetManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 3, 12),
+            Finish = new TimeSpan(0, 3, 12),
             IsLinkedToPreviousTrack = true
         };
         var track2 = new Track()
         {
             Position = 2,
             Begin = new TimeSpan(0, 3, 12),
-            End = new TimeSpan(0, 7, 34),
+            Finish = new TimeSpan(0, 7, 34),
             IsLinkedToPreviousTrack = true
         };
         var track3 = new Track()
         {
             Position = 3,
             Begin = new TimeSpan(0, 7, 34),
-            End = new TimeSpan(0, 10, 4),
+            Finish = new TimeSpan(0, 10, 4),
             IsLinkedToPreviousTrack = true
         };
         var cuesheet = new Cuesheet()
@@ -492,21 +492,21 @@ public class CuesheetManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 3, 12),
+            Finish = new TimeSpan(0, 3, 12),
             IsLinkedToPreviousTrack = true
         };
         var track2 = new Track()
         {
             Position = 2,
             Begin = new TimeSpan(0, 3, 12),
-            End = new TimeSpan(0, 7, 34),
+            Finish = new TimeSpan(0, 7, 34),
             IsLinkedToPreviousTrack = true
         };
         var track3 = new Track()
         {
             Position = 3,
             Begin = new TimeSpan(0, 7, 34),
-            End = new TimeSpan(0, 10, 4),
+            Finish = new TimeSpan(0, 10, 4),
             IsLinkedToPreviousTrack = true
         };
         var cuesheet = new Cuesheet()
@@ -591,7 +591,7 @@ public class CuesheetManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = track1End,
+            Finish = track1End,
             IsLinkedToPreviousTrack = true
         };
         var track2End = new TimeSpan(0, 7, 34);
@@ -599,14 +599,14 @@ public class CuesheetManagerTests
         {
             Position = 2,
             Begin = track1End,
-            End = track2End,
+            Finish = track2End,
             IsLinkedToPreviousTrack = true
         };
         var track3 = new Track()
         {
             Position = 3,
             Begin = track2End,
-            End = new TimeSpan(0, 10, 4),
+            Finish = new TimeSpan(0, 10, 4),
             IsLinkedToPreviousTrack = true
         };
         var cuesheet = new Cuesheet()
@@ -633,12 +633,12 @@ public class CuesheetManagerTests
         Assert.IsTrue(result.IsSuccess);
         Assert.AreEqual((ushort?)1, track1.Position);
         Assert.AreEqual(TimeSpan.Zero, track1.Begin);
-        Assert.AreEqual(track1End, track1.End);
+        Assert.AreEqual(track1End, track1.Finish);
         Assert.AreEqual(cuesheet.Audiofiles.First(), track1.Audiofile);
         Assert.AreEqual((ushort?)2, track2.Position);
         Assert.AreEqual(track1End, track2.Begin);
         Assert.AreEqual(cuesheet.Audiofiles.First(), track2.Audiofile);
-        Assert.AreEqual(track2End, track2.End);
+        Assert.AreEqual(track2End, track2.Finish);
         Assert.AreEqual((ushort?)3, track3.Position);
         Assert.AreEqual(track2End, track3.Begin);
         Assert.AreEqual(cuesheet.Audiofiles.First(), track3.Audiofile);
@@ -656,7 +656,7 @@ public class CuesheetManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = track1End,
+            Finish = track1End,
             IsLinkedToPreviousTrack = true
         };
         var track2End = new TimeSpan(0, 7, 34);
@@ -664,14 +664,14 @@ public class CuesheetManagerTests
         {
             Position = 2,
             Begin = track1End,
-            End = track2End,
+            Finish = track2End,
             IsLinkedToPreviousTrack = true
         };
         var track3 = new Track()
         {
             Position = 3,
             Begin = track2End,
-            End = new TimeSpan(0, 10, 4),
+            Finish = new TimeSpan(0, 10, 4),
             IsLinkedToPreviousTrack = true
         };
         var cuesheet = new Cuesheet()
@@ -695,10 +695,10 @@ public class CuesheetManagerTests
         Assert.IsTrue(result.IsSuccess);
         Assert.AreEqual((ushort?)1, track2.Position);
         Assert.AreEqual(TimeSpan.Zero, track2.Begin);
-        Assert.AreEqual(track1End, track2.End);
+        Assert.AreEqual(track1End, track2.Finish);
         Assert.AreEqual((ushort?)2, track3.Position);
         Assert.AreEqual(track1End, track3.Begin);
-        Assert.AreEqual(track2End, track3.End);
+        Assert.AreEqual(track2End, track3.Finish);
         Assert.AreEqual((ushort?)3, track1.Position);
         Assert.AreEqual(track2End, track1.Begin);
         _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet.Audiofiles.First() && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Never);
@@ -715,7 +715,7 @@ public class CuesheetManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = track1End,
+            Finish = track1End,
             IsLinkedToPreviousTrack = true
         };
         var track2End = new TimeSpan(0, 7, 34);
@@ -723,7 +723,7 @@ public class CuesheetManagerTests
         {
             Position = 2,
             Begin = track1End,
-            End = track2End,
+            Finish = track2End,
             IsLinkedToPreviousTrack = true
         };
         var track3End = new TimeSpan(0, 10, 4);
@@ -731,14 +731,14 @@ public class CuesheetManagerTests
         {
             Position = 3,
             Begin = track2End,
-            End = track3End,
+            Finish = track3End,
             IsLinkedToPreviousTrack = true
         };
         var track4 = new Track()
         {
             Position = 4,
             Begin = track3End,
-            End = new TimeSpan(0, 13, 45),
+            Finish = new TimeSpan(0, 13, 45),
             IsLinkedToPreviousTrack = true
         };
         var cuesheet = new Cuesheet()
@@ -764,10 +764,10 @@ public class CuesheetManagerTests
         Assert.IsTrue(result.IsSuccess);
         Assert.AreEqual((ushort?)1, track2.Position);
         Assert.AreEqual(TimeSpan.Zero, track2.Begin);
-        Assert.AreEqual(track1End, track2.End);
+        Assert.AreEqual(track1End, track2.Finish);
         Assert.AreEqual((ushort?)2, track3.Position);
         Assert.AreEqual(track1End, track3.Begin);
-        Assert.AreEqual(track2End, track3.End);
+        Assert.AreEqual(track2End, track3.Finish);
         Assert.AreEqual((ushort?)3, track1.Position);
         Assert.AreEqual(track2End, track1.Begin);
         _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet.Audiofiles.First() && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Never);
@@ -784,7 +784,7 @@ public class CuesheetManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = track1End,
+            Finish = track1End,
             IsLinkedToPreviousTrack = true
         };
         var track2End = new TimeSpan(0, 7, 34);
@@ -792,14 +792,14 @@ public class CuesheetManagerTests
         {
             Position = 2,
             Begin = track1End,
-            End = track2End,
+            Finish = track2End,
             IsLinkedToPreviousTrack = true
         };
         var track3 = new Track()
         {
             Position = 3,
             Begin = track2End,
-            End = new TimeSpan(0, 10, 4),
+            Finish = new TimeSpan(0, 10, 4),
             IsLinkedToPreviousTrack = true
         };
         var cuesheet = new Cuesheet()
@@ -824,10 +824,10 @@ public class CuesheetManagerTests
         Assert.AreEqual(ErrorType.NotPossible, result.FailureDetails!.Type);
         Assert.AreEqual((ushort?)1, track1.Position);
         Assert.AreEqual(TimeSpan.Zero, track1.Begin);
-        Assert.AreEqual(track1End, track1.End);
+        Assert.AreEqual(track1End, track1.Finish);
         Assert.AreEqual((ushort?)2, track2.Position);
         Assert.AreEqual(track1End, track2.Begin);
-        Assert.AreEqual(track2End, track2.End);
+        Assert.AreEqual(track2End, track2.Finish);
         Assert.AreEqual((ushort?)3, track3.Position);
         Assert.AreEqual(track2End, track3.Begin);
         _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet.Audiofiles.First() && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Never);
@@ -844,7 +844,7 @@ public class CuesheetManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = track1End,
+            Finish = track1End,
             IsLinkedToPreviousTrack = true
         };
         var track2End = new TimeSpan(0, 7, 34);
@@ -852,14 +852,14 @@ public class CuesheetManagerTests
         {
             Position = 2,
             Begin = track1End,
-            End = track2End,
+            Finish = track2End,
             IsLinkedToPreviousTrack = true
         };
         var track3 = new Track()
         {
             Position = 3,
             Begin = track2End,
-            End = new TimeSpan(0, 10, 4),
+            Finish = new TimeSpan(0, 10, 4),
             IsLinkedToPreviousTrack = true
         };
         var cuesheet = new Cuesheet()
@@ -884,10 +884,10 @@ public class CuesheetManagerTests
         Assert.AreEqual(ErrorType.NotPossible, result.FailureDetails!.Type);
         Assert.AreEqual((ushort?)1, track1.Position);
         Assert.AreEqual(TimeSpan.Zero, track1.Begin);
-        Assert.AreEqual(track1End, track1.End);
+        Assert.AreEqual(track1End, track1.Finish);
         Assert.AreEqual((ushort?)2, track2.Position);
         Assert.AreEqual(track1End, track2.Begin);
-        Assert.AreEqual(track2End, track2.End);
+        Assert.AreEqual(track2End, track2.Finish);
         Assert.AreEqual((ushort?)3, track3.Position);
         Assert.AreEqual(track2End, track3.Begin);
         _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet.Audiofiles.First() && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Never);
@@ -904,7 +904,7 @@ public class CuesheetManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = track1End,
+            Finish = track1End,
             IsLinkedToPreviousTrack = true
         };
         var track2End = new TimeSpan(0, 7, 34);
@@ -912,14 +912,14 @@ public class CuesheetManagerTests
         {
             Position = 2,
             Begin = track1End,
-            End = track2End,
+            Finish = track2End,
             IsLinkedToPreviousTrack = true
         };
         var track3 = new Track()
         {
             Position = 3,
             Begin = track2End,
-            End = new TimeSpan(0, 10, 4),
+            Finish = new TimeSpan(0, 10, 4),
             IsLinkedToPreviousTrack = true
         };
         var file1 = new Audiofile("Audiofile 1", $"{Guid.NewGuid()}", Audiofile.AudioCodecWEBM);
@@ -950,11 +950,11 @@ public class CuesheetManagerTests
         Assert.IsEmpty(file1.Tracks);
         Assert.AreEqual((ushort?)1, track1.Position);
         Assert.AreEqual(TimeSpan.Zero, track1.Begin);
-        Assert.AreEqual(track1End, track1.End);
+        Assert.AreEqual(track1End, track1.Finish);
         Assert.AreEqual(file2, track1.Audiofile);
         Assert.AreEqual((ushort?)2, track2.Position);
         Assert.AreEqual(track1End, track2.Begin);
-        Assert.AreEqual(track2End, track2.End);
+        Assert.AreEqual(track2End, track2.Finish);
         Assert.AreEqual(file2, track2.Audiofile);
         Assert.AreEqual((ushort?)3, track3.Position);
         Assert.AreEqual(track2End, track3.Begin);
@@ -1014,7 +1014,7 @@ public class CuesheetManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = track1End,
+            Finish = track1End,
             IsLinkedToPreviousTrack = true
         };
         var track2End = new TimeSpan(0, 7, 34);
@@ -1022,14 +1022,14 @@ public class CuesheetManagerTests
         {
             Position = 2,
             Begin = track1End,
-            End = track2End,
+            Finish = track2End,
             IsLinkedToPreviousTrack = true
         };
         var track3 = new Track()
         {
             Position = 3,
             Begin = track2End,
-            End = new TimeSpan(0, 10, 4),
+            Finish = new TimeSpan(0, 10, 4),
             IsLinkedToPreviousTrack = true
         };
         var cuesheet = new Cuesheet()
@@ -1056,11 +1056,11 @@ public class CuesheetManagerTests
         Assert.IsTrue(result.IsSuccess);
         Assert.AreEqual((ushort?)1, track1.Position);
         Assert.AreEqual(TimeSpan.Zero, track1.Begin);
-        Assert.AreEqual(track1End, track1.End);
+        Assert.AreEqual(track1End, track1.Finish);
         Assert.AreEqual(cuesheet.Audiofiles.Last(), track1.Audiofile);
         Assert.AreEqual((ushort?)2, track2.Position);
         Assert.AreEqual(track1End, track2.Begin);
-        Assert.AreEqual(track2End, track2.End);
+        Assert.AreEqual(track2End, track2.Finish);
         Assert.AreEqual(cuesheet.Audiofiles.Last(), track2.Audiofile);
         Assert.AreEqual((ushort?)3, track3.Position);
         Assert.AreEqual(track2End, track3.Begin);
@@ -1079,7 +1079,7 @@ public class CuesheetManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = track1End,
+            Finish = track1End,
             IsLinkedToPreviousTrack = true
         };
         var track2End = new TimeSpan(0, 7, 34);
@@ -1087,14 +1087,14 @@ public class CuesheetManagerTests
         {
             Position = 2,
             Begin = track1End,
-            End = track2End,
+            Finish = track2End,
             IsLinkedToPreviousTrack = true
         };
         var track3 = new Track()
         {
             Position = 3,
             Begin = track2End,
-            End = new TimeSpan(0, 10, 4),
+            Finish = new TimeSpan(0, 10, 4),
             IsLinkedToPreviousTrack = true
         };
         var cuesheet = new Cuesheet()
@@ -1118,10 +1118,10 @@ public class CuesheetManagerTests
         Assert.IsTrue(result.IsSuccess);
         Assert.AreEqual((ushort?)1, track3.Position);
         Assert.AreEqual(TimeSpan.Zero, track3.Begin);
-        Assert.AreEqual(track1End, track3.End);
+        Assert.AreEqual(track1End, track3.Finish);
         Assert.AreEqual((ushort?)2, track1.Position);
         Assert.AreEqual(track1End, track1.Begin);
-        Assert.AreEqual(track2End, track1.End);
+        Assert.AreEqual(track2End, track1.Finish);
         Assert.AreEqual((ushort?)3, track2.Position);
         Assert.AreEqual(track2End, track2.Begin);
         _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet.Audiofiles.First() && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Never);
@@ -1138,7 +1138,7 @@ public class CuesheetManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = track1End,
+            Finish = track1End,
             IsLinkedToPreviousTrack = true
         };
         var track2End = new TimeSpan(0, 7, 34);
@@ -1146,7 +1146,7 @@ public class CuesheetManagerTests
         {
             Position = 2,
             Begin = track1End,
-            End = track2End,
+            Finish = track2End,
             IsLinkedToPreviousTrack = true
         };
         var track3End = new TimeSpan(0, 10, 4);
@@ -1154,14 +1154,14 @@ public class CuesheetManagerTests
         {
             Position = 3,
             Begin = track2End,
-            End = track3End,
+            Finish = track3End,
             IsLinkedToPreviousTrack = true
         };
         var track4 = new Track()
         {
             Position = 4,
             Begin = track3End,
-            End = new TimeSpan(0, 13, 45),
+            Finish = new TimeSpan(0, 13, 45),
             IsLinkedToPreviousTrack = true
         };
         var cuesheet = new Cuesheet()
@@ -1187,13 +1187,13 @@ public class CuesheetManagerTests
         Assert.IsTrue(result.IsSuccess);
         Assert.AreEqual((ushort?)1, track3.Position);
         Assert.AreEqual(TimeSpan.Zero, track3.Begin);
-        Assert.AreEqual(track1End, track3.End);
+        Assert.AreEqual(track1End, track3.Finish);
         Assert.AreEqual((ushort?)2, track4.Position);
         Assert.AreEqual(track1End, track4.Begin);
-        Assert.AreEqual(track2End, track4.End);
+        Assert.AreEqual(track2End, track4.Finish);
         Assert.AreEqual((ushort?)3, track1.Position);
         Assert.AreEqual(track2End, track1.Begin);
-        Assert.AreEqual(track3End, track1.End);
+        Assert.AreEqual(track3End, track1.Finish);
         Assert.AreEqual((ushort?)4, track2.Position);
         Assert.AreEqual(track3End, track2.Begin);
         _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet.Audiofiles.First() && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Never);
@@ -1210,7 +1210,7 @@ public class CuesheetManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = track1End,
+            Finish = track1End,
             IsLinkedToPreviousTrack = true
         };
         var track2End = new TimeSpan(0, 7, 34);
@@ -1218,14 +1218,14 @@ public class CuesheetManagerTests
         {
             Position = 2,
             Begin = track1End,
-            End = track2End,
+            Finish = track2End,
             IsLinkedToPreviousTrack = true
         };
         var track3 = new Track()
         {
             Position = 3,
             Begin = track2End,
-            End = new TimeSpan(0, 10, 4),
+            Finish = new TimeSpan(0, 10, 4),
             IsLinkedToPreviousTrack = true
         };
         var cuesheet = new Cuesheet()
@@ -1250,10 +1250,10 @@ public class CuesheetManagerTests
         Assert.AreEqual(ErrorType.NotPossible, result.FailureDetails!.Type);
         Assert.AreEqual((ushort?)1, track1.Position);
         Assert.AreEqual(TimeSpan.Zero, track1.Begin);
-        Assert.AreEqual(track1End, track1.End);
+        Assert.AreEqual(track1End, track1.Finish);
         Assert.AreEqual((ushort?)2, track2.Position);
         Assert.AreEqual(track1End, track2.Begin);
-        Assert.AreEqual(track2End, track2.End);
+        Assert.AreEqual(track2End, track2.Finish);
         Assert.AreEqual((ushort?)3, track3.Position);
         Assert.AreEqual(track2End, track3.Begin);
         _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet.Audiofiles.First() && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Never);
@@ -1270,7 +1270,7 @@ public class CuesheetManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = track1End,
+            Finish = track1End,
             IsLinkedToPreviousTrack = true
         };
         var track2End = new TimeSpan(0, 7, 34);
@@ -1278,14 +1278,14 @@ public class CuesheetManagerTests
         {
             Position = 2,
             Begin = track1End,
-            End = track2End,
+            Finish = track2End,
             IsLinkedToPreviousTrack = true
         };
         var track3 = new Track()
         {
             Position = 3,
             Begin = track2End,
-            End = new TimeSpan(0, 10, 4),
+            Finish = new TimeSpan(0, 10, 4),
             IsLinkedToPreviousTrack = true
         };
         var cuesheet = new Cuesheet()
@@ -1310,10 +1310,10 @@ public class CuesheetManagerTests
         Assert.AreEqual(ErrorType.NotPossible, result.FailureDetails!.Type);
         Assert.AreEqual((ushort?)1, track1.Position);
         Assert.AreEqual(TimeSpan.Zero, track1.Begin);
-        Assert.AreEqual(track1End, track1.End);
+        Assert.AreEqual(track1End, track1.Finish);
         Assert.AreEqual((ushort?)2, track2.Position);
         Assert.AreEqual(track1End, track2.Begin);
-        Assert.AreEqual(track2End, track2.End);
+        Assert.AreEqual(track2End, track2.Finish);
         Assert.AreEqual((ushort?)3, track3.Position);
         Assert.AreEqual(track2End, track3.Begin);
         _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == cuesheet.Audiofiles && y.TraceableChange.PropertyName == nameof(Audiofile.Tracks))), Times.Never);
@@ -1330,7 +1330,7 @@ public class CuesheetManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = track1End,
+            Finish = track1End,
             IsLinkedToPreviousTrack = true
         };
         var track2End = new TimeSpan(0, 7, 34);
@@ -1338,14 +1338,14 @@ public class CuesheetManagerTests
         {
             Position = 2,
             Begin = track1End,
-            End = track2End,
+            Finish = track2End,
             IsLinkedToPreviousTrack = true
         };
         var track3 = new Track()
         {
             Position = 3,
             Begin = track2End,
-            End = new TimeSpan(0, 10, 4),
+            Finish = new TimeSpan(0, 10, 4),
             IsLinkedToPreviousTrack = true
         };
         var file1 = new Audiofile("Audiofile 1", $"{Guid.NewGuid()}", Audiofile.AudioCodecWEBM);
@@ -1375,11 +1375,11 @@ public class CuesheetManagerTests
         Assert.AreSequenceEqual(new List<Audiofile>([file3, file1, file2]), cuesheet.Audiofiles);
         Assert.AreEqual((ushort?)1, track1.Position);
         Assert.AreEqual(TimeSpan.Zero, track1.Begin);
-        Assert.AreEqual(track1End, track1.End);
+        Assert.AreEqual(track1End, track1.Finish);
         Assert.AreEqual(file2, track1.Audiofile);
         Assert.AreEqual((ushort?)2, track2.Position);
         Assert.AreEqual(track1End, track2.Begin);
-        Assert.AreEqual(track2End, track2.End);
+        Assert.AreEqual(track2End, track2.Finish);
         Assert.AreEqual(file2, track2.Audiofile);
         Assert.AreEqual((ushort?)3, track3.Position);
         Assert.AreEqual(track2End, track3.Begin);

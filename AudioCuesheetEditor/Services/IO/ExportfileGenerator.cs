@@ -82,7 +82,7 @@ public class ExportfileGenerator(ISessionStateContainer sessionStateContainer, I
                             .Replace(Exportprofile.SchemeTrackTitle, track.Title)
                             .Replace(Exportprofile.SchemeTrackPosition, track.Position?.ToString(CultureInfo.CurrentCulture))
                             .Replace(Exportprofile.SchemeTrackBegin, track.Begin.ToString())
-                            .Replace(Exportprofile.SchemeTrackEnd, track.End.ToString())
+                            .Replace(Exportprofile.SchemeTrackEnd, track.Finish.ToString())
                             .Replace(Exportprofile.SchemeTrackLength, track.Length.ToString())
                             .Replace(Exportprofile.SchemeTrackFlags, string.Join(" ", track.Flags.Select(x => x.CuesheetLabel)))
                             .Replace(Exportprofile.SchemeTrackPreGap, track.PreGap != null ? track.PreGap.Value.ToString() : string.Empty)

@@ -74,7 +74,7 @@ public class TrackManagerTests
             Artist = "Artist 1",
             Title = "Title 1",
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 2, 54),
+            Finish = new TimeSpan(0, 2, 54),
             IsLinkedToPreviousTrack = true,
             Position = 1,
             PostGap = new TimeSpan(0, 0, 2),
@@ -88,7 +88,7 @@ public class TrackManagerTests
         Assert.AreEqual(importTrack.Artist, track.Artist);
         Assert.AreEqual(importTrack.Title, track.Title);
         Assert.AreEqual(importTrack.Begin, track.Begin);
-        Assert.AreEqual(importTrack.End, track.End);
+        Assert.AreEqual(importTrack.Finish, track.Finish);
         Assert.AreEqual(importTrack.IsLinkedToPreviousTrack, track.IsLinkedToPreviousTrack);
         Assert.AreEqual(importTrack.Position, track.Position);
         Assert.AreEqual(importTrack.PostGap, track.PostGap);
@@ -120,7 +120,7 @@ public class TrackManagerTests
         Assert.AreEqual(importTrack.Artist, track.Artist);
         Assert.AreEqual(importTrack.Title, track.Title);
         Assert.AreEqual(importTrack.Begin, track.Begin);
-        Assert.AreEqual(importTrack.Length, track.End);
+        Assert.AreEqual(importTrack.Length, track.Finish);
         Assert.AreEqual(importTrack.IsLinkedToPreviousTrack, track.IsLinkedToPreviousTrack);
         Assert.AreEqual(importTrack.Position, track.Position);
         Assert.AreEqual(importTrack.PostGap, track.PostGap);
@@ -138,7 +138,7 @@ public class TrackManagerTests
             Artist = "Artist 1",
             Title = "Title 1",
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 2, 54),
+            Finish = new TimeSpan(0, 2, 54),
             IsLinkedToPreviousTrack = true,
             Position = 1,
             PostGap = new TimeSpan(0, 0, 2),
@@ -152,7 +152,7 @@ public class TrackManagerTests
         Assert.AreEqual(source.Artist, target.Artist);
         Assert.AreEqual(source.Title, target.Title);
         Assert.AreEqual(source.Begin, target.Begin);
-        Assert.AreEqual(source.End, target.End);
+        Assert.AreEqual(source.Finish, target.Finish);
         Assert.AreEqual(source.IsLinkedToPreviousTrack, target.IsLinkedToPreviousTrack);
         Assert.AreEqual(source.Position, target.Position);
         Assert.AreEqual(source.PostGap, target.PostGap);
@@ -171,7 +171,7 @@ public class TrackManagerTests
             Artist = "Artist 1",
             Title = "Title 1",
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 2, 54),
+            Finish = new TimeSpan(0, 2, 54),
             IsLinkedToPreviousTrack = true,
             Position = 1,
             PostGap = new TimeSpan(0, 0, 2),
@@ -185,7 +185,7 @@ public class TrackManagerTests
         Assert.AreEqual(source.Artist, target.Artist);
         Assert.AreEqual(source.Title, target.Title);
         Assert.AreNotEqual(source.Begin, target.Begin);
-        Assert.AreEqual(source.End, target.End);
+        Assert.AreEqual(source.Finish, target.Finish);
         Assert.AreEqual(source.IsLinkedToPreviousTrack, target.IsLinkedToPreviousTrack);
         Assert.AreEqual(source.Position, target.Position);
         Assert.AreNotEqual(source.PostGap, target.PostGap);
@@ -295,12 +295,12 @@ public class TrackManagerTests
             IsLinkedToPreviousTrack = true,
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 6, 37)
+            Finish = new TimeSpan(0, 6, 37)
         };
         var track2 = new Track()
         {
             IsLinkedToPreviousTrack = true,
-            Begin = track1.End
+            Begin = track1.Finish
         };
         var cuesheet = new Cuesheet()
         {
@@ -419,14 +419,14 @@ public class TrackManagerTests
         {
             IsLinkedToPreviousTrack = true,
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 8, 32)
+            Finish = new TimeSpan(0, 8, 32)
         };
         var track2 = new Track()
         {
             IsLinkedToPreviousTrack = true,
             Position = 2,
-            Begin = track1.End,
-            End = new TimeSpan(0, 13, 54)
+            Begin = track1.Finish,
+            Finish = new TimeSpan(0, 13, 54)
         };
         var cuesheet = new Cuesheet()
         {
@@ -454,7 +454,7 @@ public class TrackManagerTests
         {
             IsLinkedToPreviousTrack = true,
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 8, 32)
+            Finish = new TimeSpan(0, 8, 32)
         };
         var cuesheet = new Cuesheet();
         track1.Cuesheet = cuesheet;
@@ -473,21 +473,21 @@ public class TrackManagerTests
             Position = 1,
             IsLinkedToPreviousTrack = true,
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 8, 32)
+            Finish = new TimeSpan(0, 8, 32)
         };
         var track2 = new Track()
         {
             IsLinkedToPreviousTrack = true,
             Position = 2,
-            Begin = track1.End,
-            End = new TimeSpan(0, 13, 54)
+            Begin = track1.Finish,
+            Finish = new TimeSpan(0, 13, 54)
         };
         var track3 = new Track()
         {
             IsLinkedToPreviousTrack = true,
             Position = 2,
-            Begin = track2.End,
-            End = new TimeSpan(0, 17, 32)
+            Begin = track2.Finish,
+            Finish = new TimeSpan(0, 17, 32)
         };
         var cuesheet = new Cuesheet()
         {
@@ -516,11 +516,11 @@ public class TrackManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 3, 12)
+            Finish = new TimeSpan(0, 3, 12)
         };
         var track2 = new Track()
         {
-            Begin = track1.End,
+            Begin = track1.Finish,
             IsLinkedToPreviousTrack = true
         };
         var cuesheet = new Cuesheet()
@@ -549,7 +549,7 @@ public class TrackManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 3, 12)
+            Finish = new TimeSpan(0, 3, 12)
         };
         var track2 = new Track()
         {
@@ -570,7 +570,7 @@ public class TrackManagerTests
         // Act
         _trackManager.RecalculateLinkedTracksProperties(track2);
         // Assert
-        Assert.AreEqual(track1.End, track2.Begin);
+        Assert.AreEqual(track1.Finish, track2.Begin);
         _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == track2 && y.TraceableChange.PreviousValue == null && y.TraceableChange.PropertyName == nameof(Track.Begin))), Times.Once);
     }
 
@@ -582,12 +582,12 @@ public class TrackManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 3, 12)
+            Finish = new TimeSpan(0, 3, 12)
         };
         var track2 = new Track()
         {
             IsLinkedToPreviousTrack = true,
-            Begin = track1.End
+            Begin = track1.Finish
         };
         var cuesheet = new Cuesheet()
         {
@@ -636,8 +636,8 @@ public class TrackManagerTests
         // Act
         _trackManager.RecalculateLinkedTracksProperties(track2);
         // Assert
-        Assert.AreEqual(track2.Begin, track1.End);
-        _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == track1 && y.TraceableChange.PreviousValue == null && y.TraceableChange.PropertyName == nameof(Track.End))), Times.Once);
+        Assert.AreEqual(track2.Begin, track1.Finish);
+        _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == track1 && y.TraceableChange.PreviousValue == null && y.TraceableChange.PropertyName == nameof(Track.Finish))), Times.Once);
     }
 
     [TestMethod]
@@ -648,11 +648,11 @@ public class TrackManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 3, 12)
+            Finish = new TimeSpan(0, 3, 12)
         };
         var track2 = new Track()
         {
-            Begin = track1.End,
+            Begin = track1.Finish,
             IsLinkedToPreviousTrack = true
         };
         var cuesheet = new Cuesheet()
@@ -681,7 +681,7 @@ public class TrackManagerTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 3, 12)
+            Finish = new TimeSpan(0, 3, 12)
         };
         var track2 = new Track()
         {
@@ -702,7 +702,7 @@ public class TrackManagerTests
         // Act
         _trackManager.RecalculateLinkedTracksProperties(track1);
         // Assert
-        Assert.AreEqual(track1.End, track2.Begin);
+        Assert.AreEqual(track1.Finish, track2.Begin);
         _traceChangeManager.Verify(x => x.AddChange(It.Is<TracedChange>(y => y.TraceableObject == track2 && y.TraceableChange.PreviousValue == null && y.TraceableChange.PropertyName == nameof(Track.Begin))), Times.Once);
     }
 }

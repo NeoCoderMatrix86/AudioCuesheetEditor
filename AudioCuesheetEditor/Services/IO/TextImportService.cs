@@ -210,7 +210,7 @@ public class TextImportService(ILocalStorageOptionsProvider localStorageOptionsP
                     nameof(ImportTrack.Artist),
                     nameof(ImportTrack.Title),
                     nameof(ImportTrack.Begin),
-                    nameof(ImportTrack.End),
+                    nameof(ImportTrack.Finish),
                     nameof(ImportTrack.Length),
                     nameof(ImportTrack.Position),
                     nameof(ImportTrack.Flags),

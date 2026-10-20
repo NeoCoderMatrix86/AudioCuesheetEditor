@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -21,7 +21,7 @@ public interface ITrack
     string? Title { get; set; }
     ushort? Position { get; set; }
     TimeSpan? Begin { get; set; }
-    TimeSpan? End { get; set; }
+    TimeSpan? Finish { get; set; }
     TimeSpan? Length { get; set; }
     IEnumerable<Flag> Flags { get; set; }
     TimeSpan? PreGap { get; set; }

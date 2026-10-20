@@ -62,7 +62,7 @@ public class ProjectfileTests
             }
             track.Flags = flags;
             begin = begin.Add(new TimeSpan(0, i, i));
-            track.End = begin;
+            track.Finish = begin;
             track.Cuesheet = cuesheet;
             tracks.Add(track);
         }
@@ -104,7 +104,7 @@ public class ProjectfileTests
         Assert.Contains(Flag.DCP, cuesheet.Audiofiles.First().Tracks.ElementAt(3).Flags);
         Assert.Contains(Flag.FourCH, cuesheet.Audiofiles.First().Tracks.ElementAt(3).Flags);
         Assert.AreEqual("Artist 10", cuesheet.Audiofiles.Last().Tracks.Last().Artist);
-        Assert.AreEqual(new TimeSpan(0, 55, 55), cuesheet.Audiofiles.Last().Tracks.Last().End);
+        Assert.AreEqual(new TimeSpan(0, 55, 55), cuesheet.Audiofiles.Last().Tracks.Last().Finish);
         Assert.AreEqual((ushort)10, cuesheet.Audiofiles.Last().Tracks.Last().Position);
     }
 }

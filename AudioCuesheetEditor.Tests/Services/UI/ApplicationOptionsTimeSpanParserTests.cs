@@ -68,9 +68,9 @@ public class ApplicationOptionsTimeSpanParserTests
         var parser = new ApplicationOptionsTimeSpanParser(mockOptionsProvider.Object);
         var track = new Track();
         // Act
-        await parser.TimespanTextChanged(track, x => x.End, "not a time");
+        await parser.TimespanTextChanged(track, x => x.Finish, "not a time");
         // Assert
-        Assert.IsNull(track.End);
+        Assert.IsNull(track.Finish);
     }
 
     [TestMethod()]

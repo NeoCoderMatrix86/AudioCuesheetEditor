@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -25,9 +25,9 @@ public interface IValidateable
     /// <summary>
     /// Validates the property and return the result of validation.
     /// </summary>
-    /// <param name="property"></param>
+    /// <param name="propertyName"></param>
     /// <returns></returns>
-    ValidationResult Validate(string property);
+    ValidationResult Validate(string propertyName);
 }
 public enum ValidationStatus
 {
@@ -37,7 +37,7 @@ public enum ValidationStatus
 }
 public class ValidationResult
 {
-    List<ValidationMessage> validationMessages = [];
+    List<ValidationMessage> _validationMessages = [];
 
     public static ValidationResult Create(ValidationStatus validationStatus, IEnumerable<ValidationMessage>? validationMessages = null)
     {
@@ -52,11 +52,11 @@ public class ValidationResult
     public ValidationStatus Status { get; set; }
     public ICollection<ValidationMessage> ValidationMessages 
     {
-        get => validationMessages;
+        get => _validationMessages;
         set
         {
-            validationMessages = [.. value];
-            if (validationMessages.Count > 0)
+            _validationMessages = [.. value];
+            if (_validationMessages.Count > 0)
             {
                 Status = ValidationStatus.Error;
             }

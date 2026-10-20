@@ -31,7 +31,7 @@ public class Exportprofile : Validateable
     public static readonly string SchemeTrackArtist = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Artist)}{SchemeCharacter}";
     public static readonly string SchemeTrackTitle = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Title)}{SchemeCharacter}";
     public static readonly string SchemeTrackBegin = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Begin)}{SchemeCharacter}";
-    public static readonly string SchemeTrackEnd = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.End)}{SchemeCharacter}";
+    public static readonly string SchemeTrackEnd = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Finish)}{SchemeCharacter}";
     public static readonly string SchemeTrackLength = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Length)}{SchemeCharacter}";
     public static readonly string SchemeTrackPosition = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Position)}{SchemeCharacter}";
     public static readonly string SchemeTrackFlags = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Flags)}{SchemeCharacter}";
@@ -61,7 +61,7 @@ public class Exportprofile : Validateable
         { nameof(Track.Artist), SchemeTrackArtist },
         { nameof(Track.Title), SchemeTrackTitle },
         { nameof(Track.Begin), SchemeTrackBegin },
-        { nameof(Track.End), SchemeTrackEnd },
+        { nameof(Track.Finish), SchemeTrackEnd },
         { nameof(Track.Length), SchemeTrackLength },
         { nameof(Track.Flags), SchemeTrackFlags },
         { nameof(Track.PreGap), SchemeTrackPreGap },
@@ -119,11 +119,11 @@ public class Exportprofile : Validateable
         set { _filename = value; OnValidateablePropertyChanged(); }
     }
 
-    public override ValidationResult Validate(string property)
+    public override ValidationResult Validate(string propertyName)
     {
         var validationStatus = ValidationStatus.NoValidation;
         List<ValidationMessage>? validationMessages = null;
-        switch (property)
+        switch (propertyName)
         {
             case nameof(SchemeHead):
                 validationStatus = ValidationStatus.Success;

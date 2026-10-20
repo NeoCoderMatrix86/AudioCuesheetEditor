@@ -57,15 +57,15 @@ public class ExportfileGeneratorTests
             Artist = "Test artist 1",
             Title = "Test title 1",
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 4, 12),
+            Finish = new TimeSpan(0, 4, 12),
             Position = 1
         };
         var track2 = new Track()
         {
             Artist = "Test artist 2",
             Title = "Test title 2",
-            Begin = track1.End,
-            End = new TimeSpan(0, 8, 32),
+            Begin = track1.Finish,
+            Finish = new TimeSpan(0, 8, 32),
             Position = 2
         };
         var cuesheet = new Cuesheet()
@@ -119,15 +119,15 @@ Test audiofile 2.wav
             Artist = "Test artist 1",
             Title = "Test title 1",
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 4, 12),
+            Finish = new TimeSpan(0, 4, 12),
             Position = 1
         };
         var track2 = new Track()
         {
             Artist = "Test artist 2",
             Title = "Test title 2",
-            Begin = track1.End,
-            End = new TimeSpan(0, 8, 32),
+            Begin = track1.Finish,
+            Finish = new TimeSpan(0, 8, 32),
             Position = 2
         };
         var cuesheet = new Cuesheet()

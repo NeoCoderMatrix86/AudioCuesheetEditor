@@ -78,7 +78,7 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         Assert.HasCount(8, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks);
         Assert.AreEqual("Sample Artist 1", importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Artist);
         Assert.AreEqual("Sample Title 1", importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Title);
-        Assert.AreEqual(new TimeSpan(0, 5, 0), importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).End);
+        Assert.AreEqual(new TimeSpan(0, 5, 0), importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Finish);
         Assert.IsTrue(importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).IsLinkedToPreviousTrack);
     }
 
@@ -188,7 +188,7 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         Assert.AreEqual((ushort)6, importfile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(5).Position);
         Assert.AreEqual("Sample Artist 1", importfile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Artist);
         Assert.AreEqual("Sample Title 1", importfile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Title);
-        Assert.AreEqual(new TimeSpan(0, 5, 0), importfile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).End);
+        Assert.AreEqual(new TimeSpan(0, 5, 0), importfile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Finish);
     }
     
     [TestMethod()]
@@ -229,7 +229,7 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         Assert.AreEqual((ushort)6, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(5).Position);
         Assert.AreEqual("Sample Artist 1", importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Artist);
         Assert.AreEqual("Sample Title 1", importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Title);
-        Assert.AreEqual(new TimeSpan(0, 5, 0), importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).End);
+        Assert.AreEqual(new TimeSpan(0, 5, 0), importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Finish);
     }
 
     [TestMethod()]
@@ -322,7 +322,7 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         Assert.AreEqual((ushort)6, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(5).Position);
         Assert.AreEqual("Sample Artist 1", importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Artist);
         Assert.AreEqual("Sample Title 1", importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Title);
-        Assert.AreEqual(new TimeSpan(0, 5, 0), importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).End);
+        Assert.AreEqual(new TimeSpan(0, 5, 0), importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Finish);
     }
 
     [TestMethod()]
@@ -340,7 +340,7 @@ Sample Artist 8 - Sample Title 8				01:15:54
 Sample Artist 9 - Sample Title 9				";
         var profile = new Importprofile()
         {
-            SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.End)}"
+            SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.Finish)}"
         };
         var options = new ImportOptions
         {
@@ -358,7 +358,7 @@ Sample Artist 9 - Sample Title 9				";
         Assert.HasCount(9, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks);
         Assert.AreEqual("Sample Artist 1", importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Artist);
         Assert.AreEqual("Sample Title 1", importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Title);
-        Assert.AreEqual(new TimeSpan(1, 15, 54), importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(7).End);
+        Assert.AreEqual(new TimeSpan(1, 15, 54), importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(7).Finish);
     }
 
     [TestMethod()]
@@ -368,7 +368,7 @@ Sample Artist 9 - Sample Title 9				";
         var fileContent = File.ReadAllText("Resources/Textimport_Bug_213.txt");
         var profile = new Importprofile()
         {
-            SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.End)}",
+            SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.Finish)}",
             TimeSpanFormat = new() { Scheme = $"{nameof(TimeSpanFormat.Minutes)}:{nameof(TimeSpanFormat.Seconds)}" }
         };
         var options = new ImportOptions
@@ -385,7 +385,7 @@ Sample Artist 9 - Sample Title 9				";
         Assert.IsNotNull(importFile.AnalyzedCuesheet);
         Assert.HasCount(1, importFile.AnalyzedCuesheet.Audiofiles);
         Assert.HasCount(4, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks);
-        Assert.AreEqual(new TimeSpan(2, 3, 23), importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(3).End);
+        Assert.AreEqual(new TimeSpan(2, 3, 23), importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(3).Finish);
     }
 
     [TestMethod()]
@@ -546,7 +546,7 @@ Sample Artist 8 - Sample Title 8				01:15:54";
             UseRegularExpression = true,
             SchemeCuesheet = @$"^(?<{nameof(ImportCuesheet.Artist)}>.+?)\s*-\s*(?<{nameof(ImportCuesheet.Title)}>.+?)\t+",
             SchemeAudiofiles = @$"\s+(?<{nameof(ImportAudiofile.Name)}>\S+.mp3)",
-            SchemeTracks = @$"(?<{nameof(ImportTrack.Artist)}>.+?)\s*-\s*(?<{nameof(ImportTrack.Title)}>.+?)\s+(?<{nameof(ImportTrack.End)}>\d{{2}}:\d{{2}}:\d{{2}})"
+            SchemeTracks = @$"(?<{nameof(ImportTrack.Artist)}>.+?)\s*-\s*(?<{nameof(ImportTrack.Title)}>.+?)\s+(?<{nameof(ImportTrack.Finish)}>\d{{2}}:\d{{2}}:\d{{2}})"
         };
         var options = new ImportOptions
         {
@@ -565,7 +565,7 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         Assert.HasCount(8, importFile.AnalyzedCuesheet.Audiofiles.First().Tracks);
         Assert.AreEqual("Sample Artist 1", importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Artist);
         Assert.AreEqual("Sample Title 1", importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Title);
-        Assert.AreEqual(new TimeSpan(0, 5, 0), importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).End);
+        Assert.AreEqual(new TimeSpan(0, 5, 0), importFile.AnalyzedCuesheet.Audiofiles.First().Tracks.ElementAt(0).Finish);
         var lines = importFile.FileContentRecognized.Split(Environment.NewLine);
         Assert.AreEqual($"{CuesheetConstants.GetMarkedText("Sample Artist 8")} - {CuesheetConstants.GetMarkedText("Sample Title 8")}				{CuesheetConstants.GetMarkedText("01:15:54")}", lines.Last());
     }
@@ -576,7 +576,7 @@ Sample Artist 8 - Sample Title 8				01:15:54";
         // Arrange
         var profile = new Importprofile()
         {
-            SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.End)}"
+            SchemeTracks = $"{nameof(ImportTrack.Artist)} - {nameof(ImportTrack.Title)}\t{nameof(ImportTrack.Finish)}"
         };
         var fileContent = File.ReadAllText("Resources/Textimport_Bug_#233.txt");
         var options = new ImportOptions

@@ -97,7 +97,7 @@ public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionSta
             var lastTrack = GetLastTrack(cuesheet);
             if ((lastTrack != null) && cuesheet.RecordingStart.HasValue)
             {
-                lastTrack.End = DateTime.UtcNow - cuesheet.RecordingStart.Value;
+                lastTrack.Finish = DateTime.UtcNow - cuesheet.RecordingStart.Value;
             }
             cuesheet.RecordingStart = null;
             IsRecordingChanged?.Invoke(this, EventArgs.Empty);
@@ -166,16 +166,16 @@ public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionSta
                 else
                 {
                     var newBegin = previousTrack?.Begin;
-                    var newEnd = previousTrack?.End;
+                    var newEnd = previousTrack?.Finish;
                     if (previousTrack != null)
                     {
                         _trackManager.SetProperty(previousTrack, x => x.Position, selectedTrack.Position);
                         _trackManager.SetProperty(previousTrack, x => x.Begin, selectedTrack.Begin);
-                        _trackManager.SetProperty(previousTrack, x => x.End, selectedTrack.End);
+                        _trackManager.SetProperty(previousTrack, x => x.Finish, selectedTrack.Finish);
                     }
                     _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position - 1));
                     _trackManager.SetProperty(selectedTrack, x => x.Begin, newBegin);
-                    _trackManager.SetProperty(selectedTrack, x => x.End, newEnd);
+                    _trackManager.SetProperty(selectedTrack, x => x.Finish, newEnd);
                 }
 
             }
@@ -250,16 +250,16 @@ public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionSta
                 else
                 {
                     var newBegin = nextTrack?.Begin;
-                    var newEnd = nextTrack?.End;
+                    var newEnd = nextTrack?.Finish;
                     if (nextTrack != null)
                     {
                         _trackManager.SetProperty(nextTrack, x => x.Position, selectedTrack.Position);
                         _trackManager.SetProperty(nextTrack, x => x.Begin, selectedTrack.Begin);
-                        _trackManager.SetProperty(nextTrack, x => x.End, selectedTrack.End);
+                        _trackManager.SetProperty(nextTrack, x => x.Finish, selectedTrack.Finish);
                     }
                     _trackManager.SetProperty(selectedTrack, x => x.Position, (ushort?)(selectedTrack.Position + 1));
                     _trackManager.SetProperty(selectedTrack, x => x.Begin, newBegin);
-                    _trackManager.SetProperty(selectedTrack, x => x.End, newEnd);
+                    _trackManager.SetProperty(selectedTrack, x => x.Finish, newEnd);
                 }
             }
             foreach (var audiofile in cuesheet!.Audiofiles)
@@ -370,7 +370,7 @@ public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionSta
         return cuesheet.Audiofiles.SelectMany(x => x.Tracks)
             .OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
             .ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin)
-            .ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End)
+            .ThenByDescending(x => x.Finish.HasValue).ThenBy(x => x.Finish)
             .LastOrDefault();
     }
 }

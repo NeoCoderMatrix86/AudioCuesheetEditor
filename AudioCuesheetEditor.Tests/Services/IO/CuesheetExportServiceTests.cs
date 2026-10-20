@@ -119,14 +119,14 @@ public class CuesheetExportServiceTests
         };
         _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
         _ = _localizerMock.Setup(x => x["{0} has no value!", It.IsAny<object[]>()]).Returns((string format, object[] args) => new LocalizedString(format, string.Format(CultureInfo.CurrentCulture, format, args)));
-        _ = _localizerMock.Setup(x => x[nameof(Track.End)]).Returns(new LocalizedString(nameof(Track.End), nameof(Track.End)));
+        _ = _localizerMock.Setup(x => x[nameof(Track.Finish)]).Returns(new LocalizedString(nameof(Track.Finish), nameof(Track.Finish)));
 
         // Act
         var result = _cuesheetExportService.CanGenerateExportfile("test.cue");
 
         // Assert
         Assert.IsFalse(result.IsSuccess);
-        Assert.IsTrue(result.FailureDetails?.Message.Contains($"{nameof(Track.End)} has no value!"));
+        Assert.IsTrue(result.FailureDetails?.Message.Contains($"{nameof(Track.Finish)} has no value!"));
     }
 
     [TestMethod]
@@ -149,7 +149,7 @@ public class CuesheetExportServiceTests
                         {
                             Position = 1,
                             Begin = TimeSpan.Zero,
-                            End = new TimeSpan(0, 3, 43)
+                            Finish = new TimeSpan(0, 3, 43)
                         }
                     ]
                 }
@@ -175,15 +175,15 @@ public class CuesheetExportServiceTests
             Artist = "Test artist 1",
             Title = "Test title 1",
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 4, 12),
+            Finish = new TimeSpan(0, 4, 12),
             Position = 1
         };
         var track2 = new Track()
         {
             Artist = "Test artist 2",
             Title = "Test title 2",
-            Begin = track1.End,
-            End = new TimeSpan(0, 8, 32),
+            Begin = track1.Finish,
+            Finish = new TimeSpan(0, 8, 32),
             Position = 2
         };
         var cuesheet = new Cuesheet()
@@ -236,31 +236,31 @@ FILE ""Test audiofile.mp3"" MP3
             Artist = "Test artist 1",
             Title = "Test title 1",
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 4, 12),
+            Finish = new TimeSpan(0, 4, 12),
             Position = 1
         };
         var track2 = new Track()
         {
             Artist = "Test artist 2",
             Title = "Test title 2",
-            Begin = track1.End,
-            End = new TimeSpan(0, 8, 32),
+            Begin = track1.Finish,
+            Finish = new TimeSpan(0, 8, 32),
             Position = 2
         };
         var track3 = new Track()
         {
             Artist = "Test artist 3",
             Title = "Test title 3",
-            Begin = track2.End,
-            End = new TimeSpan(0, 12, 43),
+            Begin = track2.Finish,
+            Finish = new TimeSpan(0, 12, 43),
             Position = 3
         };
         var track4 = new Track()
         {
             Artist = "Test artist 4",
             Title = "Test title 4",
-            Begin = track3.End,
-            End = new TimeSpan(0, 15, 54),
+            Begin = track3.Finish,
+            Finish = new TimeSpan(0, 15, 54),
             Position = 4
         };
         var cuesheet = new Cuesheet()

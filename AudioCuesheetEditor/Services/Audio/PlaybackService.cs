@@ -47,7 +47,7 @@ public class PlaybackService(IJSRuntime jsRuntime, ISessionStateContainer sessio
             }
         }
     }
-    public Track? CurrentlyPlayingTrack => _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).SingleOrDefault(x => x.Begin.HasValue == true && x.End.HasValue == true && x.Begin <= CurrentPosition && x.End > CurrentPosition);
+    public Track? CurrentlyPlayingTrack => _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).SingleOrDefault(x => x.Begin.HasValue == true && x.Finish.HasValue == true && x.Begin <= CurrentPosition && x.Finish > CurrentPosition);
     public TimeSpan? TotalTime
     {
         get
@@ -62,8 +62,8 @@ public class PlaybackService(IJSRuntime jsRuntime, ISessionStateContainer sessio
     }
     public bool IsPaused { get; private set; }
     public bool IsPlaybackPossible => _sessionStateContainer.Cuesheet.Audiofiles.Any(x => string.IsNullOrEmpty(x.ObjectURL) == false);
-    public bool IsPreviousPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin) != null;
-    public bool IsNextPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End) != null;
+    public bool IsPreviousPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Finish <= CurrentlyPlayingTrack.Begin) != null;
+    public bool IsNextPossible => (CurrentlyPlayingTrack != null) && _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.Finish) != null;
     public bool IsPlaying => _currentlyPlayingAudiofile != null;
 
     public async Task InitializeAsync()
@@ -135,7 +135,7 @@ public class PlaybackService(IJSRuntime jsRuntime, ISessionStateContainer sessio
     {
         if (CurrentlyPlayingTrack != null)
         {
-            var trackToPlay = _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.End);
+            var trackToPlay = _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).FirstOrDefault(x => x.Begin >= CurrentlyPlayingTrack.Finish);
             if (trackToPlay != null)
             {
                 await PlayAsync(trackToPlay);
@@ -147,7 +147,7 @@ public class PlaybackService(IJSRuntime jsRuntime, ISessionStateContainer sessio
     {
         if (CurrentlyPlayingTrack != null)
         {
-            var trackToPlay = _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).LastOrDefault(x => x.End <= CurrentlyPlayingTrack.Begin);
+            var trackToPlay = _sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).LastOrDefault(x => x.Finish <= CurrentlyPlayingTrack.Begin);
             if (trackToPlay != null)
             {
                 await PlayAsync(trackToPlay);

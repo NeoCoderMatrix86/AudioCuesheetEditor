@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -21,9 +21,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests;
 public abstract class PlaywrightTestBase : PageTest
 {
     IBrowserContext _testContextInstance = null!;
-    protected IPage TestPage = null!;
 
     protected virtual string? DeviceName => null;
+
+    protected IPage TestPage { get; private set; } = default!;
 
     [TestInitialize]
     public async Task TestInitializeAsync()

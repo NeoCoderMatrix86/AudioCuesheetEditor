@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -114,9 +114,9 @@ public class AudiofileManager(IFileInputManager fileInputManager, ITraceChangeMa
             _trackManager.SetProperty(track, x => x.Begin, DateTime.UtcNow - cuesheet.RecordingStart);
         }
         var lastTrack = GetLastTrack(audiofile);
-        if ((audiofile.Duration.HasValue == true) && (lastTrack?.End.HasValue == true) && (lastTrack.End == audiofile.Duration))
+        if ((audiofile.Duration.HasValue == true) && (lastTrack?.Finish.HasValue == true) && (lastTrack.Finish == audiofile.Duration))
         {
-            _trackManager.SetProperty(lastTrack, x => x.End, null);
+            _trackManager.SetProperty(lastTrack, x => x.Finish, null);
         }
         var newValue = new List<Track>(audiofile.Tracks)
         {
@@ -202,15 +202,15 @@ public class AudiofileManager(IFileInputManager fileInputManager, ITraceChangeMa
                     _trackManager.SetProperty(track, x => x.Position, position);
                 }
                 var previousTrack = _trackManager.GetPreviousLinkedTrack(track);
-                if (previousTrack?.End.HasValue == true)
+                if (previousTrack?.Finish.HasValue == true)
                 {
-                    _trackManager.SetProperty(track, x => x.Begin, previousTrack.End);
+                    _trackManager.SetProperty(track, x => x.Begin, previousTrack.Finish);
                 }
                 else
                 {
                     if (previousTrack != null)
                     {
-                        _trackManager.SetProperty(previousTrack, x => x.End, track.Begin);
+                        _trackManager.SetProperty(previousTrack, x => x.Finish, track.Begin);
                     }
                 }
                 position++;
@@ -233,16 +233,16 @@ public class AudiofileManager(IFileInputManager fileInputManager, ITraceChangeMa
     {
         return audiofile.Tracks.OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
             .ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin)
-            .ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End)
+            .ThenByDescending(x => x.Finish.HasValue).ThenBy(x => x.Finish)
             .LastOrDefault();
     }
 
     void SetLastTrackEnd(Audiofile audiofile)
     {
         var lastTrack = GetLastTrack(audiofile);
-        if ((lastTrack?.End.HasValue == false) && (audiofile.Duration.HasValue == true))
+        if ((lastTrack?.Finish.HasValue == false) && (audiofile.Duration.HasValue == true))
         {
-            _trackManager.SetProperty(lastTrack, x => x.End, audiofile.Duration);
+            _trackManager.SetProperty(lastTrack, x => x.Finish, audiofile.Duration);
         }
     }
 
@@ -251,7 +251,7 @@ public class AudiofileManager(IFileInputManager fileInputManager, ITraceChangeMa
         return cuesheet.Audiofiles.SelectMany(x => x.Tracks)
             .OrderByDescending(x => x.Position.HasValue).ThenBy(x => x.Position)
             .ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin)
-            .ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End)
+            .ThenByDescending(x => x.Finish.HasValue).ThenBy(x => x.Finish)
             .FirstOrDefault();
     }
 

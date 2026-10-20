@@ -81,11 +81,11 @@ public class Audiofile() : Validateable, IAudiofile
 
     public ICollection<Track> Tracks { get; set; } = [];
 
-    public override ValidationResult Validate(string property)
+    public override ValidationResult Validate(string propertyName)
     {
         var validationStatus = ValidationStatus.NoValidation;
         List<ValidationMessage>? validationMessages = null;
-        switch (property)
+        switch (propertyName)
         {
             case nameof(Tracks):
                 validationStatus = ValidationStatus.Success;
@@ -107,21 +107,21 @@ public class Audiofile() : Validateable, IAudiofile
                         {
                             foreach (var trackWithSamePosition in track)
                             {
-                                validationMessages.Add(new ValidationMessage("{0} {1} '{2}' is used also by {3}({4},{5},{6},{7},{8}). Positions must be unique!", nameof(Track), nameof(Track.Position), track.Key != null ? track.Key : string.Empty, nameof(Track), trackWithSamePosition.Position != null ? trackWithSamePosition.Position : string.Empty, trackWithSamePosition.Artist ?? string.Empty, trackWithSamePosition.Title ?? string.Empty, trackWithSamePosition.Begin != null ? trackWithSamePosition.Begin : string.Empty, trackWithSamePosition.End != null ? trackWithSamePosition.End : string.Empty));
+                                validationMessages.Add(new ValidationMessage("{0} {1} '{2}' is used also by {3}({4},{5},{6},{7},{8}). Positions must be unique!", nameof(Track), nameof(Track.Position), track.Key != null ? track.Key : string.Empty, nameof(Track), trackWithSamePosition.Position != null ? trackWithSamePosition.Position : string.Empty, trackWithSamePosition.Artist ?? string.Empty, trackWithSamePosition.Title ?? string.Empty, trackWithSamePosition.Begin != null ? trackWithSamePosition.Begin : string.Empty, trackWithSamePosition.Finish != null ? trackWithSamePosition.Finish : string.Empty));
                             }
                         }
                     }
                     foreach (var track in Tracks.OrderBy(x => x.Position))
                     {
-                        var tracksBetween = Tracks.Where(x => ((track.Begin >= x.Begin && track.Begin < x.End)
-                                                    || (x.Begin < track.End && track.End <= x.End))
+                        var tracksBetween = Tracks.Where(x => ((track.Begin >= x.Begin && track.Begin < x.Finish)
+                                                    || (x.Begin < track.Finish && track.Finish <= x.Finish))
                                                     && (x.Equals(track) == false));
                         if (tracksBetween.Any())
                         {
                             validationMessages ??= [];
                             foreach (var trackBetween in tracksBetween)
                             {
-                                validationMessages.Add(new ValidationMessage("{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!", nameof(Track), track.Position != null ? track.Position : string.Empty, track.Artist ?? string.Empty, track.Title ?? string.Empty, track.Begin != null ? track.Begin : string.Empty, track.End != null ? track.End : string.Empty, trackBetween.Position != null ? trackBetween.Position : string.Empty, trackBetween.Artist ?? string.Empty, trackBetween.Title ?? string.Empty, trackBetween.Begin != null ? trackBetween.Begin : string.Empty, trackBetween.End != null ? trackBetween.End : string.Empty));
+                                validationMessages.Add(new ValidationMessage("{0}({1},{2},{3},{4},{5}) is overlapping with {0}({6},{7},{8},{9},{10}). Please make shure the timeinterval is only used once!", nameof(Track), track.Position != null ? track.Position : string.Empty, track.Artist ?? string.Empty, track.Title ?? string.Empty, track.Begin != null ? track.Begin : string.Empty, track.Finish != null ? track.Finish : string.Empty, trackBetween.Position != null ? trackBetween.Position : string.Empty, trackBetween.Artist ?? string.Empty, trackBetween.Title ?? string.Empty, trackBetween.Begin != null ? trackBetween.Begin : string.Empty, trackBetween.Finish != null ? trackBetween.Finish : string.Empty));
                             }
                         }
                     }

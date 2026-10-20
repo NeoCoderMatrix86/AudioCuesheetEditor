@@ -80,13 +80,13 @@ public class AudiofileTests
         {
             Position = 1,
             Begin = TimeSpan.Zero,
-            End = new TimeSpan(0, 3, 45)
+            Finish = new TimeSpan(0, 3, 45)
         };
         var track2 = new Track()
         {
             Position = 2,
             Begin = new TimeSpan(0, 3, 42),
-            End = new TimeSpan(0, 6, 32)
+            Finish = new TimeSpan(0, 6, 32)
         };
         var audiofile = new Audiofile()
         {

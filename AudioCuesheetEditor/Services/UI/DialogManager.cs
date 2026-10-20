@@ -13,11 +13,11 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using AudioCuesheetEditor.Components.Dialogs;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.UI;
 using AudioCuesheetEditor.Services.AudioCuesheet;
-using AudioCuesheetEditor.Shared.Dialogs;
 using MudBlazor;
 
 namespace AudioCuesheetEditor.Services.UI;
@@ -58,7 +58,7 @@ public class DialogManager(IDialogService dialogService, ITraceChangeManager tra
                 {
                     var position = editMultipleTracksModalResult.EditedTrack.Position;
                     var begin = editMultipleTracksModalResult.EditedTrack.Begin;
-                    var end = editMultipleTracksModalResult.EditedTrack.End;
+                    var end = editMultipleTracksModalResult.EditedTrack.Finish;
                     var length = editMultipleTracksModalResult.EditedTrack.Length;
                     var preGap = editMultipleTracksModalResult.EditedTrack.PreGap;
                     var postGap = editMultipleTracksModalResult.EditedTrack.PostGap;
@@ -102,14 +102,14 @@ public class DialogManager(IDialogService dialogService, ITraceChangeManager tra
                             copyTrackEnd = true;
                             break;
                         case DynamicEditValue.EnteredValueAdd:
-                            var newValue = editMultipleTracksModalResult.EditedTrack.End + track.End;
-                            editMultipleTracksModalResult.EditedTrack.End = newValue;
+                            var newValue = editMultipleTracksModalResult.EditedTrack.Finish + track.Finish;
+                            editMultipleTracksModalResult.EditedTrack.Finish = newValue;
                             _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: copyTrackEnd, setLength: false, setFlags: false, setPreGap: false, setPostGap: false);
                             copyTrackEnd = false;
                             break;
                         case DynamicEditValue.EnteredValueSubstract:
-                            newValue = track.End - editMultipleTracksModalResult.EditedTrack.End;
-                            editMultipleTracksModalResult.EditedTrack.End = newValue;
+                            newValue = track.Finish - editMultipleTracksModalResult.EditedTrack.Finish;
+                            editMultipleTracksModalResult.EditedTrack.Finish = newValue;
                             _trackManager.CopyValues(editMultipleTracksModalResult.EditedTrack, track, setIsLinkedToPreviousTrack: false, setPosition: false, setArtist: false, setTitle: false, setBegin: false, setEnd: copyTrackEnd, setLength: false, setFlags: false, setPreGap: false, setPostGap: false);
                             copyTrackEnd = false;
                             break;
@@ -179,7 +179,7 @@ public class DialogManager(IDialogService dialogService, ITraceChangeManager tra
                     }
                     editMultipleTracksModalResult.EditedTrack.Position = position;
                     editMultipleTracksModalResult.EditedTrack.Begin = begin;
-                    editMultipleTracksModalResult.EditedTrack.End = end;
+                    editMultipleTracksModalResult.EditedTrack.Finish = end;
                     editMultipleTracksModalResult.EditedTrack.Length = length;
                     editMultipleTracksModalResult.EditedTrack.PreGap = preGap;
                     editMultipleTracksModalResult.EditedTrack.PostGap = postGap;

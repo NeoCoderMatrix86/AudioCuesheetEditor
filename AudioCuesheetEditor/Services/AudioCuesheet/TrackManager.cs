@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ public class TrackManager(ITraceChangeManager traceChangeManager) : ITrackManage
     public Track Clone(ITrack track)
     {
         var setLength = true;
-        if (track.Begin.HasValue && track.End.HasValue)
+        if (track.Begin.HasValue && track.Finish.HasValue)
         {
             setLength = false;
         }
@@ -50,7 +50,7 @@ public class TrackManager(ITraceChangeManager traceChangeManager) : ITrackManage
             Artist = track.Artist,
             Title = track.Title,
             Begin = track.Begin,
-            End = track.End,
+            Finish = track.Finish,
             Flags = track.Flags,
             PreGap = track.PreGap,
             PostGap = track.PostGap
@@ -87,7 +87,7 @@ public class TrackManager(ITraceChangeManager traceChangeManager) : ITrackManage
         }
         if (setEnd)
         {
-            SetValue(target, x => x.End, source.End);
+            SetValue(target, x => x.Finish, source.Finish);
         }
         if (setLength)
         {
@@ -120,7 +120,7 @@ public class TrackManager(ITraceChangeManager traceChangeManager) : ITrackManage
         }
         if (track.Begin.HasValue)
         {
-            return track.Cuesheet?.Audiofiles.SelectMany(x => x.Tracks).OrderBy(x => x.End).LastOrDefault(x => x.End <= track.Begin && Equals(x, track) == false);
+            return track.Cuesheet?.Audiofiles.SelectMany(x => x.Tracks).OrderBy(x => x.Finish).LastOrDefault(x => x.Finish <= track.Begin && Equals(x, track) == false);
         }
         return null;
     }
@@ -132,9 +132,9 @@ public class TrackManager(ITraceChangeManager traceChangeManager) : ITrackManage
         {
             return track.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).OrderBy(x => x.Begin).FirstOrDefault(x => x.Position >= track.Position.Value + 1 && x.IsLinkedToPreviousTrack == true && Equals(x, track) == false);
         }
-        if (track.End.HasValue)
+        if (track.Finish.HasValue)
         {
-            return track.Cuesheet?.Audiofiles.SelectMany(x => x.Tracks).OrderBy(x => x.Begin).LastOrDefault(x => x.Begin <= track.End && x.IsLinkedToPreviousTrack == true && Equals(x, track) == false);
+            return track.Cuesheet?.Audiofiles.SelectMany(x => x.Tracks).OrderBy(x => x.Begin).LastOrDefault(x => x.Begin <= track.Finish && x.IsLinkedToPreviousTrack == true && Equals(x, track) == false);
         }
         return null;
     }
@@ -151,13 +151,13 @@ public class TrackManager(ITraceChangeManager traceChangeManager) : ITrackManage
                 {
                     SetValue(track, x => x.Position, (ushort?)(previousTrack.Position + 1));
                 }
-                if (previousTrack.End.HasValue && (track.Begin != previousTrack.End))
+                if (previousTrack.Finish.HasValue && (track.Begin != previousTrack.Finish))
                 {
-                    SetValue(track, x => x.Begin, previousTrack.End);
+                    SetValue(track, x => x.Begin, previousTrack.Finish);
                 }
-                if ((previousTrack.End.HasValue == false) && track.Begin.HasValue)
+                if ((previousTrack.Finish.HasValue == false) && track.Begin.HasValue)
                 {
-                    SetValue(previousTrack, x => x.End, track.Begin);
+                    SetValue(previousTrack, x => x.Finish, track.Begin);
                 }
             }
             var nextTrack = GetNextLinkedTrack(track);
@@ -167,7 +167,7 @@ public class TrackManager(ITraceChangeManager traceChangeManager) : ITrackManage
                 {
                     SetValue(nextTrack, x => x.Position, (ushort?)(track.Position + 1));
                 }
-                SetValue(nextTrack, x => x.Begin, track.End);
+                SetValue(nextTrack, x => x.Begin, track.Finish);
             }
         }
     }

@@ -85,7 +85,7 @@ public class ImportManagerTests
             }
             if (setEnd)
             {
-                TrackManager_SetValue(target, x => x.End, source.End, false);
+                TrackManager_SetValue(target, x => x.Finish, source.Finish, false);
             }
             if (setLength)
             {
@@ -108,7 +108,7 @@ public class ImportManagerTests
         {
             var clone = new Track();
             var setLength = true;
-            if (track.Begin.HasValue && track.End.HasValue)
+            if (track.Begin.HasValue && track.Finish.HasValue)
             {
                 setLength = false;
             }
@@ -167,7 +167,7 @@ public class ImportManagerTests
             Artist = "Test Track Artist 1",
             Title = "Test Track Title 1",
             Begin = new TimeSpan(0, 3, 20),
-            End = new TimeSpan(0, 7, 43),
+            Finish = new TimeSpan(0, 7, 43),
             Flags = [Flag.DCP],
             Position = 1,
             PreGap = new TimeSpan(0, 0, 2),
@@ -203,7 +203,7 @@ public class ImportManagerTests
         Assert.AreEqual(importAudiofile.Tracks.First().Artist, sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().Artist);
         Assert.AreEqual(importAudiofile.Tracks.First().Title, sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().Title);
         Assert.AreEqual(importAudiofile.Tracks.First().Begin, sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().Begin);
-        Assert.AreEqual(importAudiofile.Tracks.First().End, sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().End);
+        Assert.AreEqual(importAudiofile.Tracks.First().Finish, sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().Finish);
         Assert.AreSequenceEqual([.. importAudiofile.Tracks.First().Flags], sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().Flags.ToList(), SequenceOrder.InAnyOrder);
         Assert.AreEqual(importAudiofile.Tracks.First().Position, sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().Position);
         Assert.AreEqual(importAudiofile.Tracks.First().PreGap, sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().PreGap);
@@ -403,7 +403,7 @@ TRACK 08 AUDIO
         {
             Artist = "Track Artist 1",
             Title = "Track Title 1",
-            End = new TimeSpan(0, 4, 23),
+            Finish = new TimeSpan(0, 4, 23),
         };
         var track2 = new Track()
         {
@@ -446,11 +446,11 @@ TRACK 08 AUDIO
         Assert.AreEqual(track1.Artist, sessionStateContainerCuesheet.Audiofiles.First().Tracks.First().Artist);
         Assert.AreEqual(track1.Title, sessionStateContainerCuesheet.Audiofiles.First().Tracks.First().Title);
         Assert.AreEqual(TimeSpan.Zero, sessionStateContainerCuesheet.Audiofiles.First().Tracks.First().Begin);
-        Assert.AreEqual(track1.End, sessionStateContainerCuesheet.Audiofiles.First().Tracks.First().End);
+        Assert.AreEqual(track1.Finish, sessionStateContainerCuesheet.Audiofiles.First().Tracks.First().Finish);
         Assert.AreEqual(track2.Artist, sessionStateContainerCuesheet.Audiofiles.First().Tracks.Last().Artist);
         Assert.AreEqual(track2.Title, sessionStateContainerCuesheet.Audiofiles.First().Tracks.Last().Title);
-        Assert.AreEqual(track1.End, sessionStateContainerCuesheet.Audiofiles.First().Tracks.Last().Begin);
-        Assert.AreEqual(audiofileDuration, sessionStateContainerCuesheet.Audiofiles.First().Tracks.Last().End);
+        Assert.AreEqual(track1.Finish, sessionStateContainerCuesheet.Audiofiles.First().Tracks.Last().Begin);
+        Assert.AreEqual(audiofileDuration, sessionStateContainerCuesheet.Audiofiles.First().Tracks.Last().Finish);
         _traceChangeManager.Verify(x => x.RemoveTracedChanges(It.IsAny<IEnumerable<object>>()));
     }
 

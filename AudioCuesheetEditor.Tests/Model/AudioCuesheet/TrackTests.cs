@@ -76,10 +76,10 @@ public class TrackTests
         var track = new Track
         {
             Begin = new TimeSpan(0, 2, 32),
-            End = new TimeSpan(0, 1, 15)
+            Finish = new TimeSpan(0, 1, 15)
         };
         // Act
-        var endValidationResult = track.Validate(nameof(Track.End));
+        var endValidationResult = track.Validate(nameof(Track.Finish));
         // Assert
         Assert.AreEqual(ValidationStatus.Error, endValidationResult.Status);
     }
@@ -91,7 +91,7 @@ public class TrackTests
         var track = new Track
         {
             Begin = new TimeSpan(0, 4, 53),
-            End = new TimeSpan(0, 3, 15)
+            Finish = new TimeSpan(0, 3, 15)
         };
         // Act
         var endValidationResult = track.Validate(nameof(Track.Begin));

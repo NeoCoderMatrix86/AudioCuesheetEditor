@@ -242,13 +242,13 @@ public partial class ImportManager(ISessionStateContainer sessionStateContainer,
             {
                 sortedTracks = sortedTracks.ThenByDescending(x => x.Begin.HasValue).ThenBy(x => x.Begin);
             }
-            if (sortedTracks.All(x => x.End.HasValue))
+            if (sortedTracks.All(x => x.Finish.HasValue))
             {
-                sortedTracks = sortedTracks.ThenBy(x => x.End);
+                sortedTracks = sortedTracks.ThenBy(x => x.Finish);
             }
             else
             {
-                sortedTracks = sortedTracks.ThenByDescending(x => x.End.HasValue).ThenBy(x => x.End);
+                sortedTracks = sortedTracks.ThenByDescending(x => x.Finish.HasValue).ThenBy(x => x.Finish);
             }
             TimeSpan? begin = TimeSpan.Zero;
             ushort position = 1;
@@ -268,7 +268,7 @@ public partial class ImportManager(ISessionStateContainer sessionStateContainer,
                 {
                     var length = nextImportTrack.StartDateTime - importTrack.StartDateTime;
                     clone.Begin = begin;
-                    clone.End = begin + length;
+                    clone.Finish = begin + length;
                 }
                 // Calculate properties
                 if (clone.Position.HasValue == false)
@@ -279,19 +279,19 @@ public partial class ImportManager(ISessionStateContainer sessionStateContainer,
                 {
                     clone.Begin = begin;
                 }
-                if ((clone.End.HasValue == false) && (nextTrack?.Begin.HasValue == true))
+                if ((clone.Finish.HasValue == false) && (nextTrack?.Begin.HasValue == true))
                 {
-                    clone.End = nextTrack.Begin;
+                    clone.Finish = nextTrack.Begin;
                 }
-                begin = clone.End;
+                begin = clone.Finish;
                 position++;
                 targetAudiofile.Tracks.Add(clone);
             }
             //Set last track end
             var lastTrack = targetAudiofile.Tracks.LastOrDefault();
-            if ((lastTrack?.End.HasValue == false) && (targetAudiofile.Duration.HasValue == true))
+            if ((lastTrack?.Finish.HasValue == false) && (targetAudiofile.Duration.HasValue == true))
             {
-                _trackManager.SetProperty(lastTrack, x => x.End, targetAudiofile.Duration);
+                _trackManager.SetProperty(lastTrack, x => x.Finish, targetAudiofile.Duration);
             }
             target.Audiofiles.Add(targetAudiofile);
         }

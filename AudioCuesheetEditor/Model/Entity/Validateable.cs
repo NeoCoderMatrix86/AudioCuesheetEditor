@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -50,7 +50,7 @@ public abstract class Validateable : IValidateable
         return validationResult;
     }
 
-    public abstract ValidationResult Validate(string property);
+    public abstract ValidationResult Validate(string propertyName);
 
     protected void OnValidateablePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "") => ValidateablePropertyChanged?.Invoke(this, propertyName);
 }
