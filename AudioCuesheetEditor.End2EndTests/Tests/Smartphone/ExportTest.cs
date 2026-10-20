@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -72,7 +72,7 @@ FILE ""Kalimba.mp3"" MP3
         using var stream = await download.CreateReadStreamAsync();
         using var reader = new StreamReader(stream);
         var content = await reader.ReadToEndAsync(TestContext.CancellationToken);
-        Assert.AreEqual("{\"Artist\":\"Cuesheet Artist 1\",\"Title\":\"Cuesheet Title 1\",\"Audiofiles\":[{\"Name\":\"Kalimba.mp3\",\"Duration\":\"00:05:48.0608330\",\"AudioCodec\":{\"MimeType\":\"audio/mpeg\",\"FileExtension\":\".mp3\",\"Name\":\"AudioCodec MP3\"},\"Tracks\":[{\"Position\":1,\"Artist\":\"Track Artist 1\",\"Title\":\"Track Title 1\",\"Begin\":\"00:00:00\",\"End\":\"00:05:48.0608330\",\"Flags\":[],\"IsLinkedToPreviousTrack\":true}]}]}", content);
+        Assert.AreEqual("{\"Artist\":\"Cuesheet Artist 1\",\"Title\":\"Cuesheet Title 1\",\"Audiofiles\":[{\"Name\":\"Kalimba.mp3\",\"Duration\":\"00:05:48.0608330\",\"AudioCodec\":{\"MimeType\":\"audio/mpeg\",\"FileExtension\":\".mp3\",\"Name\":\"AudioCodec MP3\"},\"Tracks\":[{\"Position\":1,\"Artist\":\"Track Artist 1\",\"Title\":\"Track Title 1\",\"Begin\":\"00:00:00\",\"Finish\":\"00:05:48.0608330\",\"Flags\":[],\"IsLinkedToPreviousTrack\":true}]}]}", content);
     }
 
     [TestMethod]

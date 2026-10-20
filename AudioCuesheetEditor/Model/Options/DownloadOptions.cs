@@ -52,7 +52,7 @@ public class DownloadOptions : Validateable, IOptions
             }
             field = value;
         }
-    }
+    } = Projectfile.DefaultFilename;
     public override ValidationResult Validate(string propertyName)
     {
         var validationStatus = ValidationStatus.NoValidation;

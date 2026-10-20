@@ -31,7 +31,7 @@ public class Exportprofile : Validateable
     public static readonly string SchemeTrackArtist = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Artist)}{SchemeCharacter}";
     public static readonly string SchemeTrackTitle = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Title)}{SchemeCharacter}";
     public static readonly string SchemeTrackBegin = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Begin)}{SchemeCharacter}";
-    public static readonly string SchemeTrackEnd = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Finish)}{SchemeCharacter}";
+    public static readonly string SchemeTrackFinish = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Finish)}{SchemeCharacter}";
     public static readonly string SchemeTrackLength = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Length)}{SchemeCharacter}";
     public static readonly string SchemeTrackPosition = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Position)}{SchemeCharacter}";
     public static readonly string SchemeTrackFlags = $"{SchemeCharacter}{nameof(Track)}.{nameof(Track.Flags)}{SchemeCharacter}";
@@ -61,7 +61,7 @@ public class Exportprofile : Validateable
         { nameof(Track.Artist), SchemeTrackArtist },
         { nameof(Track.Title), SchemeTrackTitle },
         { nameof(Track.Begin), SchemeTrackBegin },
-        { nameof(Track.Finish), SchemeTrackEnd },
+        { nameof(Track.Finish), SchemeTrackFinish },
         { nameof(Track.Length), SchemeTrackLength },
         { nameof(Track.Flags), SchemeTrackFlags },
         { nameof(Track.PreGap), SchemeTrackPreGap },
@@ -70,20 +70,14 @@ public class Exportprofile : Validateable
 
     public const string SchemeCharacter = "%";
 
-    string _schemeHead;
-    string _schemeAudiofiles;
-    string _schemeTracks;
-    string _schemeFooter;
-    string _filename;
-
     public Exportprofile()
     {
         Id = Guid.NewGuid();
-        _schemeHead = string.Empty;
-        _schemeTracks = string.Empty;
-        _schemeAudiofiles = string.Empty;
-        _schemeFooter = string.Empty;
-        _filename = DefaultFileName;
+        SchemeHead = string.Empty;
+        SchemeTracks = string.Empty;
+        SchemeAudiofiles = string.Empty;
+        SchemeFooter = string.Empty;
+        Filename = DefaultFileName;
         var random = new Random();
         Name = $"{nameof(Exportprofile)}_{random.Next(1, 100)}";
     }
@@ -95,28 +89,28 @@ public class Exportprofile : Validateable
     }
     public string SchemeHead 
     {
-        get => _schemeHead;
-        set { _schemeHead = value; OnValidateablePropertyChanged(); }
+        get;
+        set { field = value; OnValidateablePropertyChanged(); }
     }
     public string SchemeTracks 
     {
-        get => _schemeTracks;
-        set { _schemeTracks = value; OnValidateablePropertyChanged(); }
+        get;
+        set { field = value; OnValidateablePropertyChanged(); }
     }
     public string SchemeAudiofiles
     {
-        get => _schemeAudiofiles;
-        set { _schemeAudiofiles = value; OnValidateablePropertyChanged(); }
+        get;
+        set { field = value; OnValidateablePropertyChanged(); }
     }
     public string SchemeFooter 
     {
-        get => _schemeFooter;
-        set { _schemeFooter = value; OnValidateablePropertyChanged(); }
+        get;
+        set { field = value; OnValidateablePropertyChanged(); }
     }
     public string Filename 
     {
-        get => _filename;
-        set { _filename = value; OnValidateablePropertyChanged(); }
+        get;
+        set { field = value; OnValidateablePropertyChanged(); }
     }
 
     public override ValidationResult Validate(string propertyName)

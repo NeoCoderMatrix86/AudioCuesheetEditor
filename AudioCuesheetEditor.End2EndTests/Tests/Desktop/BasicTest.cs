@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -141,7 +141,7 @@ public class BasicTest : PlaywrightTestBase
         await Expect(TestPage.GetByTestId("menu-wrapper")).ToMatchAriaSnapshotAsync("- menu:\r\n  - menuitem \"Künstler\":\r\n    - paragraph: Künstler\r\n  - menuitem \"Titel\":\r\n    - paragraph: Titel\r\n  - menuitem \"CDTextdatei\":\r\n    - paragraph: CDTextdatei\r\n  - menuitem \"Katalognummer\":\r\n    - paragraph: Katalognummer\r\n  - menuitem \"Datum\":\r\n    - paragraph: Datum\r\n  - menuitem \"Datum & Uhrzeit\":\r\n    - paragraph: Datum & Uhrzeit\r\n  - menuitem \"Uhrzeit\":\r\n    - paragraph: Uhrzeit");
         await TestPage.GetByText("CDTextdatei").ClickAsync();
         await exportDialog.OpenSchemeMenuAsync("Schema Titel");
-        await Expect(TestPage.GetByTestId("menu-wrapper")).ToMatchAriaSnapshotAsync("- menu:\r\n  - menuitem \"Position\":\r\n    - paragraph: Position\r\n  - menuitem \"Künstler\":\r\n    - paragraph: Künstler\r\n  - menuitem \"Titel\":\r\n    - paragraph: Titel\r\n  - menuitem \"Begin\":\r\n    - paragraph: Begin\r\n  - menuitem \"End\":\r\n    - paragraph: End\r\n  - menuitem \"Länge\":\r\n    - paragraph: Länge\r\n  - menuitem \"Markierungen\":\r\n    - paragraph: Markierungen\r\n  - menuitem \"Vorlücke\":\r\n    - paragraph: Vorlücke\r\n  - menuitem \"Nachlücke\":\r\n    - paragraph: Nachlücke");
+        await Expect(TestPage.GetByTestId("menu-wrapper")).ToMatchAriaSnapshotAsync("- menu:\r\n  - menuitem \"Position\":\r\n    - paragraph: Position\r\n  - menuitem \"Künstler\":\r\n    - paragraph: Künstler\r\n  - menuitem \"Titel\":\r\n    - paragraph: Titel\r\n  - menuitem \"Begin\":\r\n    - paragraph: Begin\r\n  - menuitem \"Ende\":\r\n    - paragraph: Ende\r\n  - menuitem \"Länge\":\r\n    - paragraph: Länge\r\n  - menuitem \"Markierungen\":\r\n    - paragraph: Markierungen\r\n  - menuitem \"Vorlücke\":\r\n    - paragraph: Vorlücke\r\n  - menuitem \"Nachlücke\":\r\n    - paragraph: Nachlücke");
     }
 
     [TestMethod]
