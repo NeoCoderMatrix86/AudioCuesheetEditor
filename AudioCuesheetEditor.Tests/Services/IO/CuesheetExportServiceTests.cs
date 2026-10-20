@@ -54,7 +54,7 @@ public class CuesheetExportServiceTests
 
         // Assert
         Assert.IsFalse(result.IsSuccess);
-        Assert.IsTrue(result.Error?.Message.Contains("File extension is not"));
+        Assert.IsTrue(result.FailureDetails?.Message.Contains("File extension is not"));
     }
 
     [TestMethod]
@@ -73,7 +73,7 @@ public class CuesheetExportServiceTests
 
         // Assert
         Assert.IsFalse(result.IsSuccess);
-        Assert.IsTrue(result.Error?.Message.Contains($"{nameof(Audiofile.Name)} has no value!"));
+        Assert.IsTrue(result.FailureDetails?.Message.Contains($"{nameof(Audiofile.Name)} has no value!"));
     }
 
     [TestMethod]
@@ -89,7 +89,7 @@ public class CuesheetExportServiceTests
 
         // Assert
         Assert.IsFalse(result.IsSuccess);
-        Assert.IsTrue(result.Error?.Message.Contains($"{nameof(Cuesheet.Title)} has no value!"));
+        Assert.IsTrue(result.FailureDetails?.Message.Contains($"{nameof(Cuesheet.Title)} has no value!"));
     }
 
     [TestMethod]
@@ -126,7 +126,7 @@ public class CuesheetExportServiceTests
 
         // Assert
         Assert.IsFalse(result.IsSuccess);
-        Assert.IsTrue(result.Error?.Message.Contains($"{nameof(Track.End)} has no value!"));
+        Assert.IsTrue(result.FailureDetails?.Message.Contains($"{nameof(Track.End)} has no value!"));
     }
 
     [TestMethod]

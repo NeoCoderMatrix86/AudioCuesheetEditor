@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -39,9 +39,9 @@ public enum ErrorType
 }
 
 /// <summary>
-/// Represents an error of an service
+/// Represents failure of a service
 /// </summary>
-public class Error(ErrorType type, string message)
+public class FailureDetails(ErrorType type, string message)
 {
     /// <summary>
     /// Type of error
@@ -53,22 +53,24 @@ public class Error(ErrorType type, string message)
     public string Message { get; } = message;
 }
 
+
 /// <summary>
-/// Indicates a service result
+/// Indicates a service result.
 /// </summary>
 public class Result
 {
     /// <summary>
-    /// Indicates if the result was successful
+    /// Indicates whether the operation was successful.
     /// </summary>
     public bool IsSuccess { get; }
-    /// <summary>
-    /// The error if one occurred
-    /// </summary>
-    public Error? Error { get; }
 
     /// <summary>
-    /// Private constructor
+    /// Contains the failure details if the operation failed.
+    /// </summary>
+    public FailureDetails? FailureDetails { get; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Result"/> class.
     /// </summary>
     protected Result()
     {
@@ -76,53 +78,62 @@ public class Result
     }
 
     /// <summary>
-    /// Private constructor
+    /// Initializes a new instance of the <see cref="Result"/> class with an error.
     /// </summary>
-    protected Result(Error error)
+    /// <param name="failureDetails"></param>
+    protected Result(FailureDetails failureDetails)
     {
         IsSuccess = false;
-        Error = error;
+        FailureDetails = failureDetails;
     }
+
     /// <summary>
-    /// Creates a success result
+    /// Creates a successful result without a value.
     /// </summary>
-    /// <returns></returns>
     public static Result Success() => new();
+
     /// <summary>
-    /// Creates a failure result
+    /// Creates a successful result containing a value.
     /// </summary>
-    /// <param name="error"></param>
-    /// <returns></returns>
-    public static Result Failure(Error error) => new(error);
+    public static Result<T> Success<T>(T value) => new(value);
+
+    /// <summary>
+    /// Creates a failed result.
+    /// </summary>
+    public static FailureResult Failure(FailureDetails error) => new(error);
 }
 
 /// <summary>
-/// Represent the result of a service
+/// Represents a failed result before conversion to a specific result type.
 /// </summary>
-/// <typeparam name="T"></typeparam>
+public sealed class FailureResult : Result
+{
+    internal FailureResult(FailureDetails error) : base(error) { }
+}
+
+/// <summary>
+/// Represents a service result containing a value.
+/// </summary>
+/// <typeparam name="T">The type of the result value.</typeparam>
 public class Result<T> : Result
 {
     /// <summary>
-    /// The result value
+    /// Gets the result value.
     /// </summary>
     public T? Value { get; }
 
-    Result(T value) : base()
+    internal Result(T value)
     {
         Value = value;
     }
 
-    Result(Error error) : base(error) { }
+    Result(FailureDetails error) : base(error) { }
+
     /// <summary>
-    /// Creates a success result
+    /// Converts a failed result to a typed failed result.
     /// </summary>
-    /// <param name="value"></param>
-    /// <returns></returns>
-    public static Result<T> Success(T value) => new(value);
-    /// <summary>
-    /// Creates a failure result
-    /// </summary>
-    /// <param name="error"></param>
-    /// <returns></returns>
-    public static new Result<T> Failure(Error error) => new(error);
+    public static implicit operator Result<T>(FailureResult failure)
+    {
+        return new Result<T>(failure.FailureDetails ?? throw new InvalidOperationException("A failed result requires failure details."));
+    }
 }

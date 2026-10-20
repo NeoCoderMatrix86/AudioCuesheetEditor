@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -56,11 +56,11 @@ public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionSta
         {
             if (_sessionStateContainer.Cuesheet.IsRecording == true)
             {
-                return Result.Failure(new Error(ErrorType.NotPossible, "Record is already running!"));
+                return Result.Failure(new FailureDetails(ErrorType.NotPossible, "Record is already running!"));
             }
             if (_sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).Any())
             {
-                return Result.Failure(new Error(ErrorType.NotPossible, "Cuesheet already contains tracks!"));
+                return Result.Failure(new FailureDetails(ErrorType.NotPossible, "Cuesheet already contains tracks!"));
             }
             return Result.Success();
         }
@@ -75,7 +75,7 @@ public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionSta
             var cuesheet = _sessionStateContainer.Cuesheet;
             if (cuesheet.IsRecording == true)
             {
-                return Result.Failure(new Error(ErrorType.NotPossible, "Record is already running!"));
+                return Result.Failure(new FailureDetails(ErrorType.NotPossible, "Record is already running!"));
             }
             cuesheet.RecordingStart = DateTime.UtcNow;
             if (cuesheet.Audiofiles.Count == 0)
@@ -145,7 +145,7 @@ public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionSta
     {
         if (IsMoveUpPossible(selectedTracks) == false)
         {
-            return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks up is not possible!"));
+            return Result.Failure(new FailureDetails(ErrorType.NotPossible, "Moving tracks up is not possible!"));
         }
         _traceChangeManager.BulkEdit = true;
         while (positions > 0)
@@ -195,7 +195,7 @@ public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionSta
     {
         if (IsMoveUpPossible(selectedAudiofiles) == false)
         {
-            return Result.Failure(new Error(ErrorType.NotPossible, "Moving audiofiles up is not possible!"));
+            return Result.Failure(new FailureDetails(ErrorType.NotPossible, "Moving audiofiles up is not possible!"));
         }
         var cuesheet = _sessionStateContainer.ActiveCuesheet;
         _traceChangeManager.BulkEdit = true;
@@ -229,7 +229,7 @@ public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionSta
     {
         if (IsMoveDownPossible(selectedTracks) == false)
         {
-            return Result.Failure(new Error(ErrorType.NotPossible, "Moving tracks down is not possible!"));
+            return Result.Failure(new FailureDetails(ErrorType.NotPossible, "Moving tracks down is not possible!"));
         }
         _traceChangeManager.BulkEdit = true;
         while (positions > 0)
@@ -278,7 +278,7 @@ public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionSta
     {
         if (IsMoveDownPossible(selectedAudiofiles) == false)
         {
-            return Result.Failure(new Error(ErrorType.NotPossible, "Moving audiofiles down is not possible!"));
+            return Result.Failure(new FailureDetails(ErrorType.NotPossible, "Moving audiofiles down is not possible!"));
         }
         var cuesheet = _sessionStateContainer.ActiveCuesheet;
         _traceChangeManager.BulkEdit = true;

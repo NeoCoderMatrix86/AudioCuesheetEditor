@@ -70,7 +70,7 @@ public class LocalStorageOptionsProvider(IJSRuntime jsRuntime, IStringLocalizer<
             var validationResult = validateable.Validate();
             if (validationResult.Status == ValidationStatus.Error)
             {
-                return Result.Failure(new Error(ErrorType.ValidationFailed, string.Join(Environment.NewLine, validationResult.ValidationMessages.Select(x => x.GetMessageLocalized(_localizer)))));
+                return Result.Failure(new FailureDetails(ErrorType.ValidationFailed, string.Join(Environment.NewLine, validationResult.ValidationMessages.Select(x => x.GetMessageLocalized(_localizer)))));
             }
         }
         await WriteOptionsAsync(options);

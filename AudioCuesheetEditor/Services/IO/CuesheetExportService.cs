@@ -43,7 +43,7 @@ public class CuesheetExportService(ISessionStateContainer sessionStateContainer,
         validationMessages.AddRange(_sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).Select(x => x.Validate()).SelectMany(x => x.ValidationMessages));
         if (validationMessages.Count != 0)
         {
-            return Result.Failure(new Error(ErrorType.ValidationFailed, string.Join(Environment.NewLine, validationMessages.Select(x => x.GetMessageLocalized(_localizer)))));
+            return Result.Failure(new FailureDetails(ErrorType.ValidationFailed, string.Join(Environment.NewLine, validationMessages.Select(x => x.GetMessageLocalized(_localizer)))));
         }
         return Result.Success();
     }
@@ -53,9 +53,9 @@ public class CuesheetExportService(ISessionStateContainer sessionStateContainer,
         var validationResult = CanGenerateExportfile(filename);
         if (validationResult.IsSuccess == false)
         {
-            return Result<Exportfile>.Failure(new Error(ErrorType.ValidationFailed, validationResult.Error!.Message));
+            return Result.Failure(new FailureDetails(ErrorType.ValidationFailed, validationResult.FailureDetails!.Message));
         }
-        return Result<Exportfile>.Success(new Exportfile() { Name = filename!, Content = WriteCuesheet() });
+        return Result.Success(new Exportfile() { Name = filename!, Content = WriteCuesheet() });
     }
 
     string WriteCuesheet()

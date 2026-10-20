@@ -163,7 +163,7 @@ public class CuesheetManagerTests
         var result = _cuesheetManager.IsRecordingPossible;
         // Assert
         Assert.IsFalse(result.IsSuccess);
-        Assert.AreEqual("Cuesheet already contains tracks!", result.Error!.Message);
+        Assert.AreEqual("Cuesheet already contains tracks!", result.FailureDetails!.Message);
     }
 
     [TestMethod]
@@ -183,7 +183,7 @@ public class CuesheetManagerTests
         var result = _cuesheetManager.IsRecordingPossible;
         // Assert
         Assert.IsFalse(result.IsSuccess);
-        Assert.AreEqual("Record is already running!", result.Error!.Message);
+        Assert.AreEqual("Record is already running!", result.FailureDetails!.Message);
     }
 
     [TestMethod]
@@ -225,7 +225,7 @@ public class CuesheetManagerTests
         // Assert
         Assert.IsFalse(result.IsSuccess);
         Assert.IsFalse(isRecordingChanged);
-        Assert.AreEqual("Record is already running!", result.Error!.Message);
+        Assert.AreEqual("Record is already running!", result.FailureDetails!.Message);
     }
 
     [TestMethod]
@@ -821,7 +821,7 @@ public class CuesheetManagerTests
         var result = _cuesheetManager.MoveUp([track2, track1]);
         // Assert
         Assert.IsFalse(result.IsSuccess);
-        Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
+        Assert.AreEqual(ErrorType.NotPossible, result.FailureDetails!.Type);
         Assert.AreEqual((ushort?)1, track1.Position);
         Assert.AreEqual(TimeSpan.Zero, track1.Begin);
         Assert.AreEqual(track1End, track1.End);
@@ -881,7 +881,7 @@ public class CuesheetManagerTests
         var result = _cuesheetManager.MoveUp(new HashSet<Track>());
         // Assert
         Assert.IsFalse(result.IsSuccess);
-        Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
+        Assert.AreEqual(ErrorType.NotPossible, result.FailureDetails!.Type);
         Assert.AreEqual((ushort?)1, track1.Position);
         Assert.AreEqual(TimeSpan.Zero, track1.Begin);
         Assert.AreEqual(track1End, track1.End);
@@ -979,7 +979,7 @@ public class CuesheetManagerTests
         var result = _cuesheetManager.MoveUp([file1, file2]);
         // Assert
         Assert.IsFalse(result.IsSuccess);
-        Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
+        Assert.AreEqual(ErrorType.NotPossible, result.FailureDetails!.Type);
         _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Never);
         _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Never);
     }
@@ -997,10 +997,10 @@ public class CuesheetManagerTests
         };
         _ = _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
         // Act
-        var result = _cuesheetManager.MoveUp(new HashSet<Audiofile>());
+        var result = _cuesheetManager.MoveUp([]);
         // Assert
         Assert.IsFalse(result.IsSuccess);
-        Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
+        Assert.AreEqual(ErrorType.NotPossible, result.FailureDetails!.Type);
         _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Never);
         _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Never);
     }
@@ -1247,7 +1247,7 @@ public class CuesheetManagerTests
         var result = _cuesheetManager.MoveDown([track2, track3]);
         // Assert
         Assert.IsFalse(result.IsSuccess);
-        Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
+        Assert.AreEqual(ErrorType.NotPossible, result.FailureDetails!.Type);
         Assert.AreEqual((ushort?)1, track1.Position);
         Assert.AreEqual(TimeSpan.Zero, track1.Begin);
         Assert.AreEqual(track1End, track1.End);
@@ -1307,7 +1307,7 @@ public class CuesheetManagerTests
         var result = _cuesheetManager.MoveDown(new HashSet<Track>());
         // Assert
         Assert.IsFalse(result.IsSuccess);
-        Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
+        Assert.AreEqual(ErrorType.NotPossible, result.FailureDetails!.Type);
         Assert.AreEqual((ushort?)1, track1.Position);
         Assert.AreEqual(TimeSpan.Zero, track1.Begin);
         Assert.AreEqual(track1End, track1.End);
@@ -1404,7 +1404,7 @@ public class CuesheetManagerTests
         var result = _cuesheetManager.MoveDown([file2, file3]);
         // Assert
         Assert.IsFalse(result.IsSuccess);
-        Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
+        Assert.AreEqual(ErrorType.NotPossible, result.FailureDetails!.Type);
         _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Never);
         _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Never);
     }
@@ -1422,10 +1422,10 @@ public class CuesheetManagerTests
         };
         _ = _sessionStateContainer.Setup(x => x.ActiveCuesheet).Returns(cuesheet);
         // Act
-        var result = _cuesheetManager.MoveDown(new HashSet<Audiofile>());
+        var result = _cuesheetManager.MoveDown([]);
         // Assert
         Assert.IsFalse(result.IsSuccess);
-        Assert.AreEqual(ErrorType.NotPossible, result.Error!.Type);
+        Assert.AreEqual(ErrorType.NotPossible, result.FailureDetails!.Type);
         _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Never);
         _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Never);
     }

@@ -204,7 +204,7 @@ public class ImportManagerTests
         Assert.AreEqual(importAudiofile.Tracks.First().Title, sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().Title);
         Assert.AreEqual(importAudiofile.Tracks.First().Begin, sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().Begin);
         Assert.AreEqual(importAudiofile.Tracks.First().End, sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().End);
-        Assert.AreSequenceEqual([.. importAudiofile.Tracks.First().Flags], sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().Flags.ToList(), Microsoft.VisualStudio.TestTools.UnitTesting.SequenceOrder.InAnyOrder);
+        Assert.AreSequenceEqual([.. importAudiofile.Tracks.First().Flags], sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().Flags.ToList(), SequenceOrder.InAnyOrder);
         Assert.AreEqual(importAudiofile.Tracks.First().Position, sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().Position);
         Assert.AreEqual(importAudiofile.Tracks.First().PreGap, sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().PreGap);
         Assert.AreEqual(importAudiofile.Tracks.First().PostGap, sessionStateContainerImportCuesheet.Audiofiles.First().Tracks.First().PostGap);

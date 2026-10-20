@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -229,15 +229,15 @@ public class DialogManager(IDialogService dialogService, ITraceChangeManager tra
     }
 
     /// <inheritdoc/>
-    public async Task<Result<T>> ShowInputDialogAsync<T>(string? title, string? placeholder, string? label, T initialValue, string? OkText = "Ok", string? OkButtonStartIcon = null)
+    public async Task<Result<T>> ShowInputDialogAsync<T>(string? title, string? placeholder, string? label, T initialValue, string? okText = "Ok", string? okButtonStartIcon = null)
     {
         var parameters = new DialogParameters<InputDialog<T>>
         {
             { x => x.Placeholder, placeholder },
             { x => x.Label, label },
             { x => x.InitialValue, initialValue },
-            { x => x.OkText, OkText },
-            { x => x.OkButtonStartIcon, OkButtonStartIcon }
+            { x => x.OkText, okText },
+            { x => x.OkButtonStartIcon, okButtonStartIcon }
         };
         var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true, CloseButton = true };
         var dialog = await _dialogService.ShowAsync<InputDialog<T>>(title, parameters, options);
@@ -245,11 +245,11 @@ public class DialogManager(IDialogService dialogService, ITraceChangeManager tra
         if (result?.Canceled == false)
         {
             var value = (T)result.Data!;
-            return Result<T>.Success(value);
+            return Result.Success(value);
         }
         else
         {
-            return Result<T>.Failure(new Error(ErrorType.Aborted, "User canceled the input dialog."));
+            return Result.Failure(new FailureDetails(ErrorType.Aborted, "User canceled the input dialog."));
         }
     }
 }

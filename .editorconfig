@@ -16,10 +16,8 @@ indent_size = 4
 tab_width = 4
 
 #TODO: Enable all of these
-dotnet_diagnostic.CA1000.severity = suggestion
 dotnet_diagnostic.CA1051.severity = suggestion
 dotnet_diagnostic.CA1716.severity = suggestion
-dotnet_diagnostic.CA1727.severity = suggestion
 dotnet_diagnostic.CA2201.severity = suggestion
 
 # Organize usings

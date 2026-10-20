@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -32,8 +32,8 @@ public interface IDialogManager
     /// <param name="placeholder"></param>
     /// <param name="label"></param>
     /// <param name="initialValue"></param>
-    /// <param name="OkText"></param>
-    /// <param name="OkButtonStartIcon"></param>
+    /// <param name="okText"></param>
+    /// <param name="okButtonStartIcon"></param>
     /// <returns></returns>
-    Task<Result<T>> ShowInputDialogAsync<T>(string? title, string? placeholder, string? label, T initialValue, string? OkText = "Ok", string? OkButtonStartIcon = null);
+    Task<Result<T>> ShowInputDialogAsync<T>(string? title, string? placeholder, string? label, T initialValue, string? okText = "Ok", string? okButtonStartIcon = null);
 }

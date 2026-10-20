@@ -1,4 +1,4 @@
-﻿<!--
+<!--
 This file is part of AudioCuesheetEditor.
 
 AudioCuesheetEditor is free software: you can redistribute it and/or modify
@@ -88,7 +88,7 @@ along with Foobar.  If not, see
             var result = _exportfileGenerator.CanGenerateExportfile(selectedExportProfile);
             if (result.IsSuccess == false)
             {
-                _validationErrorMessage = result.Error?.Message.Replace(Environment.NewLine, "<br />");
+                _validationErrorMessage = result.FailureDetails?.Message.Replace(Environment.NewLine, "<br />");
             }
         }
         else
