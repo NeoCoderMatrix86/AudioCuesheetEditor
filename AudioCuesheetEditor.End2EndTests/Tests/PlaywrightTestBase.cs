@@ -42,7 +42,7 @@ public abstract class PlaywrightTestBase : PageTest
             TestPage = Page;
         }
         await _testContextInstance.ClearCookiesAsync();
-        await _testContextInstance.Tracing.StartAsync(new()
+        _ = await _testContextInstance.Tracing.StartAsync(new()
         {
             Title = $"{TestContext.FullyQualifiedTestClassName}.{TestContext.TestName}",
             Screenshots = true,
