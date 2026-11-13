@@ -21,8 +21,8 @@ jobs:
       with:
         dotnet-version: 10.0.x
 
-    - name: Install wasm-tools
-      run: dotnet workload install wasm-tools
+    - name: Restore required workloads
+      run: dotnet workload restore
 
     - name: Build & Install
       run: dotnet build
