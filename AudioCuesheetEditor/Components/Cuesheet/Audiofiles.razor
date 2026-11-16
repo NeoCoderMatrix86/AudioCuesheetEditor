@@ -1,4 +1,4 @@
-﻿<!--
+<!--
 This file is part of AudioCuesheetEditor.
 
 AudioCuesheetEditor is free software: you can redistribute it and/or modify
@@ -110,8 +110,5 @@ along with Foobar.  If not, see
         }
     }
 
-    String GetFileName(Audiofile audiofile)
-    {
-        return String.IsNullOrEmpty(audiofile.Name) ? _localizer["No file uploaded!"] : audiofile.Name;
-    }
+    String GetFileName(Audiofile audiofile) => String.IsNullOrEmpty(audiofile.Name) ? _localizer["No file uploaded!"] : audiofile.Name;
 }
