@@ -203,7 +203,6 @@ public class CuesheetManagerTests
         Assert.IsTrue(result.IsSuccess);
         Assert.IsTrue(isRecordingChanged);
         Assert.IsNotNull(cuesheet.RecordingStart);
-        Assert.HasCount(1, cuesheet.Audiofiles);
     }
 
     [TestMethod]

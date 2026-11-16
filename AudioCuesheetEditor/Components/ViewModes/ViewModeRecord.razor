@@ -1,4 +1,4 @@
-﻿<!--
+<!--
 This file is part of AudioCuesheetEditor.
 
 AudioCuesheetEditor is free software: you can redistribute it and/or modify
@@ -21,7 +21,8 @@ along with Foobar.  If not, see
 @inject ICuesheetManager _cuesheetManager
 @inject ISessionStateContainer _sessionStateContainer
 
-<ControlRecording />
+<AudiofileSelection @bind-SelectedAudioFile="_recordingAudiofile" />
+<ControlRecording RecordingAudiofile="_recordingAudiofile" />
 <br />
 <AddTrack Audiofile="_recordingAudiofile" />
 <br/>
@@ -33,43 +34,7 @@ along with Foobar.  If not, see
         <TrackList Audiofile="_recordingAudiofile" />
     </MudCardContent>
 </MudCard>
-<MudCard Outlined>
-    <MudCardHeader>
-        <MudText Typo="Typo.h5">@_localizer["Common data"]</MudText>
-    </MudCardHeader>
-    <MudCardContent>
-        <CuesheetData Cuesheet="_sessionStateContainer.Cuesheet" />
-    </MudCardContent>
-</MudCard>
 
 @code {
-    Audiofile _recordingAudiofile = new();
-
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        _cuesheetManager.IsRecordingChanged += CuesheetManager_IsRecordingChanged;
-        SetRecordingAudiofile();
-    }
-
-    protected override void Dispose(bool disposing)
-    {
-        base.Dispose(disposing);
-        _cuesheetManager.IsRecordingChanged -= CuesheetManager_IsRecordingChanged;
-    }
-
-    void CuesheetManager_IsRecordingChanged(object? sender, EventArgs e)
-    {
-        SetRecordingAudiofile();
-        StateHasChanged();
-    }
-
-    void SetRecordingAudiofile()
-    {
-        var cuesheet = _sessionStateContainer.Cuesheet;
-        if (cuesheet.IsRecording)
-        {
-            _recordingAudiofile = cuesheet.Audiofiles.First();
-        }
-    }
+    Audiofile? _recordingAudiofile;
 }

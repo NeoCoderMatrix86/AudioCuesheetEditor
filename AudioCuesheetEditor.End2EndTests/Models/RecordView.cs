@@ -32,6 +32,8 @@ sealed class RecordView(IPage page)
         await _page.GetByText("Record view").ClickAsync();
     }
 
+    internal async Task AddAudiofile() => await _page.GetByRole(AriaRole.Button, new() { Name = "Add file" }).ClickAsync();
+
     internal async Task StartRecordingAsync() => await _page.GetByRole(AriaRole.Button, new() { Name = "Start recording" }).ClickAsync();
 
     internal async Task StopRecordingAsync() => await _page.GetByRole(AriaRole.Button, new() { Name = "Stop recording" }).ClickAsync();

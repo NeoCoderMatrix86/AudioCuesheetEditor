@@ -89,7 +89,11 @@ along with Foobar.  If not, see
     [CascadingParameter]
     public ViewMode CurrentViewMode { get; set; }
 
-    public Boolean StartRecordingDisabled => _startRecordTimer?.Enabled == true || _cuesheetManager.IsRecordingPossible.IsSuccess == false;
+    [Parameter]
+    [EditorRequired]
+    public Audiofile RecordingAudiofile { get; set; }
+
+    public Boolean StartRecordingDisabled => _startRecordTimer?.Enabled == true || _cuesheetManager.IsRecordingPossible.IsSuccess == false || RecordingAudiofile == null;
 
     protected override void OnInitialized()
     {

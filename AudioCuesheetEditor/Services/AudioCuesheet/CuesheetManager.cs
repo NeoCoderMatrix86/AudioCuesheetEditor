@@ -78,10 +78,6 @@ public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionSta
                 return Result.Failure(new FailureDetails(ErrorType.NotPossible, "Record is already running!"));
             }
             cuesheet.RecordingStart = DateTime.UtcNow;
-            if (cuesheet.Audiofiles.Count == 0)
-            {
-                cuesheet.Audiofiles.Add(new Audiofile());
-            }
             IsRecordingChanged?.Invoke(this, EventArgs.Empty);
             return Result.Success();
         }

@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ public class RecordTest : PlaywrightTestBase
         var viewModes = new ViewModes(TestPage, DeviceName != null);
         var detailView = new DetailView(TestPage);
         await recordView.GotoAsync();
+        await recordView.AddAudiofile();
         await recordView.StartRecordingAsync();
         await recordView.AddRecordingTrackAsync("Test Track 1 Artist", "Test Track 1 Title");
         await recordView.AddRecordingTrackAsync("Test Track 2 Artist", "Test Track 2 Title");
