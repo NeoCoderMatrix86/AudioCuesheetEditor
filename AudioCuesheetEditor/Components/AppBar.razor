@@ -1,4 +1,4 @@
-﻿<!--
+<!--
 This file is part of AudioCuesheetEditor.
 
 AudioCuesheetEditor is free software: you can redistribute it and/or modify
@@ -152,12 +152,14 @@ along with Foobar.  If not, see
 
     async Task DownloadCuesheetClicked()
     {
+        //TODO: Make a generic dialog for downloads for cuesheet and projectfile
         var options = new DialogOptions() { BackdropClick = false, CloseOnEscapeKey = true, CloseButton = true, FullWidth = true };
         await _dialogService.ShowAsync<GenerateCuesheetDialog>(_localizer["Download cuesheet"], options);
     }
 
     async Task DownloadExportClicked()
     {
+        //TODO: Make a generic dialog for downloads for cuesheet and projectfile
         var options = new DialogOptions() { BackdropClick = false, CloseOnEscapeKey = true, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Large };
         await _dialogService.ShowAsync<GenerateExportDialog>(_localizer["Export profiles"], options);
     }
