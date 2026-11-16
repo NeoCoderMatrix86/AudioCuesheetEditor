@@ -1,0 +1,87 @@
+<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<AudiofileSelection> _localizer
+@inject ISessionStateContainer _sessionStateContainer
+@inject ICuesheetManager _cuesheetManager
+
+<MudStack Row Justify="Justify.SpaceBetween">
+    <MudSelect T="Audiofile" Value="SelectedAudioFile" ValueChanged="OnSelectedAudioFileChanged" Label="@_localizer["Select audiofile"]" Placeholder="@_localizer["Select an audiofile for recording"]" Variant="Variant.Outlined" Required Disabled="_cuesheet.IsRecording">
+        @foreach (var file in _audiofiles)
+        {
+            <MudSelectItem T="Audiofile" Value="file">@GetFileName(file)</MudSelectItem>
+        }
+    </MudSelect>
+    <MudButtonGroup OverrideStyles="false">
+        <MudTooltip Text="Add file">
+            <MudIconButton Color="Color.Primary" Variant="Variant.Filled" OnClick="AddButtonClicked" Icon="@Icons.Material.Outlined.Add" aria-label="Add file" Style="height: 56px;" Class="mt-2" Disabled="_cuesheet.IsRecording" />
+        </MudTooltip>
+    </MudButtonGroup>
+</MudStack>
+
+@code {
+    //TODO: Localization
+    ICollection<Audiofile> _audiofiles => _cuesheet.Audiofiles;
+    Cuesheet _cuesheet => _sessionStateContainer.Cuesheet;
+
+    [Parameter]
+    public Audiofile? SelectedAudioFile { get; set; }
+
+    [Parameter]
+    public EventCallback<Audiofile?> SelectedAudioFileChanged { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _cuesheetManager.IsRecordingChanged += CuesheetManager_IsRecordingChanged;
+        SetSelectedAudioFile();
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        _cuesheetManager.IsRecordingChanged -= CuesheetManager_IsRecordingChanged;
+    }
+
+    void AddButtonClicked()
+    {
+        var files = new List<Audiofile>(_audiofiles);
+        files.Add(new());
+        _cuesheetManager.SetProperty(x => x.Audiofiles, files);
+        SetSelectedAudioFile();
+    }
+
+    void SetSelectedAudioFile()
+    {
+        if (_audiofiles.Count == 1)
+        {
+            SelectedAudioFile = _audiofiles.First();
+            OnSelectedAudioFileChanged(SelectedAudioFile);
+        }
+    }
+
+    String GetFileName(Audiofile audiofile) => String.IsNullOrEmpty(audiofile.Name) ? _localizer["No file uploaded!"] : audiofile.Name;
+
+    Task OnSelectedAudioFileChanged(Audiofile? file) => SelectedAudioFileChanged.InvokeAsync(file);
+
+    void CuesheetManager_IsRecordingChanged(object? sender, EventArgs args)
+    {
+        StateHasChanged();
+    }
+}
