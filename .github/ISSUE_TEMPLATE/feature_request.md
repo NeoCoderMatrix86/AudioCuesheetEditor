@@ -1,8 +1,9 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: ''
-labels: 'unreviewed'
+title: ""
+labels: ["unreviewed"]
+projects: ["NeoCoderMatrix86/2"]
 type: Feature
 ---
 
