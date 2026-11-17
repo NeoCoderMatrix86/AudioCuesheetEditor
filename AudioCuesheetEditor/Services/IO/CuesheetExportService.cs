@@ -13,14 +13,13 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using System.Globalization;
+using System.Text;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
-using AudioCuesheetEditor.Model.IO;
 using AudioCuesheetEditor.Model.IO.Export;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.Extensions.Localization;
-using System.Globalization;
-using System.Text;
 
 namespace AudioCuesheetEditor.Services.IO;
 
@@ -29,15 +28,9 @@ public class CuesheetExportService(ISessionStateContainer sessionStateContainer,
     readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
     readonly IStringLocalizer<ValidationMessage> _localizer = localizer;
 
-    public Result CanGenerateExportfile(string? filename)
+    public Result CanGenerateExportfile()
     {
         List<ValidationMessage> validationMessages = [];
-        var extension = Path.GetExtension(filename);
-        if (extension?.Equals(FileExtensions.Cuesheet, StringComparison.OrdinalIgnoreCase) == false)
-        {
-            validationMessages ??= [];
-            validationMessages.Add(new ValidationMessage("File extension is not '{0}'", FileExtensions.Cuesheet));
-        }
         validationMessages.AddRange(_sessionStateContainer.Cuesheet.Validate().ValidationMessages);
         validationMessages.AddRange(_sessionStateContainer.Cuesheet.Audiofiles.Select(x => x.Validate()).SelectMany(x => x.ValidationMessages));
         validationMessages.AddRange(_sessionStateContainer.Cuesheet.Audiofiles.SelectMany(x => x.Tracks).Select(x => x.Validate()).SelectMany(x => x.ValidationMessages));
@@ -48,14 +41,14 @@ public class CuesheetExportService(ISessionStateContainer sessionStateContainer,
         return Result.Success();
     }
 
-    public Result<Exportfile> GenerateExportfile(string? filename)
+    public Result<Exportfile> GenerateExportfile(string filename)
     {
-        var validationResult = CanGenerateExportfile(filename);
+        var validationResult = CanGenerateExportfile();
         if (validationResult.IsSuccess == false)
         {
             return Result.Failure(new FailureDetails(ErrorType.ValidationFailed, validationResult.FailureDetails!.Message));
         }
-        return Result.Success(new Exportfile() { Name = filename!, Content = WriteCuesheet() });
+        return Result.Success(new Exportfile() { Name = filename, Content = WriteCuesheet() });
     }
 
     string WriteCuesheet()

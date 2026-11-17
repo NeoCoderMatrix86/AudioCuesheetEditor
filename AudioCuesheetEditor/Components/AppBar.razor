@@ -30,6 +30,7 @@ along with Foobar.  If not, see
 @inject ValidationService _validationService
 @inject IBlazorDownloadFileService _blazorDownloadFileService
 @inject CuesheetExportService _cuesheetExportService
+@inject ISnackbar _snackbar
 
 <MudAppBar Elevation="1" Color="Color.Dark" Fixed>
     <MudButton StartIcon="@Icons.Material.Outlined.Home" Color="Color.Inherit" OnClick="() => _navigationManager.NavigateTo(_navigationManager.BaseUri)" aria-label="Home">
@@ -150,16 +151,32 @@ along with Foobar.  If not, see
 
     async Task DownloadProjectfileClicked() 
     {
+        //TODO: Make a generic dialog for downloads for cuesheet and projectfile
         var options = new DialogOptions() { BackdropClick = false, CloseOnEscapeKey = true, CloseButton = true, FullWidth = true };
         await _dialogService.ShowAsync<DownloadProjectfileDialog>(_localizer["Save project"], options);
     }
 
     async Task DownloadCuesheetClicked()
     {
-        //TODO: Display dialog if export is not possible
         //TODO: Localization
         var downloadOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<DownloadOptions>();
-        var result = await _dialogManager.ShowInputDialogAsync<string?>(
+        var canGenerateExportResult = _cuesheetExportService.CanGenerateExportfile();
+        if (canGenerateExportResult.IsSuccess == false)
+        {
+            _snackbar.Add
+            (
+                @<div>
+                    <h3>@_localizer["Export is currently not possible"]</h3>
+                    <p>@((MarkupString)canGenerateExportResult.FailureDetails!.Message.Replace(Environment.NewLine, "<br/>"))</p>
+                </div>
+            , Severity.Error, (options) =>
+            {
+                options.RequireInteraction = true;
+            });
+        }
+        else
+        {
+            var result = await _dialogManager.ShowInputDialogAsync<string?>(
             _localizer["Download cuesheet"],
             null,
             _localizer["Filename"],
@@ -167,22 +184,22 @@ along with Foobar.  If not, see
             _localizer["Download"],
             null,
             value => _validationService.Validate<DownloadOptions>(x => x.CuesheetFilename, value));
-        if (result.IsSuccess)
-        {
-            await base.LocalStorageOptionsProvider.SaveOptionsValueAsync<DownloadOptions>(x => x.CuesheetFilename, result.Value);
-            var generateExportResult = _cuesheetExportService.GenerateExportfile(result.Value);
-            if (generateExportResult.IsSuccess == false)
+            if (result.IsSuccess)
             {
-                throw new InvalidOperationException($"Could not generate export file: {generateExportResult.FailureDetails?.Message}");
+                await base.LocalStorageOptionsProvider.SaveOptionsValueAsync<DownloadOptions>(x => x.CuesheetFilename, result.Value);
+                var generateExportResult = _cuesheetExportService.GenerateExportfile(result.Value!);
+                if (generateExportResult.IsSuccess == false)
+                {
+                    throw new InvalidOperationException($"Could not generate export file: {generateExportResult.FailureDetails?.Message}");
+                }
+                var exportfile = generateExportResult.Value!;
+                await _blazorDownloadFileService.DownloadFileFromText(exportfile.Name, exportfile.Content, System.Text.Encoding.Default, "text/plain");
             }
-            var exportfile = generateExportResult.Value!;
-            await _blazorDownloadFileService.DownloadFileFromText(exportfile.Name, exportfile.Content, System.Text.Encoding.Default, "text/plain");
         }
     }
 
     async Task DownloadExportClicked()
     {
-        //TODO: Make a generic dialog for downloads for cuesheet and projectfile
         var options = new DialogOptions() { BackdropClick = false, CloseOnEscapeKey = true, CloseButton = true, FullWidth = true, MaxWidth = MaxWidth.Large };
         await _dialogService.ShowAsync<GenerateExportDialog>(_localizer["Export profiles"], options);
     }
