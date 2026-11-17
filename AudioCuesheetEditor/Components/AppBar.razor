@@ -28,6 +28,8 @@ along with Foobar.  If not, see
 @inject IFileInputManager _fileInputManager
 @inject IDialogManager _dialogManager
 @inject ValidationService _validationService
+@inject IBlazorDownloadFileService _blazorDownloadFileService
+@inject CuesheetExportService _cuesheetExportService
 
 <MudAppBar Elevation="1" Color="Color.Dark" Fixed>
     <MudButton StartIcon="@Icons.Material.Outlined.Home" Color="Color.Inherit" OnClick="() => _navigationManager.NavigateTo(_navigationManager.BaseUri)" aria-label="Home">
@@ -154,7 +156,7 @@ along with Foobar.  If not, see
 
     async Task DownloadCuesheetClicked()
     {
-        //TODO: Display dialog if export is not possible? Or add this again to the input dialog?
+        //TODO: Display dialog if export is not possible
         //TODO: Localization
         var downloadOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<DownloadOptions>();
         var result = await _dialogManager.ShowInputDialogAsync<string?>(
@@ -168,7 +170,13 @@ along with Foobar.  If not, see
         if (result.IsSuccess)
         {
             await base.LocalStorageOptionsProvider.SaveOptionsValueAsync<DownloadOptions>(x => x.CuesheetFilename, result.Value);
-            //TODO Download file
+            var generateExportResult = _cuesheetExportService.GenerateExportfile(result.Value);
+            if (generateExportResult.IsSuccess == false)
+            {
+                throw new InvalidOperationException($"Could not generate export file: {generateExportResult.FailureDetails?.Message}");
+            }
+            var exportfile = generateExportResult.Value!;
+            await _blazorDownloadFileService.DownloadFileFromText(exportfile.Name, exportfile.Content, System.Text.Encoding.Default, "text/plain");
         }
     }
 
