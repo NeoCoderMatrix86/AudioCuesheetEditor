@@ -26,6 +26,8 @@ along with Foobar.  If not, see
 @inject HotKeys _hotKeys
 @inject ImportManager _importManager
 @inject IFileInputManager _fileInputManager
+@inject IDialogManager _dialogManager
+@inject ValidationService _validationService
 
 <MudAppBar Elevation="1" Color="Color.Dark" Fixed>
     <MudButton StartIcon="@Icons.Material.Outlined.Home" Color="Color.Inherit" OnClick="() => _navigationManager.NavigateTo(_navigationManager.BaseUri)" aria-label="Home">
@@ -152,9 +154,22 @@ along with Foobar.  If not, see
 
     async Task DownloadCuesheetClicked()
     {
-        //TODO: Make a generic dialog for downloads for cuesheet and projectfile
-        var options = new DialogOptions() { BackdropClick = false, CloseOnEscapeKey = true, CloseButton = true, FullWidth = true };
-        await _dialogService.ShowAsync<GenerateCuesheetDialog>(_localizer["Download cuesheet"], options);
+        //TODO: Display dialog if export is not possible? Or add this again to the input dialog?
+        //TODO: Localization
+        var downloadOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<DownloadOptions>();
+        var result = await _dialogManager.ShowInputDialogAsync<string?>(
+            _localizer["Download cuesheet"],
+            null,
+            _localizer["Filename"],
+            downloadOptions.CuesheetFilename,
+            _localizer["Download"],
+            null,
+            value => _validationService.Validate<DownloadOptions>(x => x.CuesheetFilename, value));
+        if (result.IsSuccess)
+        {
+            await base.LocalStorageOptionsProvider.SaveOptionsValueAsync<DownloadOptions>(x => x.CuesheetFilename, result.Value);
+            //TODO Download file
+        }
     }
 
     async Task DownloadExportClicked()

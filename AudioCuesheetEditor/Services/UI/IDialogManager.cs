@@ -34,6 +34,7 @@ public interface IDialogManager
     /// <param name="initialValue"></param>
     /// <param name="okText"></param>
     /// <param name="okButtonStartIcon"></param>
+    /// <param name="validator"></param>
     /// <returns></returns>
-    Task<Result<T>> ShowInputDialogAsync<T>(string? title, string? placeholder, string? label, T initialValue, string? okText = "Ok", string? okButtonStartIcon = null);
+    Task<Result<T>> ShowInputDialogAsync<T>(string? title, string? placeholder, string? label, T initialValue, string? okText = "Ok", string? okButtonStartIcon = null, Func<T?, IEnumerable<string>?>? validator = null);
 }
