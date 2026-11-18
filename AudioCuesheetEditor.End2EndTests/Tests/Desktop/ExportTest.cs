@@ -65,7 +65,7 @@ FILE ""Kalimba.mp3"" MP3
         await detailView.EditTrackAsync("Track Artist 1", "Track Title 1");
         await bar.OpenExportDialogAsync("Projectfile");
         var downloadTask = TestPage.WaitForDownloadAsync();
-        await TestPage.GetByRole(AriaRole.Button, new() { Name = "Download project" }).ClickAsync();
+        await TestPage.GetByRole(AriaRole.Button, new() { Name = "Download" }).ClickAsync();
         var download = await downloadTask;
         using var stream = await download.CreateReadStreamAsync();
         using var reader = new StreamReader(stream);

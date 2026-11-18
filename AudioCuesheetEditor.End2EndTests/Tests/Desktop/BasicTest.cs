@@ -172,6 +172,11 @@ public class BasicTest : PlaywrightTestBase
         var bar = new AppBar(TestPage);
         var detailView = new DetailView(TestPage);
         await detailView.GotoAsync();
+        await detailView.CuesheetArtistInput.FillAsync("Test Artist");
+        await detailView.CuesheetTitleInput.FillAsync("Test Title");
+        await detailView.AddAudiofileAsync();
+        await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
+        await detailView.AddTrackAsync(0);
         await TestPage.GetByRole(AriaRole.Dialog).WaitForAsync(new() { State = WaitForSelectorState.Detached });
         await bar.OpenExportDialogAsync("Cuesheet");
         await Expect(TestPage.GetByRole(AriaRole.Dialog)).ToBeVisibleAsync();
