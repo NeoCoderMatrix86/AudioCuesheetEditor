@@ -97,6 +97,7 @@ along with Foobar.  If not, see
 @code {
     HotKeysContext? _hotKeysContext;
     MudFileUpload<IBrowserFile>? _mudFileUpload;
+    DownloadOptions? _downloadOptions;
 
     protected override void OnInitialized()
     {
@@ -110,10 +111,25 @@ along with Foobar.  If not, see
             .Add(ModKey.Ctrl, Key.r, ResetCuesheetClicked);
     }
 
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _hotKeysContext = _hotKeys.CreateContext()
+            .Add(ModKey.Ctrl, Key.z, TraceChangeManager.Undo)
+            .Add(ModKey.Ctrl, Key.y, TraceChangeManager.Redo)
+            .Add(ModKey.Ctrl, Key.s, DownloadProjectfileClicked)
+            .Add(ModKey.Ctrl, Key.e, DownloadExportClicked)
+            .Add(ModKey.Ctrl, Key.u, DownloadCuesheetClicked)
+            .Add(ModKey.Ctrl, Key.r, ResetCuesheetClicked);
+        _downloadOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<DownloadOptions>();
+        base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+    }
+
     protected override void Dispose(bool disposing)
     {
         base.Dispose(disposing);
         _hotKeysContext?.DisposeAsync();
+        base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
     }
 
     [Parameter]
@@ -151,15 +167,27 @@ along with Foobar.  If not, see
 
     async Task DownloadProjectfileClicked() 
     {
-        //TODO: Make a generic dialog for downloads for cuesheet and projectfile
-        var options = new DialogOptions() { BackdropClick = false, CloseOnEscapeKey = true, CloseButton = true, FullWidth = true };
-        await _dialogService.ShowAsync<DownloadProjectfileDialog>(_localizer["Save project"], options);
+        //TODO: Localization
+        var result = await _dialogManager.ShowInputDialogAsync<string?>(
+                _localizer["Download projectfile"],
+                null,
+                _localizer["Filename"],
+                _downloadOptions?.ProjectFilename,
+                _localizer["Download"],
+                null,
+                value => _validationService.Validate<DownloadOptions>(x => x.ProjectFilename, value));
+        if (result.IsSuccess)
+        {
+            await base.LocalStorageOptionsProvider.SaveOptionsValueAsync<DownloadOptions>(x => x.ProjectFilename, result.Value);
+            var projectFile = new Projectfile(_sessionStateContainer.Cuesheet);
+            var fileData = projectFile.GenerateFile();
+            await _blazorDownloadFileService.DownloadFile(_downloadOptions?.ProjectFilename, fileData, "text/plain");
+        }
     }
 
     async Task DownloadCuesheetClicked()
     {
         //TODO: Localization
-        var downloadOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<DownloadOptions>();
         var canGenerateExportResult = _cuesheetExportService.CanGenerateExportfile();
         if (canGenerateExportResult.IsSuccess == false)
         {
@@ -177,13 +205,13 @@ along with Foobar.  If not, see
         else
         {
             var result = await _dialogManager.ShowInputDialogAsync<string?>(
-            _localizer["Download cuesheet"],
-            null,
-            _localizer["Filename"],
-            downloadOptions.CuesheetFilename,
-            _localizer["Download"],
-            null,
-            value => _validationService.Validate<DownloadOptions>(x => x.CuesheetFilename, value));
+                _localizer["Download cuesheet"],
+                null,
+                _localizer["Filename"],
+                _downloadOptions?.CuesheetFilename,
+                _localizer["Download"],
+                null,
+                value => _validationService.Validate<DownloadOptions>(x => x.CuesheetFilename, value));
             if (result.IsSuccess)
             {
                 await base.LocalStorageOptionsProvider.SaveOptionsValueAsync<DownloadOptions>(x => x.CuesheetFilename, result.Value);
@@ -296,6 +324,14 @@ along with Foobar.  If not, see
         else
         {
             return "🌐";
+        }
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
+    {
+        if (option is DownloadOptions downloadOption)
+        {
+            _downloadOptions = downloadOption;
         }
     }
 }
