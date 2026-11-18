@@ -167,7 +167,6 @@ along with Foobar.  If not, see
 
     async Task DownloadProjectfileClicked() 
     {
-        //TODO: Localization
         var result = await _dialogManager.ShowInputDialogAsync<string?>(
                 _localizer["Download projectfile"],
                 null,
@@ -187,7 +186,6 @@ along with Foobar.  If not, see
 
     async Task DownloadCuesheetClicked()
     {
-        //TODO: Localization
         var canGenerateExportResult = _cuesheetExportService.CanGenerateExportfile();
         if (canGenerateExportResult.IsSuccess == false)
         {
