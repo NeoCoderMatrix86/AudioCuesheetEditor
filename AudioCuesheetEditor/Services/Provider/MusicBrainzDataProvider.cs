@@ -36,6 +36,7 @@ public class MusicBrainzTrack
 }
 public partial class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> logger)
 {
+    //TODO: We need caching of answers to avoid being blocked by MusicBrainz for too many requests. See https://musicbrainz.org/doc/MusicBrainz_API/Rate_Limiting
     readonly ILogger<MusicBrainzDataProvider> _logger = logger;
 
     public const string Application = "AudioCuesheetEditor";
