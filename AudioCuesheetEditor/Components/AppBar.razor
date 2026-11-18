@@ -327,9 +327,9 @@ along with Foobar.  If not, see
 
     void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
     {
-        if (option is DownloadOptions downloadOption)
+        if (option is DownloadOptions downloadOptions)
         {
-            _downloadOptions = downloadOption;
+            _downloadOptions = downloadOptions;
         }
     }
 }
