@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -135,14 +135,26 @@
   <data name="Cuesheet" xml:space="preserve">
     <value>Cuesheet</value>
   </data>
+  <data name="Download" xml:space="preserve">
+    <value>Herunterladen</value>
+  </data>
   <data name="Download cuesheet" xml:space="preserve">
     <value>Cuesheet runterladen</value>
+  </data>
+  <data name="Download projectfile" xml:space="preserve">
+    <value>Projektdatei runterladen</value>
+  </data>
+  <data name="Export is currently not possible" xml:space="preserve">
+    <value>Export ist nicht verfügbar</value>
   </data>
   <data name="Export profiles" xml:space="preserve">
     <value>Exportprofile</value>
   </data>
   <data name="File" xml:space="preserve">
     <value>Datei</value>
+  </data>
+  <data name="Filename" xml:space="preserve">
+    <value>Dateiname</value>
   </data>
   <data name="Help" xml:space="preserve">
     <value>Hilfe</value>
@@ -170,9 +182,6 @@
   </data>
   <data name="Reset cuesheet" xml:space="preserve">
     <value>Cuesheet zurücksetzen</value>
-  </data>
-  <data name="Save project" xml:space="preserve">
-    <value>Projekt speichern</value>
   </data>
   <data name="Select file" xml:space="preserve">
     <value>Datei auswählen</value>

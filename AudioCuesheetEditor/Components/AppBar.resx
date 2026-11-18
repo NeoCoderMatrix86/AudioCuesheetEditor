@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -135,14 +135,26 @@
   <data name="Cuesheet" xml:space="preserve">
     <value>Cuesheet</value>
   </data>
+  <data name="Download" xml:space="preserve">
+    <value>Download</value>
+  </data>
   <data name="Download cuesheet" xml:space="preserve">
     <value>Download cuesheet</value>
+  </data>
+  <data name="Download projectfile" xml:space="preserve">
+    <value>Download projectfile</value>
+  </data>
+  <data name="Export is currently not possible" xml:space="preserve">
+    <value>Export is currently not possible</value>
   </data>
   <data name="Export profiles" xml:space="preserve">
     <value>Export profiles</value>
   </data>
   <data name="File" xml:space="preserve">
     <value>File</value>
+  </data>
+  <data name="Filename" xml:space="preserve">
+    <value>Filename</value>
   </data>
   <data name="Help" xml:space="preserve">
     <value>Help</value>
@@ -170,9 +182,6 @@
   </data>
   <data name="Reset cuesheet" xml:space="preserve">
     <value>Reset cuesheet</value>
-  </data>
-  <data name="Save project" xml:space="preserve">
-    <value>Save project</value>
   </data>
   <data name="Select file" xml:space="preserve">
     <value>Select file</value>

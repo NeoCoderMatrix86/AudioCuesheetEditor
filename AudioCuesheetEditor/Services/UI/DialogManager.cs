@@ -229,7 +229,7 @@ public class DialogManager(IDialogService dialogService, ITraceChangeManager tra
     }
 
     /// <inheritdoc/>
-    public async Task<Result<T>> ShowInputDialogAsync<T>(string? title, string? placeholder, string? label, T initialValue, string? okText = "Ok", string? okButtonStartIcon = null)
+    public async Task<Result<T>> ShowInputDialogAsync<T>(string? title, string? placeholder, string? label, T initialValue, string? okText = "Ok", string? okButtonStartIcon = null, Func<T?, IEnumerable<string>?>? validator = null)
     {
         var parameters = new DialogParameters<InputDialog<T>>
         {
@@ -237,7 +237,8 @@ public class DialogManager(IDialogService dialogService, ITraceChangeManager tra
             { x => x.Label, label },
             { x => x.InitialValue, initialValue },
             { x => x.OkText, okText },
-            { x => x.OkButtonStartIcon, okButtonStartIcon }
+            { x => x.OkButtonStartIcon, okButtonStartIcon },
+            { x => x.Validator, validator }
         };
         var options = new DialogOptions() { CloseOnEscapeKey = true, BackdropClick = false, FullWidth = true, CloseButton = true };
         var dialog = await _dialogService.ShowAsync<InputDialog<T>>(title, parameters, options);
