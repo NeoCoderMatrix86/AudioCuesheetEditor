@@ -13,10 +13,12 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using System.Collections.Concurrent;
+using System.Reflection;
+using MetaBrainz.Common;
 using MetaBrainz.MusicBrainz;
 using MetaBrainz.MusicBrainz.Interfaces.Entities;
 using MetaBrainz.MusicBrainz.Interfaces.Searches;
-using System.Reflection;
 
 namespace AudioCuesheetEditor.Services.Provider;
 
@@ -34,97 +36,247 @@ public class MusicBrainzTrack
     public TimeSpan? Length { get; init; }
     public string? Disambiguation { get; init; }
 }
-public partial class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> logger)
+public partial class MusicBrainzDataProvider : IDisposable
 {
-    readonly ILogger<MusicBrainzDataProvider> _logger = logger;
+    static string? _applicationVersion;
+    readonly record struct TitleSearchKey(string SearchString, string? Artist);
 
-    public const string Application = "AudioCuesheetEditor";
-    public const string ProjectUrl = "https://github.com/NeoCoderMatrix86/AudioCuesheetEditor";
+    const string _application = "AudioCuesheetEditor";
+    const string _projectUrl = "https://github.com/NeoCoderMatrix86/AudioCuesheetEditor";
+    const int _maxRequestAttempts = 3;
+    readonly TimeSpan _minimumTimeBetweenRequests = TimeSpan.FromMilliseconds(1100);
+    readonly ILogger<MusicBrainzDataProvider> _logger;
+    readonly SemaphoreSlim _requestGate = new(1, 1);
+    readonly Lock _lastRequestLock = new();
+    DateTimeOffset _lastRequestStarted = DateTimeOffset.MinValue;
+    readonly ConcurrentDictionary<string, Lazy<Task<IReadOnlyCollection<MusicBrainzArtist>>>> _artistSearchCache = new();
+    readonly ConcurrentDictionary<TitleSearchKey, Lazy<Task<IReadOnlyCollection<MusicBrainzTrack>>>> _titleSearchCache = new();
+    bool _disposedValue;
+
+    public MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> logger)
+    {
+        _logger = logger;
+        var versionAttribute = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+        if (versionAttribute != null)
+        {
+            _applicationVersion = versionAttribute.InformationalVersion;
+        }
+    }
+
+    public void Dispose()
+    {
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
+    }
 
     public async Task<IReadOnlyCollection<MusicBrainzArtist>> SearchArtistAsync(string? searchString, CancellationToken token)
     {
-        List<MusicBrainzArtist> artistSearchResult = [];
+        if (string.IsNullOrWhiteSpace(searchString))
+        {
+            return [];
+        }
+        var cacheKey = searchString.Trim();
+
+        var cachedSearch = _artistSearchCache.GetOrAdd(
+            cacheKey,
+            new Lazy<Task<IReadOnlyCollection<MusicBrainzArtist>>>(() => GetMusicBrainzArtistsAsync(cacheKey), LazyThreadSafetyMode.ExecutionAndPublication));
         try
         {
-            if (string.IsNullOrEmpty(searchString) == false)
-            {
-                using var query = new Query(Application, ApplicationVersion, ProjectUrl);
-                var findArtistsResult = await query.FindArtistsAsync(searchString, simple: true, cancellationToken: token);
-                artistSearchResult = findArtistsResult.Results.ToList().ConvertAll(x => new MusicBrainzArtist() { Id = x.Item.Id, Name = x.Item.Name, Disambiguation = x.Item.Disambiguation });
-            }
+            return await cachedSearch.Value.WaitAsync(token);
+        }
+        catch (OperationCanceledException) when (token.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (HttpError he)
+        {
+            _ = _artistSearchCache.TryRemove(cacheKey, out _);
+           LogHttpError(he, he.Message);
+            return [];
         }
         catch (HttpRequestException hre)
         {
-            LogErrorGettingResponseFromMusicBrainz(hre);
+            _ = _artistSearchCache.TryRemove(cacheKey, out _);
+            LogHttpRequestException(hre);
+            return [];
         }
-        return artistSearchResult.AsReadOnly();
     }
 
     public async Task<IReadOnlyCollection<MusicBrainzTrack>> SearchTitleAsync(string? searchString, string? artist, CancellationToken token)
     {
-        List<MusicBrainzTrack> titleSearchResult = [];
+        if (string.IsNullOrWhiteSpace(searchString))
+        {
+            return [];
+        }
+
+        var normalizedSearchString = searchString.Trim();
+        var normalizedArtist = string.IsNullOrWhiteSpace(artist) ? null : artist.Trim();
+        var cacheKey = new TitleSearchKey(normalizedSearchString, normalizedArtist);
+
+        var cachedSearch = _titleSearchCache.GetOrAdd(
+            cacheKey,
+            new Lazy<Task<IReadOnlyCollection<MusicBrainzTrack>>>(() => GetMusicBrainzTracksAsync(normalizedSearchString, normalizedArtist), LazyThreadSafetyMode.ExecutionAndPublication));
+
         try
         {
-            if (string.IsNullOrEmpty(searchString) == false)
+            return await cachedSearch.Value.WaitAsync(token);
+        }
+        catch (OperationCanceledException) when (token.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (HttpError he)
+        {
+            _ = _titleSearchCache.TryRemove(cacheKey, out _);
+            LogHttpError(he, he.Message);
+            return [];
+        }
+        catch (HttpRequestException hre)
+        {
+            _ = _titleSearchCache.TryRemove(cacheKey, out _);
+            LogHttpRequestException(hre);
+            return [];
+        }
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
             {
-                using var query = new Query(Application, ApplicationVersion, ProjectUrl);
-                ISearchResults<ISearchResult<IRecording>> findRecordingsResult;
+                _requestGate.Dispose();
+            }
+
+            _disposedValue = true;
+        }
+    }
+
+    async Task WaitForRequestSlotAsync()
+    {
+        await _requestGate.WaitAsync();
+
+        TimeSpan delay;
+
+        lock (_lastRequestLock)
+        {
+            delay = _lastRequestStarted + _minimumTimeBetweenRequests - DateTimeOffset.UtcNow;
+
+            if (delay < TimeSpan.Zero)
+            {
+                delay = TimeSpan.Zero;
+            }
+        }
+
+        if (delay > TimeSpan.Zero)
+        {
+            await Task.Delay(delay);
+        }
+
+        lock (_lastRequestLock)
+        {
+            _lastRequestStarted = DateTimeOffset.UtcNow;
+        }
+    }
+
+    async Task<IReadOnlyCollection<MusicBrainzArtist>> GetMusicBrainzArtistsAsync(string searchString)
+    {
+        for (var attempt = 1; attempt <= _maxRequestAttempts; attempt++)
+        {
+            await WaitForRequestSlotAsync();
+
+            try
+            {
+                using var query = new Query(_application, _applicationVersion, _projectUrl);
+                var result = await query.FindArtistsAsync(searchString, simple: true);
+
+                return [.. result.Results
+                        .Select(x => new MusicBrainzArtist
+                        {
+                            Id = x.Item.Id,
+                            Name = x.Item.Name,
+                            Disambiguation = x.Item.Disambiguation
+                        })];
+            }
+            catch (HttpError he) when (IsMusicBrainzBusy(he) && attempt < _maxRequestAttempts)
+            {
+                var delay = TimeSpan.FromSeconds(Math.Pow(2, attempt - 1));
+                await Task.Delay(delay);
+            }
+            finally
+            {
+                _ = _requestGate.Release();
+            }
+        }
+        return [];
+    }
+
+    async Task<IReadOnlyCollection<MusicBrainzTrack>> GetMusicBrainzTracksAsync(string searchString, string? artist)
+    {
+        for (var attempt = 1; attempt <= _maxRequestAttempts; attempt++)
+        {
+            await WaitForRequestSlotAsync();
+            try
+            {
+                using var query = new Query(_application, _applicationVersion, _projectUrl);
+                ISearchResults<ISearchResult<IRecording>> result;
+
                 if (string.IsNullOrEmpty(artist))
                 {
-                    findRecordingsResult = await query.FindRecordingsAsync(searchString, simple: true, cancellationToken: token);
+                    result = await query.FindRecordingsAsync(searchString, simple: true);
                 }
                 else
                 {
-                    findRecordingsResult = await query.FindRecordingsAsync($"{searchString} AND artistname:{artist}", cancellationToken: token);
+                    result = await query.FindRecordingsAsync($"{searchString} AND artistname:{artist}");
                 }
-                foreach (var result in findRecordingsResult.Results)
+
+                var tracks = new List<MusicBrainzTrack>();
+                foreach (var recording in result.Results)
                 {
                     var artistString = string.Empty;
-                    if (result.Item.ArtistCredit != null)
+                    if (recording.Item.ArtistCredit != null)
                     {
-                        foreach (var artistCredit in result.Item.ArtistCredit)
+                        foreach (var artistCredit in recording.Item.ArtistCredit)
                         {
                             artistString += artistCredit.Name;
-                            if (string.IsNullOrEmpty(artistCredit.JoinPhrase) == false)
+                            if (!string.IsNullOrEmpty(artistCredit.JoinPhrase))
                             {
                                 artistString += artistCredit.JoinPhrase;
                             }
                         }
                     }
-                    titleSearchResult.Add(new MusicBrainzTrack()
+
+                    tracks.Add(new MusicBrainzTrack
                     {
-                        Id = result.Item.Id,
+                        Id = recording.Item.Id,
                         Artist = artistString,
-                        Title = result.Item.Title,
-                        Length = result.Item.Length,
-                        Disambiguation = result.Item.Disambiguation
+                        Title = recording.Item.Title,
+                        Length = recording.Item.Length,
+                        Disambiguation = recording.Item.Disambiguation
                     });
                 }
-            }
-        }
-        catch (HttpRequestException hre)
-        {
-            LogErrorGettingResponseFromMusicBrainz(hre);
-        }
-        return titleSearchResult.AsReadOnly();
-    }
 
-    string? ApplicationVersion
-    {
-        get
-        {
-            if (field == null)
+                return tracks.AsReadOnly();
+            }
+            catch (HttpError he) when (IsMusicBrainzBusy(he) && attempt < _maxRequestAttempts)
             {
-                var versionAttribute = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>();
-                if (versionAttribute != null)
-                {
-                    field = versionAttribute.InformationalVersion;
-                }
+                var delay = TimeSpan.FromSeconds(Math.Pow(2, attempt - 1));
+                await Task.Delay(delay);
             }
-            return field;
+            finally
+            {
+                _ = _requestGate.Release();
+            }
         }
+
+        return [];
     }
 
-    [LoggerMessage(Level = LogLevel.Error, Message = "Error getting response from MusicBrainz")]
-    partial void LogErrorGettingResponseFromMusicBrainz(HttpRequestException hre);
+    static bool IsMusicBrainzBusy(HttpError error) => error.Message.StartsWith("The MusicBrainz web server is currently busy. Please try again later.", StringComparison.InvariantCultureIgnoreCase);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "General error getting response from MusicBrainz")]
+    partial void LogHttpRequestException(HttpRequestException hre);
+
+    [LoggerMessage(Level = LogLevel.Error, Message = "HttpError caught: {exceptionMessage}")]
+    partial void LogHttpError(HttpError he, string exceptionMessage);
 }
