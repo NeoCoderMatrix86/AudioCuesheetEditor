@@ -33,7 +33,7 @@ along with Foobar.  If not, see
                     Name = _currentRecordingTrack.Artist
                 };
             }
-            <MudAutocomplete @ref="_artistInput" T="MusicBrainzArtist" Label="@_localizer["Artist"]" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value?.Name" 
+            <MudAutocomplete @ref="_artistInput" T="MusicBrainzArtist" Label="@_localizer["Artist"]" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value?.Name"
                              @bind-Text="@_currentRecordingTrack.Artist" @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator ResetValueOnEmptyText
                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(_currentRecordingTrack, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(_currentRecordingTrack, nameof(Track.Artist))"
                              Disabled="Cuesheet?.IsRecording == false" MaxItems="null" CoerceText="false" MinCharacters="1" DebounceInterval="750">
@@ -56,8 +56,8 @@ along with Foobar.  If not, see
                 };
             }
             <MudAutocomplete @ref="_titleInput" T="MusicBrainzTrack" Label="@_localizer["Title"]" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, _currentRecordingTrack.Artist, token)" ToStringFunc="(value) => value?.Title"
-                             @bind-Text="_currentRecordingTrack.Title" @bind-Value="autocompleteTrack" Clearable ShowProgressIndicator ResetValueOnEmptyText 
-                             Error="!String.IsNullOrEmpty(GetValidationErrorMessage(_currentRecordingTrack, nameof(Track.Title)))" ErrorText="@GetValidationErrorMessage(_currentRecordingTrack, nameof(Track.Title))" 
+                             @bind-Text="_currentRecordingTrack.Title" @bind-Value="autocompleteTrack" Clearable ShowProgressIndicator ResetValueOnEmptyText
+                             Error="!String.IsNullOrEmpty(GetValidationErrorMessage(_currentRecordingTrack, nameof(Track.Title)))" ErrorText="@GetValidationErrorMessage(_currentRecordingTrack, nameof(Track.Title))"
                              Disabled="Cuesheet?.IsRecording == false" MaxItems="null" CoerceText="false" MinCharacters="1" DebounceInterval="750">
                 <ItemTemplate Context="autocompleteContext">
                     @if (autocompleteContext.Disambiguation != null)

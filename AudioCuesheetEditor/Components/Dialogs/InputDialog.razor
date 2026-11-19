@@ -1,4 +1,4 @@
-﻿<!--
+<!--
 This file is part of AudioCuesheetEditor.
 
 AudioCuesheetEditor is free software: you can redistribute it and/or modify
@@ -25,21 +25,26 @@ along with Foobar.  If not, see
     <DialogContent>
         @if (IsNumericType)
         {
-            <MudNumericField T="T" @bind-Value="_value" Label="@Label" Placeholder="@Placeholder" Variant="Variant.Outlined" Immediate OnKeyDown="OnKeyDown" />
+            <MudNumericField T="T" Value="_value" ValueChanged="OnValueChanged" Label="@Label" Placeholder="@Placeholder" Variant="Variant.Outlined" Immediate OnKeyDown="OnKeyDown"
+                             Error="String.IsNullOrEmpty(_validationErrorText) == false" ErrorText="@_validationErrorText" />
         }
         else
         {
-            <MudTextField T="T" @bind-Value="_value" Label="@Label" Placeholder="@Placeholder" Variant="Variant.Outlined" Immediate OnKeyDown="OnKeyDown" />
+            <MudTextField T="T" Value="_value" ValueChanged="OnValueChanged" Label="@Label" Placeholder="@Placeholder" Variant="Variant.Outlined" Immediate OnKeyDown="OnKeyDown"
+                          Error="String.IsNullOrEmpty(_validationErrorText) == false" ErrorText="@_validationErrorText" />
         }
     </DialogContent>
     <DialogActions>
-        <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="CloseDialogOk" StartIcon="@OkButtonStartIcon">@OkText</MudButton>
+        <MudButton Color="Color.Success" Variant="Variant.Filled" OnClick="CloseDialogOk" StartIcon="@OkButtonStartIcon" Disabled="_hasValidationErrors">@OkText</MudButton>
     </DialogActions>
 </MudDialog>
 
 @code {
     HotKeysContext? _hotKeysContext;
     T? _value;
+    IEnumerable<string> _validationErrors = [];
+    bool _hasValidationErrors => _validationErrors.Any();
+    string? _validationErrorText => _hasValidationErrors ? string.Join(Environment.NewLine, _validationErrors) : null;
 
     [Parameter]
     public T? InitialValue { get; set; }
@@ -55,6 +60,9 @@ along with Foobar.  If not, see
 
     [Parameter]
     public string? OkButtonStartIcon { get; set; }
+
+    [Parameter]
+    public Func<T?, IEnumerable<string>?>? Validator { get; set; }
 
     [CascadingParameter]
     private IMudDialogInstance? MudDialog { get; set; }
@@ -84,6 +92,18 @@ along with Foobar.  If not, see
         _hotKeysContext?.DisposeAsync();
     }
 
+    void ValidateValue()
+    {
+        _validationErrors = Validator?.Invoke(_value)?.Where(message => !string.IsNullOrWhiteSpace(message)) ?? [];
+    }
+
+    Task OnValueChanged(T? value)
+    {
+        _value = value;
+        ValidateValue();
+        return Task.CompletedTask;
+    }
+
     void OnKeyDown(KeyboardEventArgs args)
     {
         if (args.Key == "Enter")
@@ -95,6 +115,11 @@ along with Foobar.  If not, see
 
     void CloseDialogOk(object? state = null)
     {
-        MudDialog?.Close(_value);
+        ValidateValue();
+
+        if (!_hasValidationErrors)
+        {
+            MudDialog?.Close(_value);
+        }
     }
 }

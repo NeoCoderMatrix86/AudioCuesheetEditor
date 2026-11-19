@@ -13,17 +13,14 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using System.Globalization;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.Entity;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.Extensions.Localization;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Globalization;
-using System.Linq;
 
 namespace AudioCuesheetEditor.Tests.Services.IO;
 
@@ -42,41 +39,6 @@ public class CuesheetExportServiceTests
     }
 
     [TestMethod]
-    public void CanGenerateExportfile_InvalidExtension_ReturnsValidationMessage()
-    {
-        // Arrange
-        var invalidFilename = "test.txt";
-        _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, new Cuesheet());
-        _ = _localizerMock.Setup(x => x["File extension is not '{0}'", It.IsAny<object[]>()]).Returns(new LocalizedString("File extension is not '{0}'", "File extension is not '{0}'"));
-
-        // Act
-        var result = _cuesheetExportService.CanGenerateExportfile(invalidFilename);
-
-        // Assert
-        Assert.IsFalse(result.IsSuccess);
-        Assert.IsTrue(result.FailureDetails?.Message.Contains("File extension is not"));
-    }
-
-    [TestMethod]
-    public void CanGenerateExportfile_InvalidAudiofileName_ReturnsValidationMessage()
-    {
-        // Arrange
-        _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, new Cuesheet()
-        {
-            Audiofiles = [new()]
-        });
-        _ = _localizerMock.Setup(x => x["{0} has no value!", It.IsAny<object[]>()]).Returns((string format, object[] args) => new LocalizedString(format, string.Format(CultureInfo.CurrentCulture, format, args)));
-        _ = _localizerMock.Setup(x => x[nameof(Audiofile.Name)]).Returns(new LocalizedString(nameof(Audiofile.Name), nameof(Audiofile.Name)));
-
-        // Act
-        var result = _cuesheetExportService.CanGenerateExportfile("test.cue");
-
-        // Assert
-        Assert.IsFalse(result.IsSuccess);
-        Assert.IsTrue(result.FailureDetails?.Message.Contains($"{nameof(Audiofile.Name)} has no value!"));
-    }
-
-    [TestMethod]
     public void CanGenerateExportfile_InvalidCuesheeetTitle_ReturnsValidationMessage()
     {
         // Arrange
@@ -85,7 +47,7 @@ public class CuesheetExportServiceTests
         _ = _localizerMock.Setup(x => x[nameof(Cuesheet.Title)]).Returns(new LocalizedString(nameof(Cuesheet.Title), nameof(Cuesheet.Title)));
 
         // Act
-        var result = _cuesheetExportService.CanGenerateExportfile("test.cue");
+        var result = _cuesheetExportService.CanGenerateExportfile();
 
         // Assert
         Assert.IsFalse(result.IsSuccess);
@@ -122,7 +84,7 @@ public class CuesheetExportServiceTests
         _ = _localizerMock.Setup(x => x[nameof(Track.Finish)]).Returns(new LocalizedString(nameof(Track.Finish), nameof(Track.Finish)));
 
         // Act
-        var result = _cuesheetExportService.CanGenerateExportfile("test.cue");
+        var result = _cuesheetExportService.CanGenerateExportfile();
 
         // Assert
         Assert.IsFalse(result.IsSuccess);
@@ -159,7 +121,7 @@ public class CuesheetExportServiceTests
         _ = _sessionStateContainerMock.SetupProperty(x => x.Cuesheet, cuesheet);
 
         // Act
-        var result = _cuesheetExportService.CanGenerateExportfile("test.cue");
+        var result = _cuesheetExportService.CanGenerateExportfile();
 
         // Assert
         Assert.IsTrue(result.IsSuccess);
