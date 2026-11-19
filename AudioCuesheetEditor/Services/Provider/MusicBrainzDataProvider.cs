@@ -36,17 +36,32 @@ public class MusicBrainzTrack
     public TimeSpan? Length { get; init; }
     public string? Disambiguation { get; init; }
 }
-public partial class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> logger) : IDisposable
+public partial class MusicBrainzDataProvider : IDisposable
 {
-    readonly ILogger<MusicBrainzDataProvider> _logger = logger;
-    readonly SemaphoreSlim _requestGate = new(1, 1);
+    static string? _applicationVersion;
+    readonly record struct TitleSearchKey(string SearchString, string? Artist);
+
+    const string _application = "AudioCuesheetEditor";
+    const string _projectUrl = "https://github.com/NeoCoderMatrix86/AudioCuesheetEditor";
+    const int _maxRequestAttempts = 3;
     readonly TimeSpan _minimumTimeBetweenRequests = TimeSpan.FromMilliseconds(1100);
+    readonly ILogger<MusicBrainzDataProvider> _logger;
+    readonly SemaphoreSlim _requestGate = new(1, 1);
     readonly Lock _lastRequestLock = new();
     DateTimeOffset _lastRequestStarted = DateTimeOffset.MinValue;
     readonly ConcurrentDictionary<string, Lazy<Task<IReadOnlyCollection<MusicBrainzArtist>>>> _artistSearchCache = new();
+    readonly ConcurrentDictionary<TitleSearchKey, Lazy<Task<IReadOnlyCollection<MusicBrainzTrack>>>> _titleSearchCache = new();
     bool _disposedValue;
-    public const string Application = "AudioCuesheetEditor";
-    public const string ProjectUrl = "https://github.com/NeoCoderMatrix86/AudioCuesheetEditor";
+
+    public MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> logger)
+    {
+        _logger = logger;
+        var versionAttribute = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>();
+        if (versionAttribute != null)
+        {
+            _applicationVersion = versionAttribute.InformationalVersion;
+        }
+    }
 
     public void Dispose()
     {
@@ -89,52 +104,39 @@ public partial class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> lo
 
     public async Task<IReadOnlyCollection<MusicBrainzTrack>> SearchTitleAsync(string? searchString, string? artist, CancellationToken token)
     {
-        //TODO: Caching an retry like SearchArtistAsync
-        List<MusicBrainzTrack> titleSearchResult = [];
+        if (string.IsNullOrWhiteSpace(searchString))
+        {
+            return [];
+        }
+
+        var normalizedSearchString = searchString.Trim();
+        var normalizedArtist = string.IsNullOrWhiteSpace(artist) ? null : artist.Trim();
+        var cacheKey = new TitleSearchKey(normalizedSearchString, normalizedArtist);
+
+        var cachedSearch = _titleSearchCache.GetOrAdd(
+            cacheKey,
+            new Lazy<Task<IReadOnlyCollection<MusicBrainzTrack>>>(() => GetMusicBrainzTracksAsync(normalizedSearchString, normalizedArtist), LazyThreadSafetyMode.ExecutionAndPublication));
+
         try
         {
-            if (string.IsNullOrEmpty(searchString) == false)
-            {
-                using var query = new Query(Application, ApplicationVersion, ProjectUrl);
-                ISearchResults<ISearchResult<IRecording>> findRecordingsResult;
-                if (string.IsNullOrEmpty(artist))
-                {
-                    findRecordingsResult = await query.FindRecordingsAsync(searchString, simple: true, cancellationToken: token);
-                }
-                else
-                {
-                    findRecordingsResult = await query.FindRecordingsAsync($"{searchString} AND artistname:{artist}", cancellationToken: token);
-                }
-                foreach (var result in findRecordingsResult.Results)
-                {
-                    var artistString = string.Empty;
-                    if (result.Item.ArtistCredit != null)
-                    {
-                        foreach (var artistCredit in result.Item.ArtistCredit)
-                        {
-                            artistString += artistCredit.Name;
-                            if (string.IsNullOrEmpty(artistCredit.JoinPhrase) == false)
-                            {
-                                artistString += artistCredit.JoinPhrase;
-                            }
-                        }
-                    }
-                    titleSearchResult.Add(new MusicBrainzTrack()
-                    {
-                        Id = result.Item.Id,
-                        Artist = artistString,
-                        Title = result.Item.Title,
-                        Length = result.Item.Length,
-                        Disambiguation = result.Item.Disambiguation
-                    });
-                }
-            }
+            return await cachedSearch.Value.WaitAsync(token);
+        }
+        catch (OperationCanceledException) when (token.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (HttpError he)
+        {
+            _ = _titleSearchCache.TryRemove(cacheKey, out _);
+            LogHttpError(he, he.Message);
+            return [];
         }
         catch (HttpRequestException hre)
         {
+            _ = _titleSearchCache.TryRemove(cacheKey, out _);
             LogHttpRequestException(hre);
+            return [];
         }
-        return titleSearchResult.AsReadOnly();
     }
 
     protected virtual void Dispose(bool disposing)
@@ -179,15 +181,13 @@ public partial class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> lo
 
     async Task<IReadOnlyCollection<MusicBrainzArtist>> GetMusicBrainzArtistsAsync(string searchString)
     {
-        const int maxAttempts = 3;
-
-        for (var attempt = 1; attempt <= maxAttempts; attempt++)
+        for (var attempt = 1; attempt <= _maxRequestAttempts; attempt++)
         {
             await WaitForRequestSlotAsync();
 
             try
             {
-                using var query = new Query(Application, ApplicationVersion, ProjectUrl);
+                using var query = new Query(_application, _applicationVersion, _projectUrl);
                 var result = await query.FindArtistsAsync(searchString, simple: true);
 
                 return [.. result.Results
@@ -198,7 +198,7 @@ public partial class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> lo
                             Disambiguation = x.Item.Disambiguation
                         })];
             }
-            catch (HttpError he) when (IsMusicBrainzBusy(he) && attempt < maxAttempts)
+            catch (HttpError he) when (IsMusicBrainzBusy(he) && attempt < _maxRequestAttempts)
             {
                 var delay = TimeSpan.FromSeconds(Math.Pow(2, attempt - 1));
                 await Task.Delay(delay);
@@ -211,23 +211,68 @@ public partial class MusicBrainzDataProvider(ILogger<MusicBrainzDataProvider> lo
         return [];
     }
 
-    static bool IsMusicBrainzBusy(HttpError error) => error.Message.StartsWith("The MusicBrainz web server is currently busy. Please try again later.", StringComparison.InvariantCultureIgnoreCase);
-
-    string? ApplicationVersion
+    async Task<IReadOnlyCollection<MusicBrainzTrack>> GetMusicBrainzTracksAsync(string searchString, string? artist)
     {
-        get
+        for (var attempt = 1; attempt <= _maxRequestAttempts; attempt++)
         {
-            if (field == null)
+            await WaitForRequestSlotAsync();
+            try
             {
-                var versionAttribute = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>();
-                if (versionAttribute != null)
+                using var query = new Query(_application, _applicationVersion, _projectUrl);
+                ISearchResults<ISearchResult<IRecording>> result;
+
+                if (string.IsNullOrEmpty(artist))
                 {
-                    field = versionAttribute.InformationalVersion;
+                    result = await query.FindRecordingsAsync(searchString, simple: true);
                 }
+                else
+                {
+                    result = await query.FindRecordingsAsync($"{searchString} AND artistname:{artist}");
+                }
+
+                var tracks = new List<MusicBrainzTrack>();
+                foreach (var recording in result.Results)
+                {
+                    var artistString = string.Empty;
+                    if (recording.Item.ArtistCredit != null)
+                    {
+                        foreach (var artistCredit in recording.Item.ArtistCredit)
+                        {
+                            artistString += artistCredit.Name;
+                            if (!string.IsNullOrEmpty(artistCredit.JoinPhrase))
+                            {
+                                artistString += artistCredit.JoinPhrase;
+                            }
+                        }
+                    }
+
+                    tracks.Add(new MusicBrainzTrack
+                    {
+                        Id = recording.Item.Id,
+                        Artist = artistString,
+                        Title = recording.Item.Title,
+                        Length = recording.Item.Length,
+                        Disambiguation = recording.Item.Disambiguation
+                    });
+                }
+
+                return tracks.AsReadOnly();
             }
-            return field;
+            catch (HttpError he) when (IsMusicBrainzBusy(he) && attempt < _maxRequestAttempts)
+            {
+                var delay = TimeSpan.FromSeconds(Math.Pow(2, attempt - 1));
+                await Task.Delay(delay);
+            }
+            finally
+            {
+                _ = _requestGate.Release();
+            }
         }
+
+        return [];
     }
+
+    static bool IsMusicBrainzBusy(HttpError error) => error.Message.StartsWith("The MusicBrainz web server is currently busy. Please try again later.", StringComparison.InvariantCultureIgnoreCase);
 
     [LoggerMessage(Level = LogLevel.Error, Message = "General error getting response from MusicBrainz")]
     partial void LogHttpRequestException(HttpRequestException hre);
