@@ -32,51 +32,47 @@ along with Foobar.  If not, see
         </MudAlert>
     }
 }
-<MudCard Outlined>
-    <MudCardContent>
-        @if (Cuesheet.IsRecording == true)
-        {
-            <MudAlert Severity="Severity.Info" Variant="Variant.Filled" ContentAlignment="HorizontalAlignment.Center">@_localizer["Recording!"]</MudAlert>
-            <br />
-        }
-        @if (_startRecordTimer?.Enabled == true)
-        {
-            <MudAlert Severity="Severity.Warning" Variant="Variant.Filled" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon CloseIcon="@Icons.Material.Outlined.TimerOff" CloseIconClicked="() => _startRecordTimer.Dispose()">
-                @_localizer["Record will start in {0} seconds!", ((_startRecordTimer.Interval / 1000) - (DateTime.Now - _recordTimerStarted).Seconds)]
-            </MudAlert>
-            <br />
-        }
-        <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
-            <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
-                <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert>
-                    <MudButton StartIcon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecording" aria-label="@_localizer["Start recording"]">@_localizer["Start recording"]</MudButton>
-                </MudHidden>
-                <MudHidden Breakpoint="Breakpoint.SmAndUp">
-                    <MudIconButton Icon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecording" aria-label="@_localizer["Start recording"]" />
-                </MudHidden>
-                <MudMenu Icon="@Icons.Material.Outlined.ArrowRight" Disabled="StartRecordingDisabled" AnchorOrigin="Origin.TopRight">
-                    <MudMenuItem Disabled="StartRecordingDisabled" OnClick="DisplayStartCountdownDialog">@_localizer["Enter countdown timer"]</MudMenuItem>
-                </MudMenu>
-            </MudButtonGroup>
-            @if ((Cuesheet.IsRecording) && (Cuesheet.RecordingStart.HasValue))
-            {
-                var recordingTime = DateTime.UtcNow - Cuesheet.RecordingStart;
-                recordingTime = recordingTime.Value.Subtract(new TimeSpan(0, 0, 0, 0, recordingTime.Value.Milliseconds));
-                <MudText Typo="Typo.h5">@recordingTime</MudText>
-            }
-            else
-            {
-                <MudText Typo="Typo.h5">@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
-            }
-            <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert>
-                <MudButton Color="Color.Warning" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet.IsRecording == false" OnClick="StopRecording" aria-label="@_localizer["Stop recording"]">@_localizer["Stop recording"]</MudButton>
-            </MudHidden>
-            <MudHidden Breakpoint="Breakpoint.SmAndUp">
-                <MudIconButton Color="Color.Warning" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet.IsRecording == false" OnClick="StopRecording" aria-label="@_localizer["Stop recording"]" />
-            </MudHidden>
-        </MudStack>
-    </MudCardContent>
-</MudCard>
+@if (Cuesheet.IsRecording == true)
+{
+    <MudAlert Severity="Severity.Info" Variant="Variant.Filled" ContentAlignment="HorizontalAlignment.Center">@_localizer["Recording!"]</MudAlert>
+    <br />
+}
+@if (_startRecordTimer?.Enabled == true)
+{
+    <MudAlert Severity="Severity.Warning" Variant="Variant.Filled" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon CloseIcon="@Icons.Material.Outlined.TimerOff" CloseIconClicked="() => _startRecordTimer.Dispose()">
+        @_localizer["Record will start in {0} seconds!", ((_startRecordTimer.Interval / 1000) - (DateTime.Now - _recordTimerStarted).Seconds)]
+    </MudAlert>
+    <br />
+}
+<MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
+    <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
+        <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert>
+            <MudButton StartIcon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecording" aria-label="@_localizer["Start recording"]">@_localizer["Start recording"]</MudButton>
+        </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.SmAndUp">
+            <MudIconButton Icon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecording" aria-label="@_localizer["Start recording"]" />
+        </MudHidden>
+        <MudMenu Icon="@Icons.Material.Outlined.ArrowRight" Disabled="StartRecordingDisabled" AnchorOrigin="Origin.TopRight">
+            <MudMenuItem Disabled="StartRecordingDisabled" OnClick="DisplayStartCountdownDialog">@_localizer["Enter countdown timer"]</MudMenuItem>
+        </MudMenu>
+    </MudButtonGroup>
+    @if ((Cuesheet.IsRecording) && (Cuesheet.RecordingStart.HasValue))
+    {
+        var recordingTime = DateTime.UtcNow - Cuesheet.RecordingStart;
+        recordingTime = recordingTime.Value.Subtract(new TimeSpan(0, 0, 0, 0, recordingTime.Value.Milliseconds));
+        <MudText Typo="Typo.h5">@recordingTime</MudText>
+    }
+    else
+    {
+        <MudText Typo="Typo.h5">@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
+    }
+    <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert>
+        <MudButton Color="Color.Warning" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet.IsRecording == false" OnClick="StopRecording" aria-label="@_localizer["Stop recording"]">@_localizer["Stop recording"]</MudButton>
+    </MudHidden>
+    <MudHidden Breakpoint="Breakpoint.SmAndUp">
+        <MudIconButton Color="Color.Warning" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet.IsRecording == false" OnClick="StopRecording" aria-label="@_localizer["Stop recording"]" />
+    </MudHidden>
+</MudStack>
 
 @code {
     Timer _updateGUITimer = new(500);
