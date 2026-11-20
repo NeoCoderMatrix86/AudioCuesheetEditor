@@ -26,7 +26,7 @@ along with Foobar.  If not, see
 
 <MudCard Outlined>
     <MudCardContent>
-        <MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
+        <MudStack Row Justify="Justify.SpaceBetween">
             @{
                 MusicBrainzArtist? autocompleteArtist = new()
                 {
@@ -36,7 +36,7 @@ along with Foobar.  If not, see
             <MudAutocomplete @ref="_artistInput" T="MusicBrainzArtist" Label="@_localizer["Artist"]" SearchFunc="_autocompleteManager.SearchArtistsAsync" ToStringFunc="(value) => value?.Name"
                              @bind-Text="@_currentRecordingTrack.Artist" @bind-Value="autocompleteArtist" Clearable ShowProgressIndicator ResetValueOnEmptyText
                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(_currentRecordingTrack, nameof(Track.Artist)))" ErrorText="@GetValidationErrorMessage(_currentRecordingTrack, nameof(Track.Artist))"
-                             Disabled="Cuesheet?.IsRecording == false" MaxItems="null" CoerceText="false" MinCharacters="1" DebounceInterval="750">
+                             Disabled="Cuesheet?.IsRecording == false" MaxItems="null" CoerceText="false" Variant="Variant.Outlined" MinCharacters="1" DebounceInterval="750">
                 <ItemTemplate Context="autocompleteContext">
                     @if (autocompleteContext.Disambiguation != null)
                     {
@@ -58,7 +58,7 @@ along with Foobar.  If not, see
             <MudAutocomplete @ref="_titleInput" T="MusicBrainzTrack" Label="@_localizer["Title"]" SearchFunc="(value, token) => _autocompleteManager.SearchTitlesAsync(value, _currentRecordingTrack.Artist, token)" ToStringFunc="(value) => value?.Title"
                              @bind-Text="_currentRecordingTrack.Title" @bind-Value="autocompleteTrack" Clearable ShowProgressIndicator ResetValueOnEmptyText
                              Error="!String.IsNullOrEmpty(GetValidationErrorMessage(_currentRecordingTrack, nameof(Track.Title)))" ErrorText="@GetValidationErrorMessage(_currentRecordingTrack, nameof(Track.Title))"
-                             Disabled="Cuesheet?.IsRecording == false" MaxItems="null" CoerceText="false" MinCharacters="1" DebounceInterval="750">
+                             Disabled="Cuesheet?.IsRecording == false" MaxItems="null" CoerceText="false" Variant="Variant.Outlined" MinCharacters="1" DebounceInterval="750">
                 <ItemTemplate Context="autocompleteContext">
                     @if (autocompleteContext.Disambiguation != null)
                     {
@@ -71,10 +71,10 @@ along with Foobar.  If not, see
                 </ItemTemplate>
             </MudAutocomplete>
             <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert>
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Add" OnClick="AddTrackAsync" Disabled="Cuesheet?.IsRecording == false" aria-label="@_localizer["Add track"]">@_localizer["Add track"]</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Add" OnClick="AddTrackAsync" Disabled="Cuesheet?.IsRecording == false" aria-label="@_localizer["Add track"]" Style="height: 56px;" Class="mt-2">@_localizer["Add track"]</MudButton>
             </MudHidden>
             <MudHidden Breakpoint="Breakpoint.SmAndUp">
-                <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Icon="@Icons.Material.Outlined.Add" OnClick="AddTrackAsync" Disabled="Cuesheet?.IsRecording == false" aria-label="@_localizer["Add track"]" />
+                <MudIconButton Variant="Variant.Filled" Color="Color.Primary" Icon="@Icons.Material.Outlined.Add" OnClick="AddTrackAsync" Disabled="Cuesheet?.IsRecording == false" aria-label="@_localizer["Add track"]" Style="height: 56px;" Class="mt-2" />
             </MudHidden>
         </MudStack>
     </MudCardContent>

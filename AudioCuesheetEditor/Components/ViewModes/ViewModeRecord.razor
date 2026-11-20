@@ -21,8 +21,12 @@ along with Foobar.  If not, see
 @inject ICuesheetManager _cuesheetManager
 @inject ISessionStateContainer _sessionStateContainer
 
-<AudiofileSelection @bind-SelectedAudioFile="_recordingAudiofile" />
-<ControlRecording RecordingAudiofile="_recordingAudiofile" />
+<MudCard Outlined>
+    <MudCardContent>
+        <AudiofileSelection @bind-SelectedAudioFile="_recordingAudiofile" />
+        <ControlRecording RecordingAudiofile="_recordingAudiofile" />
+    </MudCardContent>
+</MudCard>
 <br />
 <AddTrack Audiofile="_recordingAudiofile" />
 <br/>

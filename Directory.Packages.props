@@ -14,7 +14,7 @@
     <PackageVersion Include="Microsoft.Extensions.Logging.Configuration" Version="10.0.15" />
     <PackageVersion Include="MudBlazor" Version="9.14.0" />
     <PackageVersion Include="Toolbelt.Blazor.HotKeys2" Version="6.2.1" />
-    <PackageVersion Include="Microsoft.Playwright.MSTest.v4" Version="1.65.0" />
+    <PackageVersion Include="Microsoft.Playwright.MSTest.v4" Version="1.65.1" />
     <PackageVersion Include="MSTest" Version="4.5.3" />
     <PackageVersion Include="Moq" Version="4.21.0" />
     <PackageVersion Include="coverlet.collector" Version="10.1.1" />
