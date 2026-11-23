@@ -99,18 +99,6 @@ along with Foobar.  If not, see
     MudFileUpload<IBrowserFile>? _mudFileUpload;
     DownloadOptions? _downloadOptions;
 
-    protected override void OnInitialized()
-    {
-        base.OnInitialized();
-        _hotKeysContext = _hotKeys.CreateContext()
-            .Add(ModKey.Ctrl, Key.z, TraceChangeManager.Undo)
-            .Add(ModKey.Ctrl, Key.y, TraceChangeManager.Redo)
-            .Add(ModKey.Ctrl, Key.s, DownloadProjectfileClicked)
-            .Add(ModKey.Ctrl, Key.e, DownloadExportClicked)
-            .Add(ModKey.Ctrl, Key.u, DownloadCuesheetClicked)
-            .Add(ModKey.Ctrl, Key.r, ResetCuesheetClicked);
-    }
-
     protected override async Task OnInitializedAsync()
     {
         await base.OnInitializedAsync();
