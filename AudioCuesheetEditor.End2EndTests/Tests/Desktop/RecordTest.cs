@@ -42,4 +42,16 @@ public class RecordTest : PlaywrightTestBase
         await detailView.EditSelectedTracksModalAsync();
         await Expect(TestPage.GetByRole(AriaRole.Switch, new() { Name = "Link to previous track" })).ToBeCheckedAsync();
     }
+
+    [TestMethod]
+    public async Task Record_ShouldBePossible_WhenNoTracksAdded()
+    {
+        var recordView = new RecordView(TestPage);
+        await recordView.GotoAsync();
+        await recordView.AddAudiofile();
+        await recordView.StartRecordingAsync();
+        await Task.Delay(500, TestContext.CancellationToken);
+        await recordView.StopRecordingAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Tabpanel, new() { Name = "Record view" })).ToMatchAriaSnapshotAsync("- group:\n  - combobox \"Select audiofile\": No file uploaded!\n  - group \"Select audiofile\"\n  - text: Select audiofile*\n  - group:\n    - button \"Add file\"\n- group:\n  - group:\n    - button \"Start recording\"\n    - button\n  - heading \"--:--:--\" [level=5]\n  - button \"Stop recording\" [disabled]");
+    }
 }
