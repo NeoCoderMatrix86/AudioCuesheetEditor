@@ -32,13 +32,17 @@ public class AudioImportServiceTests
     readonly Mock<IDialogManager> _dialogManager;
     readonly Mock<ISessionStateContainer> _sessionStateContainer;
     readonly Mock<ICuesheetManager> _cuesheetManager;
+    readonly Mock<IAudiofileManager> _audiofileManager;
+    readonly Mock<ITraceChangeManager> _traceChangeManager;
 
     public AudioImportServiceTests()
     {
         _dialogManager = new();
         _sessionStateContainer = new();
         _cuesheetManager = new();
-        _service = new(_dialogManager.Object, _sessionStateContainer.Object, _cuesheetManager.Object);
+        _audiofileManager = new();
+        _traceChangeManager = new();
+        _service = new(_dialogManager.Object, _sessionStateContainer.Object, _cuesheetManager.Object, _audiofileManager.Object, _traceChangeManager.Object);
     }
 
     [TestMethod]
@@ -85,6 +89,8 @@ public class AudioImportServiceTests
         var result = await _service.MapAudioImportAsync();
         // Assert
         Assert.IsTrue(result);
+        _traceChangeManager.VerifySet(x => x.BulkEdit = true, Times.Once);
+        _traceChangeManager.VerifySet(x => x.BulkEdit = false, Times.Once);
     }
 
     [TestMethod]

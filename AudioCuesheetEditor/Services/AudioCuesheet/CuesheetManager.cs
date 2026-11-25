@@ -36,14 +36,15 @@ public class CuesheetManager(ITraceChangeManager traceChangeManager, ISessionSta
     /// <inheritdoc/>
     public void SetProperty<TProperty>(Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value)
     {
+        var runningInTransaction = _traceChangeManager.BulkEdit;
         var workingOnCuesheet = _sessionStateContainer.ActiveCuesheet == _sessionStateContainer.Cuesheet;
-        if (workingOnCuesheet)
+        if (runningInTransaction == false)
         {
             _traceChangeManager.BulkEdit = true;
         }
         var cuesheet = _sessionStateContainer.ActiveCuesheet;
         SetValue(cuesheet!, propertyExpression, value, workingOnCuesheet);
-        if (workingOnCuesheet)
+        if (runningInTransaction == false)
         {
             _traceChangeManager.BulkEdit = false;
         }

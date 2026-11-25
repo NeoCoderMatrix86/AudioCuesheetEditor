@@ -13,6 +13,8 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using System.Linq.Expressions;
+using System.Reflection;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Model.UI;
@@ -21,14 +23,7 @@ using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Threading.Tasks;
 
 namespace AudioCuesheetEditor.Tests.Services.AudioCuesheet;
 
@@ -46,6 +41,7 @@ public class AudiofileManagerTests
     {
         _fileInputManager = new Mock<IFileInputManager>();
         _traceChangeManager = new Mock<ITraceChangeManager>();
+        _ = _traceChangeManager.SetupProperty(x => x.BulkEdit);
         _jsRuntime = new Mock<IJSRuntime>();
         _trackManager = new Mock<ITrackManager>();
         _ = _trackManager.Setup(x => x.SetProperty(It.IsAny<Track>(), It.IsAny<Expression<Func<Track, It.IsAnyType>>>(), It.IsAny<It.IsAnyType>()))

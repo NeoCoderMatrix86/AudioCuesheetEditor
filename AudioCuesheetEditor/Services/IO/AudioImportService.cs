@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -21,11 +21,13 @@ using MudBlazor;
 namespace AudioCuesheetEditor.Services.IO;
 
 /// <inheritdoc/>
-public class AudioImportService(IDialogManager dialogManager, ISessionStateContainer sessionStateContainer, ICuesheetManager cuesheetManager) : IAudioImportService
+public class AudioImportService(IDialogManager dialogManager, ISessionStateContainer sessionStateContainer, ICuesheetManager cuesheetManager, IAudiofileManager audiofileManager, ITraceChangeManager traceChangeManager) : IAudioImportService
 {
     readonly ISessionStateContainer _sessionStateContainer = sessionStateContainer;
     readonly IDialogManager _dialogManager = dialogManager;
     readonly ICuesheetManager _cuesheetManager = cuesheetManager;
+    readonly IAudiofileManager  _audiofileManager = audiofileManager;
+    readonly ITraceChangeManager _traceChangeManager = traceChangeManager;
 
     /// <inheritdoc/>
     public async Task<bool> MapAudioImportAsync()
@@ -43,6 +45,7 @@ public class AudioImportService(IDialogManager dialogManager, ISessionStateConta
         }
         if (cancel == false)
         {
+            _traceChangeManager.BulkEdit = true;
             var files = new List<Audiofile>(_sessionStateContainer.ActiveCuesheet!.Audiofiles);
             foreach (var mapping in _sessionStateContainer.ImportAudiofileMapping.Where(x => x.Value != null))
             {
@@ -52,12 +55,10 @@ public class AudioImportService(IDialogManager dialogManager, ISessionStateConta
                     audiofile = mapping.Key;
                     files.Add(audiofile);
                 }
-                audiofile.ObjectURL = mapping.Value!.ObjectURL;
-                audiofile.AudioCodec = mapping.Value!.AudioCodec;
-                audiofile.Duration = mapping.Value!.Duration;
-                audiofile.Name = mapping.Value!.Name;
+                _audiofileManager.SetProperties(audiofile, mapping.Value!);
             }
             _cuesheetManager.SetProperty(x => x.Audiofiles, files);
+            _traceChangeManager.BulkEdit = false;
         }
         else
         {

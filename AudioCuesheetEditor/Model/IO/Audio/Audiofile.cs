@@ -63,6 +63,7 @@ public class Audiofile() : Validateable, IAudiofile
     /// <summary>
     /// Duration of the audio file
     /// </summary>
+    [JsonIgnore]
     public TimeSpan? Duration { get; set; }
 
     public AudioCodec? AudioCodec
