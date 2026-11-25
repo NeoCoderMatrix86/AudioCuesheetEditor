@@ -16,10 +16,9 @@
 
 using AudioCuesheetEditor.Model.IO.Import;
 
-namespace AudioCuesheetEditor.Services.IO
+namespace AudioCuesheetEditor.Services.IO;
+
+public interface ITextImportService
 {
-    public interface ITextImportService
-    {
-        Task<IImportfile> AnalyseAsync(string fileContent);
-    }
+    Task<IImportfile> AnalyseAsync(string fileContent);
 }

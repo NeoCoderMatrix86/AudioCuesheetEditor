@@ -15,26 +15,25 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.AudioCuesheet;
 
-namespace AudioCuesheetEditor.Model.UI
+namespace AudioCuesheetEditor.Model.UI;
+
+public enum DynamicEditValue
 {
-    public enum DynamicEditValue
-    {
-        DoNotChange = 0,
-        EnteredValueEquals = 1,
-        EnteredValueAdd = 2,
-        EnteredValueSubstract = 3
-    }
-    public class EditMultipleTracksModalResult(Track editedTrack, DynamicEditValue isLinkedToPreviousTrackChanged, DynamicEditValue artistEditMode, DynamicEditValue titleEditMode, DynamicEditValue beginEditMode, DynamicEditValue endEditMode, DynamicEditValue lengthEditMode, DynamicEditValue flagsEditMode, DynamicEditValue pregapEditMode, DynamicEditValue postgapEditMode)
-    {
-        public Track EditedTrack { get; } = editedTrack;
-        public DynamicEditValue IsLinkedToPreviousTrackEditMode { get; } = isLinkedToPreviousTrackChanged;
-        public DynamicEditValue ArtistEditMode { get; } = artistEditMode;
-        public DynamicEditValue TitleEditMode { get; } = titleEditMode;
-        public DynamicEditValue BeginEditMode { get; } = beginEditMode;
-        public DynamicEditValue EndEditMode { get; } = endEditMode;
-        public DynamicEditValue LengthEditMode { get; } = lengthEditMode;
-        public DynamicEditValue FlagsEditMode { get; } = flagsEditMode;
-        public DynamicEditValue PregapEditMode { get; } = pregapEditMode;
-        public DynamicEditValue PostgapEditMode { get; } = postgapEditMode;
-    }
+    DoNotChange = 0,
+    EnteredValueEquals = 1,
+    EnteredValueAdd = 2,
+    EnteredValueSubstract = 3
+}
+public class EditMultipleTracksModalResult(Track editedTrack, DynamicEditValue isLinkedToPreviousTrackChanged, DynamicEditValue artistEditMode, DynamicEditValue titleEditMode, DynamicEditValue beginEditMode, DynamicEditValue endEditMode, DynamicEditValue lengthEditMode, DynamicEditValue flagsEditMode, DynamicEditValue pregapEditMode, DynamicEditValue postgapEditMode)
+{
+    public Track EditedTrack { get; } = editedTrack;
+    public DynamicEditValue IsLinkedToPreviousTrackEditMode { get; } = isLinkedToPreviousTrackChanged;
+    public DynamicEditValue ArtistEditMode { get; } = artistEditMode;
+    public DynamicEditValue TitleEditMode { get; } = titleEditMode;
+    public DynamicEditValue BeginEditMode { get; } = beginEditMode;
+    public DynamicEditValue EndEditMode { get; } = endEditMode;
+    public DynamicEditValue LengthEditMode { get; } = lengthEditMode;
+    public DynamicEditValue FlagsEditMode { get; } = flagsEditMode;
+    public DynamicEditValue PregapEditMode { get; } = pregapEditMode;
+    public DynamicEditValue PostgapEditMode { get; } = postgapEditMode;
 }

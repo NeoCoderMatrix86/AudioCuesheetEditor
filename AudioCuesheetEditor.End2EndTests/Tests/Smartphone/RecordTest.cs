@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -16,31 +16,44 @@
 using AudioCuesheetEditor.End2EndTests.Models;
 using Microsoft.Playwright;
 
-namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone
+namespace AudioCuesheetEditor.End2EndTests.Tests.Smartphone;
+
+[TestClass]
+public class RecordTest : PlaywrightTestBase
 {
-    [TestClass]
-    public class RecordTest : PlaywrightTestBase
+    protected override string? DeviceName => "iPhone 13";
+
+    [TestMethod]
+    public async Task Record_ShouldRecordTracks_WhenTracksAdded()
     {
-        protected override string? DeviceName => "iPhone 13";
-        [TestMethod]
-        public async Task Record_ShouldRecordTracks_WhenTracksAdded()
-        {
-            var recordView = new RecordView(TestPage);
-            var viewModes = new ViewModes(TestPage, DeviceName != null);
-            var detailView = new DetailView(TestPage);
-            await recordView.GotoAsync();
-            await recordView.StartRecordingAsync();
-            await recordView.AddRecordingTrackAsync("Test Track 1 Artist", "Test Track 1 Title");
-            await recordView.AddRecordingTrackAsync("Test Track 2 Artist", "Test Track 2 Title");
-            await recordView.StopRecordingAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = "Test Track 1 Artist Clear" })).ToBeVisibleAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = "Test Track 1 Title Clear" })).ToBeVisibleAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = "Test Track 2 Artist Clear" })).ToBeVisibleAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = "Test Track 2 Title Clear" })).ToBeVisibleAsync();
-            await viewModes.SwitchView("Detail view");
-            await detailView.SelectTracksAsync([1]);
-            await detailView.EditSelectedTracksModalAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Switch, new() { Name = "Link to previous track" })).ToBeCheckedAsync();
-        }
+        var recordView = new RecordView(TestPage);
+        var viewModes = new ViewModes(TestPage, DeviceName != null);
+        var detailView = new DetailView(TestPage);
+        await recordView.GotoAsync();
+        await recordView.AddAudiofile();
+        await recordView.StartRecordingAsync();
+        await recordView.AddRecordingTrackAsync("Test Track 1 Artist", "Test Track 1 Title");
+        await recordView.AddRecordingTrackAsync("Test Track 2 Artist", "Test Track 2 Title");
+        await recordView.StopRecordingAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = "Test Track 1 Artist Clear" })).ToBeVisibleAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = "Test Track 1 Title Clear" })).ToBeVisibleAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = "Test Track 2 Artist Clear" })).ToBeVisibleAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Cell, new() { Name = "Test Track 2 Title Clear" })).ToBeVisibleAsync();
+        await viewModes.SwitchView("Detail view");
+        await detailView.SelectTracksAsync([1]);
+        await detailView.EditSelectedTracksModalAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Switch, new() { Name = "Link to previous track" })).ToBeCheckedAsync();
+    }
+
+    [TestMethod]
+    public async Task Record_ShouldBePossible_WhenNoTracksAdded()
+    {
+        var recordView = new RecordView(TestPage);
+        await recordView.GotoAsync();
+        await recordView.AddAudiofile();
+        await recordView.StartRecordingAsync();
+        await Task.Delay(500, TestContext.CancellationToken);
+        await recordView.StopRecordingAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Tabpanel, new() { Name = "Record view" })).ToMatchAriaSnapshotAsync("- group:\n  - combobox \"Select audiofile\": No file uploaded!\n  - group \"Select audiofile\"\n  - text: Select audiofile*\n  - group:\n    - button \"Add file\"\n- group:\n  - group:\n    - button \"Start recording\"\n    - button\n  - heading \"--:--:--\" [level=5]\n  - button \"Stop recording\" [disabled]");
     }
 }

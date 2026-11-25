@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -15,46 +15,42 @@
 //<http: //www.gnu.org/licenses />.
 using System.Reflection;
 
-namespace AudioCuesheetEditor.Model.Entity
+namespace AudioCuesheetEditor.Model.Entity;
+
+public abstract class Validateable : IValidateable
 {
-    public abstract class Validateable : IValidateable
+    public event EventHandler<string>? ValidateablePropertyChanged;
+
+    public ValidationResult Validate()
     {
-        public event EventHandler<String>? ValidateablePropertyChanged;
-
-        public ValidationResult Validate()
+        ValidationResult validationResult = new() { Status = ValidationStatus.NoValidation };
+        List<ValidationMessage> validationMessages = [];
+        foreach (var property in GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
         {
-            ValidationResult validationResult = new() { Status = ValidationStatus.NoValidation };
-            List<ValidationMessage> validationMessages = [];
-            foreach (var property in this.GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public))
+            var result = Validate(property.Name);
+            validationMessages.AddRange(result.ValidationMessages);
+            switch (validationResult.Status)
             {
-                var result = Validate(property.Name);
-                validationMessages.AddRange(result.ValidationMessages);
-                switch (validationResult.Status)
-                {
-                    case ValidationStatus.NoValidation:
-                    case ValidationStatus.Success:
-                        switch (result.Status)
-                        {
-                            case ValidationStatus.Success:
-                            case ValidationStatus.Error:
-                                validationResult.Status = result.Status;
-                                break;
-                        }
-                        break;
-                    case ValidationStatus.Error:
-                        //If there was an error, we don't delete it!
-                        break;
-                }
+                case ValidationStatus.NoValidation:
+                case ValidationStatus.Success:
+                    switch (result.Status)
+                    {
+                        case ValidationStatus.Success:
+                        case ValidationStatus.Error:
+                            validationResult.Status = result.Status;
+                            break;
+                    }
+                    break;
+                case ValidationStatus.Error:
+                    //If there was an error, we don't delete it!
+                    break;
             }
-            validationResult.ValidationMessages = validationMessages;
-            return validationResult;
         }
-
-        public abstract ValidationResult Validate(String property);
-
-        protected void OnValidateablePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "")
-        {
-            ValidateablePropertyChanged?.Invoke(this, propertyName);
-        }
+        validationResult.ValidationMessages = validationMessages;
+        return validationResult;
     }
+
+    public abstract ValidationResult Validate(string propertyName);
+
+    protected void OnValidateablePropertyChanged([System.Runtime.CompilerServices.CallerMemberName] string propertyName = "") => ValidateablePropertyChanged?.Invoke(this, propertyName);
 }

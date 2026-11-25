@@ -15,33 +15,32 @@
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.UI;
 
-namespace AudioCuesheetEditor.Services.UI
+namespace AudioCuesheetEditor.Services.UI;
+
+/// <summary>
+/// Manager for Undo and Redo operations on objects.
+/// </summary>
+public interface ITraceChangeManager
 {
+    event EventHandler? TracedObjectHistoryChanged;
+    event EventHandler? UndoDone;
+    event EventHandler? RedoDone;
     /// <summary>
-    /// Manager for Undo and Redo operations on objects.
+    /// Is Undo() currently possible (are there any changes)?
     /// </summary>
-    public interface ITraceChangeManager
-    {
-        public event EventHandler? TracedObjectHistoryChanged;
-        public event EventHandler? UndoDone;
-        public event EventHandler? RedoDone;
-        /// <summary>
-        /// Is Undo() currently possible (are there any changes)?
-        /// </summary>
-        public bool CanUndo { get; }
-        /// <summary>
-        /// Is Redo() currently possible (are there any changes)?
-        /// </summary>
-        public bool CanRedo { get; }
-        public bool BulkEdit { get; set; }
-        /// <summary>
-        /// Adds a change of a property
-        /// </summary>
-        /// <param name="tracedChange"></param>
-        void AddChange(TracedChange tracedChange);
-        public void Reset();
-        public void Undo();
-        public void Redo();
-        public void RemoveTracedChanges(IEnumerable<object> traceables);
-    }
+    bool CanUndo { get; }
+    /// <summary>
+    /// Is Redo() currently possible (are there any changes)?
+    /// </summary>
+    bool CanRedo { get; }
+    bool BulkEdit { get; set; }
+    /// <summary>
+    /// Adds a change of a property
+    /// </summary>
+    /// <param name="tracedChange"></param>
+    void AddChange(TracedChange tracedChange);
+    void Reset();
+    void Undo();
+    void Redo();
+    void RemoveTracedChanges(IEnumerable<object> traceables);
 }

@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -18,40 +18,39 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 using System.Text.Json;
 
-namespace AudioCuesheetEditor.Tests.Model.Options
+namespace AudioCuesheetEditor.Tests.Model.Options;
+
+[TestClass()]
+public class ExportOptionsTest
 {
-    [TestClass()]
-    public class ExportOptionsTest
+    readonly JsonSerializerOptions serializerOptions = new()
     {
-        private readonly JsonSerializerOptions serializerOptions = new()
-        {
-            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
-        };
+        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+    };
 
-        [TestMethod()]
-        public void SerializationTest()
-        {
-            var exportOptions = new ExportOptions();
-            var optionsJson = JsonSerializer.Serialize<object>(exportOptions, serializerOptions);
-            Assert.IsNotNull(optionsJson);
-        }
+    [TestMethod()]
+    public void SerializationTest()
+    {
+        var exportOptions = new ExportOptions();
+        var optionsJson = JsonSerializer.Serialize<object>(exportOptions, serializerOptions);
+        Assert.IsNotNull(optionsJson);
+    }
 
-        [TestMethod()]
-        public void DeserializationTest()
-        {
-            var optionsJson = "{\"ExportProfiles\":[{\"Id\":\"ba65845a-f264-4ca1-b342-d99871e961da\",\"Name\":\"YouTube\",\"SchemeHead\":\"%Cuesheet.Artist% - %Cuesheet.Title%\",\"SchemeTracks\":\"%Track.Artist% - %Track.Title% %Track.Begin%\",\"SchemeFooter\":\"\",\"Filename\":\"YouTube.txt\"},{\"Id\":\"325cefed-ccdf-4694-9e0c-3fa28f38e9c6\",\"Name\":\"Mixcloud\",\"SchemeHead\":\"\",\"SchemeTracks\":\"%Track.Artist% - %Track.Title% %Track.Begin%\",\"SchemeFooter\":\"\",\"Filename\":\"Mixcloud.txt\"},{\"Id\":\"17c526a5-eec5-439a-b968-789975003600\",\"Name\":\"CSV Export\",\"SchemeHead\":\"%Cuesheet.Artist%;%Cuesheet.Title%;\",\"SchemeTracks\":\"%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%\",\"SchemeFooter\":\"Exported at %DateTime% using AudioCuesheetEditor (https://neocodermatrix86.github.io/AudioCuesheetEditor/)\",\"Filename\":\"Export.csv\"},{\"Id\":\"e85c8a42-a5a9-4df5-a580-48f0b85a19af\",\"Name\":\"Tracks only\",\"SchemeHead\":\"\",\"SchemeTracks\":\"%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%\",\"SchemeFooter\":\"\",\"Filename\":\"Tracks.txt\"}],\"SelectedProfileId\":\"e85c8a42-a5a9-4df5-a580-48f0b85a19af\"}";
-            var options = JsonSerializer.Deserialize<ExportOptions>(optionsJson);
-            Assert.IsNotNull(options);
-            Assert.AreEqual(options.ExportProfiles.Last(), options.SelectedExportProfile);
-        }
+    [TestMethod()]
+    public void DeserializationTest()
+    {
+        var optionsJson = "{\"ExportProfiles\":[{\"Id\":\"ba65845a-f264-4ca1-b342-d99871e961da\",\"Name\":\"YouTube\",\"SchemeHead\":\"%Cuesheet.Artist% - %Cuesheet.Title%\",\"SchemeTracks\":\"%Track.Artist% - %Track.Title% %Track.Begin%\",\"SchemeFooter\":\"\",\"Filename\":\"YouTube.txt\"},{\"Id\":\"325cefed-ccdf-4694-9e0c-3fa28f38e9c6\",\"Name\":\"Mixcloud\",\"SchemeHead\":\"\",\"SchemeTracks\":\"%Track.Artist% - %Track.Title% %Track.Begin%\",\"SchemeFooter\":\"\",\"Filename\":\"Mixcloud.txt\"},{\"Id\":\"17c526a5-eec5-439a-b968-789975003600\",\"Name\":\"CSV Export\",\"SchemeHead\":\"%Cuesheet.Artist%;%Cuesheet.Title%;\",\"SchemeTracks\":\"%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%\",\"SchemeFooter\":\"Exported at %DateTime% using AudioCuesheetEditor (https://neocodermatrix86.github.io/AudioCuesheetEditor/)\",\"Filename\":\"Export.csv\"},{\"Id\":\"e85c8a42-a5a9-4df5-a580-48f0b85a19af\",\"Name\":\"Tracks only\",\"SchemeHead\":\"\",\"SchemeTracks\":\"%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%\",\"SchemeFooter\":\"\",\"Filename\":\"Tracks.txt\"}],\"SelectedProfileId\":\"e85c8a42-a5a9-4df5-a580-48f0b85a19af\"}";
+        var options = JsonSerializer.Deserialize<ExportOptions>(optionsJson);
+        Assert.IsNotNull(options);
+        Assert.AreEqual(options.ExportProfiles.Last(), options.SelectedExportProfile);
+    }
 
-        [TestMethod()]
-        public void DeserializeBackwardCompabilityTest()
-        {
-            var optionsJson = "{\"ExportProfiles\":[{\"Name\":\"YouTube\",\"SchemeHead\":\"%Cuesheet.Artist% - %Cuesheet.Title%\",\"SchemeTracks\":\"%Track.Artist% - %Track.Title% %Track.Begin%\",\"SchemeFooter\":\"\",\"Filename\":\"YouTube.txt\"},{\"Name\":\"Mixcloud\",\"SchemeHead\":\"\",\"SchemeTracks\":\"%Track.Artist% - %Track.Title% %Track.Begin%\",\"SchemeFooter\":\"\",\"Filename\":\"Mixcloud.txt\"},{\"Name\":\"CSV Export\",\"SchemeHead\":\"%Cuesheet.Artist%;%Cuesheet.Title%;\",\"SchemeTracks\":\"%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%\",\"SchemeFooter\":\"Exported at %DateTime% using AudioCuesheetEditor (https://neocodermatrix86.github.io/AudioCuesheetEditor/)\",\"Filename\":\"Export.csv\"},{\"Name\":\"Tracks only\",\"SchemeHead\":\"\",\"SchemeTracks\":\"%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%\",\"SchemeFooter\":\"\",\"Filename\":\"Tracks.txt\"}]}";
-            var options = JsonSerializer.Deserialize<ExportOptions>(optionsJson);
-            Assert.IsNotNull(options);
-            Assert.HasCount(4, options.ExportProfiles);
-        }
+    [TestMethod()]
+    public void DeserializeBackwardCompabilityTest()
+    {
+        var optionsJson = "{\"ExportProfiles\":[{\"Name\":\"YouTube\",\"SchemeHead\":\"%Cuesheet.Artist% - %Cuesheet.Title%\",\"SchemeTracks\":\"%Track.Artist% - %Track.Title% %Track.Begin%\",\"SchemeFooter\":\"\",\"Filename\":\"YouTube.txt\"},{\"Name\":\"Mixcloud\",\"SchemeHead\":\"\",\"SchemeTracks\":\"%Track.Artist% - %Track.Title% %Track.Begin%\",\"SchemeFooter\":\"\",\"Filename\":\"Mixcloud.txt\"},{\"Name\":\"CSV Export\",\"SchemeHead\":\"%Cuesheet.Artist%;%Cuesheet.Title%;\",\"SchemeTracks\":\"%Track.Position%;%Track.Artist%;%Track.Title%;%Track.Begin%;%Track.End%;%Track.Length%\",\"SchemeFooter\":\"Exported at %DateTime% using AudioCuesheetEditor (https://neocodermatrix86.github.io/AudioCuesheetEditor/)\",\"Filename\":\"Export.csv\"},{\"Name\":\"Tracks only\",\"SchemeHead\":\"\",\"SchemeTracks\":\"%Track.Position% - %Track.Artist% - %Track.Title% - %Track.Begin% - %Track.End% - %Track.Length%\",\"SchemeFooter\":\"\",\"Filename\":\"Tracks.txt\"}]}";
+        var options = JsonSerializer.Deserialize<ExportOptions>(optionsJson);
+        Assert.IsNotNull(options);
+        Assert.HasCount(4, options.ExportProfiles);
     }
 }

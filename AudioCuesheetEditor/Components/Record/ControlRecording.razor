@@ -1,0 +1,179 @@
+<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<ControlRecording> _localizer
+@inject IDialogManager _dialogManager
+@inject ISessionStateContainer _sessionStateContainer
+@inject ICuesheetManager _cuesheetManager
+
+@if (Cuesheet.IsRecording == false)
+{
+    if (String.IsNullOrEmpty(_errorMessage) == false)
+    {
+        <MudAlert Severity="Severity.Warning" Variant="Variant.Filled">
+            <MudText Typo="Typo.h4">@_localizer["Record not possible"]</MudText>
+            <MudText>@_localizer[_errorMessage]</MudText>
+        </MudAlert>
+    }
+}
+@if (Cuesheet.IsRecording == true)
+{
+    <MudAlert Severity="Severity.Info" Variant="Variant.Filled" ContentAlignment="HorizontalAlignment.Center">@_localizer["Recording!"]</MudAlert>
+    <br />
+}
+@if (_startRecordTimer?.Enabled == true)
+{
+    <MudAlert Severity="Severity.Warning" Variant="Variant.Filled" ContentAlignment="HorizontalAlignment.Center" ShowCloseIcon CloseIcon="@Icons.Material.Outlined.TimerOff" CloseIconClicked="() => _startRecordTimer.Dispose()">
+        @_localizer["Record will start in {0} seconds!", ((_startRecordTimer.Interval / 1000) - (DateTime.Now - _recordTimerStarted).Seconds)]
+    </MudAlert>
+    <br />
+}
+<MudStack Row AlignItems="AlignItems.Baseline" Justify="Justify.SpaceBetween">
+    <MudButtonGroup Color="Color.Primary" Variant="Variant.Filled">
+        <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert>
+            <MudButton StartIcon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecording" aria-label="@_localizer["Start recording"]">@_localizer["Start recording"]</MudButton>
+        </MudHidden>
+        <MudHidden Breakpoint="Breakpoint.SmAndUp">
+            <MudIconButton Icon="@Icons.Material.Outlined.Mic" Disabled="StartRecordingDisabled" OnClick="StartRecording" aria-label="@_localizer["Start recording"]" />
+        </MudHidden>
+        <MudMenu Icon="@Icons.Material.Outlined.ArrowRight" Disabled="StartRecordingDisabled" AnchorOrigin="Origin.TopRight">
+            <MudMenuItem Disabled="StartRecordingDisabled" OnClick="DisplayStartCountdownDialog">@_localizer["Enter countdown timer"]</MudMenuItem>
+        </MudMenu>
+    </MudButtonGroup>
+    @if ((Cuesheet.IsRecording) && (Cuesheet.RecordingStart.HasValue))
+    {
+        var recordingTime = DateTime.UtcNow - Cuesheet.RecordingStart;
+        recordingTime = recordingTime.Value.Subtract(new TimeSpan(0, 0, 0, 0, recordingTime.Value.Milliseconds));
+        <MudText Typo="Typo.h5">@recordingTime</MudText>
+    }
+    else
+    {
+        <MudText Typo="Typo.h5">@String.Format("--{0}--{1}--", CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator, CultureInfo.CurrentCulture.DateTimeFormat.TimeSeparator)</MudText>
+    }
+    <MudHidden Breakpoint="Breakpoint.SmAndUp" Invert>
+        <MudButton Color="Color.Warning" Variant="Variant.Filled" StartIcon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet.IsRecording == false" OnClick="StopRecording" aria-label="@_localizer["Stop recording"]">@_localizer["Stop recording"]</MudButton>
+    </MudHidden>
+    <MudHidden Breakpoint="Breakpoint.SmAndUp">
+        <MudIconButton Color="Color.Warning" Variant="Variant.Filled" Icon="@Icons.Material.Outlined.Stop" Disabled="Cuesheet.IsRecording == false" OnClick="StopRecording" aria-label="@_localizer["Stop recording"]" />
+    </MudHidden>
+</MudStack>
+
+@code {
+    Timer _updateGUITimer = new(500);
+    Timer? _startRecordTimer;
+    DateTime _recordTimerStarted;
+    string? _errorMessage = null;
+
+    public Cuesheet Cuesheet => _sessionStateContainer.Cuesheet;
+
+    [CascadingParameter]
+    public ViewMode CurrentViewMode { get; set; }
+
+    [Parameter]
+    [EditorRequired]
+    public Audiofile RecordingAudiofile { get; set; }
+
+    public Boolean StartRecordingDisabled => _startRecordTimer?.Enabled == true || _cuesheetManager.IsRecordingPossible.IsSuccess == false || RecordingAudiofile == null;
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        _updateGUITimer.AutoReset = true;
+        _updateGUITimer.Elapsed += UpdateGUITimer_Elapsed;
+        _cuesheetManager.IsRecordingChanged += CuesheetManager_IsRecordingChanged;
+        var result = _cuesheetManager.IsRecordingPossible;
+        if (result.IsSuccess == false)
+        {
+            _errorMessage = result.FailureDetails!.Message;
+        }
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        _updateGUITimer.Elapsed -= UpdateGUITimer_Elapsed;
+        _cuesheetManager.IsRecordingChanged -= CuesheetManager_IsRecordingChanged;
+        _updateGUITimer.Dispose();
+    }
+
+    void UpdateGUITimer_Elapsed(object? sender, ElapsedEventArgs e)
+    {
+        StateHasChanged();
+        Boolean startRecordTimeEnabled = false;
+        if (_startRecordTimer != null)
+        {
+            startRecordTimeEnabled = _startRecordTimer.Enabled;
+        }
+        if ((startRecordTimeEnabled == false) && (Cuesheet.IsRecording == false))
+        {
+            _updateGUITimer.Stop();
+        }
+    }
+
+    void StartRecording()
+    {
+        var result = _cuesheetManager.StartRecording();
+        if (result.IsSuccess)
+        {
+            _updateGUITimer.Start();
+        }
+        else
+        {
+            _errorMessage = result.FailureDetails!.Message;
+        }
+    }
+
+    void StopRecording() 
+    {
+        _cuesheetManager.StopRecording();
+    }
+
+    async Task DisplayStartCountdownDialog()
+    {
+        var recordOptions = await LocalStorageOptionsProvider.GetOptionsAsync<RecordOptions>();
+        var result = await _dialogManager.ShowInputDialogAsync<uint>(@_localizer["Start record countdown timer"], @_localizer["Seconds till record starts"], @_localizer["Record countdown in sconds"], recordOptions.RecordCountdownTimer, @_localizer["Start countdown"], @Icons.Material.Outlined.Timer);
+        if (result.IsSuccess)
+        {
+            await LocalStorageOptionsProvider.SaveOptionsValueAsync<RecordOptions>(x => x.RecordCountdownTimer, result.Value);
+            _startRecordTimer = new Timer(result.Value * 1000);
+            _startRecordTimer.Elapsed += delegate
+            {
+                StartRecording();
+                _startRecordTimer.Stop();
+                _startRecordTimer.Dispose();
+            };
+            _startRecordTimer.Start();
+            _updateGUITimer.Start();
+            _recordTimerStarted = DateTime.Now;
+        }
+    }
+
+    void CuesheetManager_IsRecordingChanged(object? sender, EventArgs e)
+    {
+        var result = _cuesheetManager.IsRecordingPossible;
+        if (result.IsSuccess == false)
+        {
+            _errorMessage = result.FailureDetails!.Message;
+        }
+        else
+        {
+            _errorMessage = null;
+        }
+    }
+}

@@ -13,17 +13,16 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
-namespace AudioCuesheetEditor.Services.IO
+namespace AudioCuesheetEditor.Services.IO;
+
+/// <summary>
+/// Service for importing audio files and matching them to the cuesheet.
+/// </summary>
+public interface IAudioImportService
 {
     /// <summary>
-    /// Service for importing audio files and matching them to the cuesheet.
+    /// Maps the import audio from session state to the active cuesheet. If mapping is not possible automatically the user gets a dialog.
     /// </summary>
-    public interface IAudioImportService
-    {
-        /// <summary>
-        /// Maps the import audio from session state to the active cuesheet. If mapping is not possible automatically the user gets a dialog.
-        /// </summary>
-        /// <returns></returns>
-        Task<Boolean> MapAudioImportAsync();
-    }
+    /// <returns></returns>
+    Task<bool> MapAudioImportAsync();
 }

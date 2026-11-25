@@ -17,88 +17,87 @@ using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using System.Linq.Expressions;
 
-namespace AudioCuesheetEditor.Services.AudioCuesheet
+namespace AudioCuesheetEditor.Services.AudioCuesheet;
+
+/// <summary>
+/// Manager for cuesheet interactions
+/// </summary>
+public interface ICuesheetManager
 {
     /// <summary>
-    /// Manager for cuesheet interactions
+    /// Event propagated when recording on a cuesheet changes
     /// </summary>
-    public interface ICuesheetManager
-    {
-        /// <summary>
-        /// Event propagated when recording on a cuesheet changes
-        /// </summary>
-        public event EventHandler? IsRecordingChanged;
-        /// <summary>
-        /// Set property for cuesheet
-        /// </summary>
-        /// <typeparam name="TProperty"></typeparam>
-        /// <param name="propertyExpression"></param>
-        /// <param name="value"></param>
-        void SetProperty<TProperty>(Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value);
-        /// <summary>
-        /// Checks if recording for the cuesheet is possible
-        /// </summary>
-        /// <returns></returns>
-        Result IsRecordingPossible { get; }
-        /// <summary>
-        /// Starts recording on cuesheet
-        /// </summary>
-        /// <returns></returns>
-        Result StartRecording();
-        /// <summary>
-        /// Stop recording on cuesheet
-        /// </summary>
-        /// <returns></returns>
-        void StopRecording();
-        /// <summary>
-        /// Determines if moving tracks up is possible
-        /// </summary>
-        /// <param name="selectedTracks"></param>
-        /// <returns></returns>
-        Boolean IsMoveUpPossible(HashSet<Track> selectedTracks);
-        /// <summary>
-        /// Determines if moving audiofiles up is possible
-        /// </summary>
-        /// <param name="selectedAudiofiles"></param>
-        /// <returns></returns>
-        Boolean IsMoveUpPossible(HashSet<Audiofile> selectedAudiofiles);
-        /// <summary>
-        /// Determines if moving tracks down is possible
-        /// </summary>
-        /// <param name="selectedTracks"></param>
-        /// <returns></returns>
-        Boolean IsMoveDownPossible(HashSet<Track> selectedTracks);
-        /// <summary>
-        /// Determines if moving audiofiles down is possible
-        /// </summary>
-        /// <param name="selectedTracks"></param>
-        /// <returns></returns>
-        Boolean IsMoveDownPossible(HashSet<Audiofile> selectedAudiofiles);
-        /// <summary>
-        /// Moves selected tracks up
-        /// </summary>
-        /// <param name="selectedTracks"></param>
-        /// <param name="positions"></param>
-        /// <returns></returns>
-        Result MoveUp(HashSet<Track> selectedTracks, uint positions = 1);
-        /// <summary>
-        /// Moves selected audiofiles up
-        /// </summary>
-        /// <param name="selectedAudiofiles"></param>
-        /// <returns></returns>
-        Result MoveUp(HashSet<Audiofile> selectedAudiofiles);
-        /// <summary>
-        /// Moves selected tracks down
-        /// </summary>
-        /// <param name="selectedTracks"></param>
-        /// <param name="positions"></param>
-        /// <returns></returns>
-        Result MoveDown(HashSet<Track> selectedTracks, uint positions = 1);
-        /// <summary>
-        /// Moves selected audiofiles down
-        /// </summary>
-        /// <param name="selectedAudiofiles"></param>
-        /// <returns></returns>
-        Result MoveDown(HashSet<Audiofile> selectedAudiofiles);
-    }
+    event EventHandler? IsRecordingChanged;
+    /// <summary>
+    /// Set property for cuesheet
+    /// </summary>
+    /// <typeparam name="TProperty"></typeparam>
+    /// <param name="propertyExpression"></param>
+    /// <param name="value"></param>
+    void SetProperty<TProperty>(Expression<Func<Cuesheet, TProperty>> propertyExpression, TProperty value);
+    /// <summary>
+    /// Checks if recording for the cuesheet is possible
+    /// </summary>
+    /// <returns></returns>
+    Result IsRecordingPossible { get; }
+    /// <summary>
+    /// Starts recording on cuesheet
+    /// </summary>
+    /// <returns></returns>
+    Result StartRecording();
+    /// <summary>
+    /// Stop recording on cuesheet
+    /// </summary>
+    /// <returns></returns>
+    void StopRecording();
+    /// <summary>
+    /// Determines if moving tracks up is possible
+    /// </summary>
+    /// <param name="selectedTracks"></param>
+    /// <returns></returns>
+    bool IsMoveUpPossible(HashSet<Track> selectedTracks);
+    /// <summary>
+    /// Determines if moving audiofiles up is possible
+    /// </summary>
+    /// <param name="selectedAudiofiles"></param>
+    /// <returns></returns>
+    bool IsMoveUpPossible(HashSet<Audiofile> selectedAudiofiles);
+    /// <summary>
+    /// Determines if moving tracks down is possible
+    /// </summary>
+    /// <param name="selectedTracks"></param>
+    /// <returns></returns>
+    bool IsMoveDownPossible(HashSet<Track> selectedTracks);
+    /// <summary>
+    /// Determines if moving audiofiles down is possible
+    /// </summary>
+    /// <param name="selectedTracks"></param>
+    /// <returns></returns>
+    bool IsMoveDownPossible(HashSet<Audiofile> selectedAudiofiles);
+    /// <summary>
+    /// Moves selected tracks up
+    /// </summary>
+    /// <param name="selectedTracks"></param>
+    /// <param name="positions"></param>
+    /// <returns></returns>
+    Result MoveUp(HashSet<Track> selectedTracks, uint positions = 1);
+    /// <summary>
+    /// Moves selected audiofiles up
+    /// </summary>
+    /// <param name="selectedAudiofiles"></param>
+    /// <returns></returns>
+    Result MoveUp(HashSet<Audiofile> selectedAudiofiles);
+    /// <summary>
+    /// Moves selected tracks down
+    /// </summary>
+    /// <param name="selectedTracks"></param>
+    /// <param name="positions"></param>
+    /// <returns></returns>
+    Result MoveDown(HashSet<Track> selectedTracks, uint positions = 1);
+    /// <summary>
+    /// Moves selected audiofiles down
+    /// </summary>
+    /// <param name="selectedAudiofiles"></param>
+    /// <returns></returns>
+    Result MoveDown(HashSet<Audiofile> selectedAudiofiles);
 }

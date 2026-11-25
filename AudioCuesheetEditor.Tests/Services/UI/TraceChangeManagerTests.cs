@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -16,388 +16,391 @@
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Services.UI;
-using AudioCuesheetEditor.Tests.Utility;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using Microsoft.Extensions.Logging;
+using Moq;
 
-namespace AudioCuesheetEditor.Tests.Services.UI
+namespace AudioCuesheetEditor.Tests.Services.UI;
+
+[TestClass()]
+public class TraceChangeManagerTests
 {
-    [TestClass()]
-    public class TraceChangeManagerTests
+    readonly Mock<ILogger<TraceChangeManager>> _logger = new();
+
+    readonly TraceChangeManager _traceChangeManager;
+
+    public TraceChangeManagerTests()
     {
-        private readonly TraceChangeManager _traceChangeManager = new(TestHelper.CreateLogger<TraceChangeManager>());
+        _traceChangeManager = new(_logger.Object);
+    }
 
-        [TestMethod()]
-        public void AddChange_SingleChange_EnablesUndo()
+    [TestMethod()]
+    public void AddChange_SingleChange_EnablesUndo()
+    {
+        // Arrange
+        var cuesheet = new Cuesheet
         {
-            // Arrange
-            var cuesheet = new Cuesheet
-            {
-                Artist = "Test Artist 1"
-            };
-            var tracedObjectHistoryChangedFired = false;
-            _traceChangeManager.TracedObjectHistoryChanged += delegate
-            {
-                tracedObjectHistoryChangedFired = true;
-            };
-            // Act
-            _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Artist))));
-            // Assert
-            Assert.IsTrue(_traceChangeManager.CanUndo);
-            Assert.IsFalse(_traceChangeManager.CanRedo);
-            Assert.IsTrue(tracedObjectHistoryChangedFired);
-        }
-
-        [TestMethod()]
-        public void AddChange_BulkChange_EnablesUndo()
+            Artist = "Test Artist 1"
+        };
+        var tracedObjectHistoryChangedFired = false;
+        _traceChangeManager.TracedObjectHistoryChanged += delegate
         {
-            // Arrange
-            var cuesheet = new Cuesheet
-            {
-                Artist = "Test Artist 1",
-                Title = "Test Title 1",
-                Cataloguenumber = "1234567890"
-            };
-            var tracedObjectHistoryChangedFired = false;
-            _traceChangeManager.TracedObjectHistoryChanged += delegate
-            {
-                tracedObjectHistoryChangedFired = true;
-            };
-            _traceChangeManager.BulkEdit = true;
-            _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Artist))));
-            _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Title))));
-            _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Cataloguenumber))));
-            // Act
-            _traceChangeManager.BulkEdit = false;
-            // Assert
-            Assert.IsTrue(_traceChangeManager.CanUndo);
-            Assert.IsFalse(_traceChangeManager.CanRedo);
-            Assert.IsTrue(tracedObjectHistoryChangedFired);
-        }
+            tracedObjectHistoryChangedFired = true;
+        };
+        // Act
+        _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Artist))));
+        // Assert
+        Assert.IsTrue(_traceChangeManager.CanUndo);
+        Assert.IsFalse(_traceChangeManager.CanRedo);
+        Assert.IsTrue(tracedObjectHistoryChangedFired);
+    }
 
-        [TestMethod()]
-        public void BulkEdit_WithoutChange_DoesntAddChange()
+    [TestMethod()]
+    public void AddChange_BulkChange_EnablesUndo()
+    {
+        // Arrange
+        var cuesheet = new Cuesheet
         {
-            // Arrange
-            _traceChangeManager.BulkEdit = true;
-            // Act
-            _traceChangeManager.BulkEdit = false;
-            // Assert
-            Assert.IsFalse(_traceChangeManager.CanUndo);
-        }
-
-        [TestMethod()]
-        public void BulkEdit_AlreadyEnabledBulkEdit_DoesntDropPreviousEdits()
+            Artist = "Test Artist 1",
+            Title = "Test Title 1",
+            Cataloguenumber = "1234567890"
+        };
+        var tracedObjectHistoryChangedFired = false;
+        _traceChangeManager.TracedObjectHistoryChanged += delegate
         {
-            // Arrange
-            var cuesheet = new Cuesheet
-            {
-                Artist = "Test Artist 1",
-                Title = "Test Title 1",
-                Cataloguenumber = "1234567890"
-            };
-            _traceChangeManager.BulkEdit = true;
-            _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Artist))));
-            _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Title))));
-            _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Cataloguenumber))));
-            _traceChangeManager.BulkEdit = true;
-            _traceChangeManager.BulkEdit = false;
-            // Act
-            _traceChangeManager.Undo();
-            // Assert
-            Assert.IsNull(cuesheet.Artist);
-            Assert.IsNull(cuesheet.Title);
-            Assert.IsNull(cuesheet.Cataloguenumber);
-            Assert.IsTrue(_traceChangeManager.CanRedo);
-        }
+            tracedObjectHistoryChangedFired = true;
+        };
+        _traceChangeManager.BulkEdit = true;
+        _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Artist))));
+        _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Title))));
+        _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Cataloguenumber))));
+        // Act
+        _traceChangeManager.BulkEdit = false;
+        // Assert
+        Assert.IsTrue(_traceChangeManager.CanUndo);
+        Assert.IsFalse(_traceChangeManager.CanRedo);
+        Assert.IsTrue(tracedObjectHistoryChangedFired);
+    }
 
+    [TestMethod()]
+    public void BulkEdit_WithoutChange_DoesntAddChange()
+    {
+        // Arrange
+        _traceChangeManager.BulkEdit = true;
+        // Act
+        _traceChangeManager.BulkEdit = false;
+        // Assert
+        Assert.IsFalse(_traceChangeManager.CanUndo);
+    }
 
-        [TestMethod()]
-        public void BulkEditFalse_AfterBulkEditAndUndo_ResetsRedoStack()
+    [TestMethod()]
+    public void BulkEdit_AlreadyEnabledBulkEdit_DoesntDropPreviousEdits()
+    {
+        // Arrange
+        var cuesheet = new Cuesheet
         {
-            // Arrange
-            var audiofile = new Audiofile();
-            var track1 = new Track();
-            var track2 = new Track();
-            var track3 = new Track();
-            _traceChangeManager.BulkEdit = true;
-            _traceChangeManager.AddChange(new(audiofile, new(new List<Track>() { track1 }, nameof(Audiofile.Tracks))));
-            track1.Audiofile = audiofile;
-            _traceChangeManager.BulkEdit = false;
-            _traceChangeManager.BulkEdit = true;
-            _traceChangeManager.AddChange(new(audiofile, new(new List<Track>() { track1, track2 }, nameof(Audiofile.Tracks))));
-            track1.Audiofile = audiofile;
-            track2.Audiofile = audiofile;
-            _traceChangeManager.BulkEdit = false;
-            _traceChangeManager.Undo();
-            _traceChangeManager.BulkEdit = true;
-            _traceChangeManager.AddChange(new(audiofile, new(new List<Track>() { track1, track2, track3 }, nameof(Audiofile.Tracks))));
-            track1.Audiofile = audiofile;
-            track2.Audiofile = audiofile;
-            track3.Audiofile = audiofile;
-            _traceChangeManager.BulkEdit = false;
-            _traceChangeManager.BulkEdit = true;
-            _traceChangeManager.AddChange(new(track2, new("Testartist", nameof(Track.Artist))));
-            // Act
-            _traceChangeManager.BulkEdit = false;
-            // Assert
-            Assert.IsTrue(_traceChangeManager.CanUndo);
-            Assert.IsFalse(_traceChangeManager.CanRedo);
-        }
+            Artist = "Test Artist 1",
+            Title = "Test Title 1",
+            Cataloguenumber = "1234567890"
+        };
+        _traceChangeManager.BulkEdit = true;
+        _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Artist))));
+        _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Title))));
+        _traceChangeManager.AddChange(new(cuesheet, new(null, nameof(Cuesheet.Cataloguenumber))));
+        _traceChangeManager.BulkEdit = true;
+        _traceChangeManager.BulkEdit = false;
+        // Act
+        _traceChangeManager.Undo();
+        // Assert
+        Assert.IsNull(cuesheet.Artist);
+        Assert.IsNull(cuesheet.Title);
+        Assert.IsNull(cuesheet.Cataloguenumber);
+        Assert.IsTrue(_traceChangeManager.CanRedo);
+    }
 
-        [TestMethod()]
-        public void Undo_SingleChange_UndoesChange()
-        {
-            // Arrange
-            var track = new Track
-            {
-                Position = 3
-            };
-            var undoDoneEventFired = false;
-            _traceChangeManager.UndoDone += delegate
-            {
-                undoDoneEventFired = true;
-            };
-            _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Position))));
-            // Act
-            _traceChangeManager.Undo();
-            // Assert
-            Assert.IsNull(track.Position);
-            Assert.IsTrue(undoDoneEventFired);
-            Assert.IsFalse(_traceChangeManager.CanUndo);
-            Assert.IsTrue(_traceChangeManager.CanRedo);
-        }
 
-        [TestMethod()]
-        public void Undo_BulkChange_UndoesChanges()
-        {
-            // Arrange
-            var track = new Track
-            {
-                Position = 3,
-                Artist = "Artist"
-            };
-            var undoDoneEventFired = false;
-            _traceChangeManager.UndoDone += delegate
-            {
-                undoDoneEventFired = true;
-            };
-            _traceChangeManager.BulkEdit = true;
-            _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Position))));
-            _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Artist))));
-            _traceChangeManager.BulkEdit = false;
-            // Act
-            _traceChangeManager.Undo();
-            // Assert
-            Assert.IsNull(track.Position);
-            Assert.IsNull(track.Artist);
-            Assert.IsTrue(undoDoneEventFired);
-            Assert.IsFalse(_traceChangeManager.CanUndo);
-            Assert.IsTrue(_traceChangeManager.CanRedo);
-        }
+    [TestMethod()]
+    public void BulkEditFalse_AfterBulkEditAndUndo_ResetsRedoStack()
+    {
+        // Arrange
+        var audiofile = new Audiofile();
+        var track1 = new Track();
+        var track2 = new Track();
+        var track3 = new Track();
+        _traceChangeManager.BulkEdit = true;
+        _traceChangeManager.AddChange(new(audiofile, new(new List<Track>() { track1 }, nameof(Audiofile.Tracks))));
+        track1.Audiofile = audiofile;
+        _traceChangeManager.BulkEdit = false;
+        _traceChangeManager.BulkEdit = true;
+        _traceChangeManager.AddChange(new(audiofile, new(new List<Track>() { track1, track2 }, nameof(Audiofile.Tracks))));
+        track1.Audiofile = audiofile;
+        track2.Audiofile = audiofile;
+        _traceChangeManager.BulkEdit = false;
+        _traceChangeManager.Undo();
+        _traceChangeManager.BulkEdit = true;
+        _traceChangeManager.AddChange(new(audiofile, new(new List<Track>() { track1, track2, track3 }, nameof(Audiofile.Tracks))));
+        track1.Audiofile = audiofile;
+        track2.Audiofile = audiofile;
+        track3.Audiofile = audiofile;
+        _traceChangeManager.BulkEdit = false;
+        _traceChangeManager.BulkEdit = true;
+        _traceChangeManager.AddChange(new(track2, new("Testartist", nameof(Track.Artist))));
+        // Act
+        _traceChangeManager.BulkEdit = false;
+        // Assert
+        Assert.IsTrue(_traceChangeManager.CanUndo);
+        Assert.IsFalse(_traceChangeManager.CanRedo);
+    }
 
-        [TestMethod()]
-        public void Redo_SingleChange_UndoesChange()
+    [TestMethod()]
+    public void Undo_SingleChange_UndoesChange()
+    {
+        // Arrange
+        var track = new Track
         {
-            // Arrange
-            var track = new Track
-            {
-                Position = 3
-            };
-            var redoDoneEventFired = false;
-            _traceChangeManager.RedoDone += delegate
-            {
-                redoDoneEventFired = true;
-            };
-            _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Position))));
-            _traceChangeManager.Undo();
-            // Act
-            _traceChangeManager.Redo();
-            // Assert
-            Assert.AreEqual((ushort)3, track.Position);
-            Assert.IsTrue(redoDoneEventFired);
-            Assert.IsTrue(_traceChangeManager.CanUndo);
-            Assert.IsFalse(_traceChangeManager.CanRedo);
-        }
+            Position = 3
+        };
+        var undoDoneEventFired = false;
+        _traceChangeManager.UndoDone += delegate
+        {
+            undoDoneEventFired = true;
+        };
+        _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Position))));
+        // Act
+        _traceChangeManager.Undo();
+        // Assert
+        Assert.IsNull(track.Position);
+        Assert.IsTrue(undoDoneEventFired);
+        Assert.IsFalse(_traceChangeManager.CanUndo);
+        Assert.IsTrue(_traceChangeManager.CanRedo);
+    }
 
-        [TestMethod()]
-        public void Redo_BulkChange_UndoesChanges()
+    [TestMethod()]
+    public void Undo_BulkChange_UndoesChanges()
+    {
+        // Arrange
+        var track = new Track
         {
-            // Arrange
-            var track = new Track
-            {
-                Position = 3,
-                Artist = "Artist"
-            };
-            var redoDoneEventFired = false;
-            _traceChangeManager.RedoDone += delegate
-            {
-                redoDoneEventFired = true;
-            };
-            _traceChangeManager.BulkEdit = true;
-            _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Position))));
-            _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Artist))));
-            _traceChangeManager.BulkEdit = false;
-            _traceChangeManager.Undo();
-            // Act
-            _traceChangeManager.Redo();
-            // Assert
-            Assert.AreEqual((ushort)3, track.Position);
-            Assert.AreEqual("Artist", track.Artist);
-            Assert.IsTrue(redoDoneEventFired);
-            Assert.IsTrue(_traceChangeManager.CanUndo);
-            Assert.IsFalse(_traceChangeManager.CanRedo);
-        }
+            Position = 3,
+            Artist = "Artist"
+        };
+        var undoDoneEventFired = false;
+        _traceChangeManager.UndoDone += delegate
+        {
+            undoDoneEventFired = true;
+        };
+        _traceChangeManager.BulkEdit = true;
+        _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Position))));
+        _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Artist))));
+        _traceChangeManager.BulkEdit = false;
+        // Act
+        _traceChangeManager.Undo();
+        // Assert
+        Assert.IsNull(track.Position);
+        Assert.IsNull(track.Artist);
+        Assert.IsTrue(undoDoneEventFired);
+        Assert.IsFalse(_traceChangeManager.CanUndo);
+        Assert.IsTrue(_traceChangeManager.CanRedo);
+    }
 
-        [TestMethod]
-        public void Undo_ObjectReferences_UndoesChanges()
+    [TestMethod()]
+    public void Redo_SingleChange_UndoesChange()
+    {
+        // Arrange
+        var track = new Track
         {
-            // Arrange
-            var cuesheet = new Cuesheet()
-            {
-                Audiofiles = [
-                    new() {
-                        Tracks = [new()]
-                    }
-                ]
-            };
-            var undoDoneEventFired = false;
-            _traceChangeManager.UndoDone += delegate
-            {
-                undoDoneEventFired = true;
-            };
-            _traceChangeManager.AddChange(new(cuesheet.Audiofiles.First(), new(Enumerable.Empty<Track>(), nameof(Audiofile.Tracks))));
-            // Act
-            _traceChangeManager.Undo();
-            // Assert
-            Assert.IsEmpty(cuesheet.Audiofiles.First().Tracks);
-            Assert.IsFalse(_traceChangeManager.CanUndo);
-            Assert.IsTrue(_traceChangeManager.CanRedo);
-            Assert.IsTrue(undoDoneEventFired);
-        }
+            Position = 3
+        };
+        var redoDoneEventFired = false;
+        _traceChangeManager.RedoDone += delegate
+        {
+            redoDoneEventFired = true;
+        };
+        _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Position))));
+        _traceChangeManager.Undo();
+        // Act
+        _traceChangeManager.Redo();
+        // Assert
+        Assert.AreEqual((ushort)3, track.Position);
+        Assert.IsTrue(redoDoneEventFired);
+        Assert.IsTrue(_traceChangeManager.CanUndo);
+        Assert.IsFalse(_traceChangeManager.CanRedo);
+    }
 
-        [TestMethod]
-        public void Redo_ObjectReferences_UndoesChanges()
+    [TestMethod()]
+    public void Redo_BulkChange_UndoesChanges()
+    {
+        // Arrange
+        var track = new Track
         {
-            // Arrange
-            var cuesheet = new Cuesheet()
-            {
-                Audiofiles = [
-                    new() {
-                        Tracks = [new()]
-                    }
-                ]
-            };
-            var redoDoneEventFired = false;
-            _traceChangeManager.RedoDone += delegate
-            {
-                redoDoneEventFired = true;
-            };
-            _traceChangeManager.AddChange(new(cuesheet.Audiofiles.First(), new(Enumerable.Empty<Track>(), nameof(Audiofile.Tracks))));
-            _traceChangeManager.Undo();
-            // Act
-            _traceChangeManager.Redo();
-            // Assert
-            Assert.HasCount(1, cuesheet.Audiofiles.First().Tracks);
-            Assert.IsTrue(_traceChangeManager.CanUndo);
-            Assert.IsFalse(_traceChangeManager.CanRedo);
-            Assert.IsTrue(redoDoneEventFired);
-        }
+            Position = 3,
+            Artist = "Artist"
+        };
+        var redoDoneEventFired = false;
+        _traceChangeManager.RedoDone += delegate
+        {
+            redoDoneEventFired = true;
+        };
+        _traceChangeManager.BulkEdit = true;
+        _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Position))));
+        _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Artist))));
+        _traceChangeManager.BulkEdit = false;
+        _traceChangeManager.Undo();
+        // Act
+        _traceChangeManager.Redo();
+        // Assert
+        Assert.AreEqual((ushort)3, track.Position);
+        Assert.AreEqual("Artist", track.Artist);
+        Assert.IsTrue(redoDoneEventFired);
+        Assert.IsTrue(_traceChangeManager.CanUndo);
+        Assert.IsFalse(_traceChangeManager.CanRedo);
+    }
 
-        [TestMethod]
-        public void Reset_HasChanges_ResetsAllChanges()
+    [TestMethod]
+    public void Undo_ObjectReferences_UndoesChanges()
+    {
+        // Arrange
+        var cuesheet = new Cuesheet()
         {
-            // Arrange
-            var track = new Track()
-            {
-                Artist = "Track 1 Artist",
-                Title = "Track 1 Title",
-                End = new TimeSpan(0, 2, 30)
-            };
-            var cuesheet = new Cuesheet()
-            {
-                Audiofiles = [
-                    new() {
-                        Tracks = [track],
-                    }
-                ]
-            };
-            _traceChangeManager.AddChange(new(cuesheet.Audiofiles.First(), new(Enumerable.Empty<Track>(), nameof(Audiofile.Tracks))));
-            _traceChangeManager.AddChange(new(track, new(null, nameof(Track.End))));
-            _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Title))));
-            _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Artist))));
-            _traceChangeManager.Undo();
-            // Act
-            _traceChangeManager.Reset();
-            // Assert
-            Assert.IsFalse(_traceChangeManager.CanUndo);
-            Assert.IsFalse(_traceChangeManager.CanRedo);
-        }
+            Audiofiles = [
+                new() {
+                    Tracks = [new()]
+                }
+            ]
+        };
+        var undoDoneEventFired = false;
+        _traceChangeManager.UndoDone += delegate
+        {
+            undoDoneEventFired = true;
+        };
+        _traceChangeManager.AddChange(new(cuesheet.Audiofiles.First(), new(Enumerable.Empty<Track>(), nameof(Audiofile.Tracks))));
+        // Act
+        _traceChangeManager.Undo();
+        // Assert
+        Assert.IsEmpty(cuesheet.Audiofiles.First().Tracks);
+        Assert.IsFalse(_traceChangeManager.CanUndo);
+        Assert.IsTrue(_traceChangeManager.CanRedo);
+        Assert.IsTrue(undoDoneEventFired);
+    }
 
-        [TestMethod()]
-        public void RemoveTracedChanges_RemovesChanges_WhenChangesAvailable()
+    [TestMethod]
+    public void Redo_ObjectReferences_UndoesChanges()
+    {
+        // Arrange
+        var cuesheet = new Cuesheet()
         {
-            // Arrange
-            var cuesheet1 = new Cuesheet()
-            {
-                Artist = "Test Artist Cuesheet 1",
-                Title = "Test Title Cuesheet 1"
-            };
-            var cuesheet2 = new Cuesheet()
-            {
-                CDTextfile = new("CD Testfile.cdt"),
-                Title = "Test Title Cuesheet 2"
-            };
-            _traceChangeManager.AddChange(new(cuesheet1, new(null, nameof(Cuesheet.Artist))));
-            _traceChangeManager.AddChange(new(cuesheet1, new(null, nameof(Cuesheet.Title))));
-            _traceChangeManager.AddChange(new(cuesheet2, new(null, nameof(Cuesheet.CDTextfile))));
-            _traceChangeManager.AddChange(new(cuesheet2, new(null, nameof(Cuesheet.Title))));
-            var tracedObjectHistoryChangedFired = false;
-            _traceChangeManager.TracedObjectHistoryChanged += delegate
-            {
-                tracedObjectHistoryChangedFired = true;
-            };
-            // Act
-            _traceChangeManager.RemoveTracedChanges([cuesheet1]);
-            // Assert
-            Assert.IsTrue(tracedObjectHistoryChangedFired);
-            Assert.IsTrue(_traceChangeManager.CanUndo);
-            _traceChangeManager.Undo();
-            _traceChangeManager.Undo();
-            Assert.IsFalse(_traceChangeManager.CanUndo);
-            Assert.IsNull(cuesheet2.CDTextfile);
-            Assert.IsNull(cuesheet2.Title);
-        }
+            Audiofiles = [
+                new() {
+                    Tracks = [new()]
+                }
+            ]
+        };
+        var redoDoneEventFired = false;
+        _traceChangeManager.RedoDone += delegate
+        {
+            redoDoneEventFired = true;
+        };
+        _traceChangeManager.AddChange(new(cuesheet.Audiofiles.First(), new(Enumerable.Empty<Track>(), nameof(Audiofile.Tracks))));
+        _traceChangeManager.Undo();
+        // Act
+        _traceChangeManager.Redo();
+        // Assert
+        Assert.HasCount(1, cuesheet.Audiofiles.First().Tracks);
+        Assert.IsTrue(_traceChangeManager.CanUndo);
+        Assert.IsFalse(_traceChangeManager.CanRedo);
+        Assert.IsTrue(redoDoneEventFired);
+    }
 
-        [TestMethod()]
-        public void RemoveTracedChanges_RemovesNoChanges_WhenNoChangesAvailable()
+    [TestMethod]
+    public void Reset_HasChanges_ResetsAllChanges()
+    {
+        // Arrange
+        var track = new Track()
         {
-            // Arrange
-            var cuesheet1 = new Cuesheet();
-            var cuesheet2 = new Cuesheet()
-            {
-                CDTextfile = new("CD Testfile.cdt"),
-                Title = "Test Title Cuesheet 2"
-            };
-            _traceChangeManager.AddChange(new(cuesheet2, new(null, nameof(Cuesheet.CDTextfile))));
-            _traceChangeManager.AddChange(new(cuesheet2, new(null, nameof(Cuesheet.Title))));
-            var tracedObjectHistoryChangedFired = false;
-            _traceChangeManager.TracedObjectHistoryChanged += delegate
-            {
-                tracedObjectHistoryChangedFired = true;
-            };
-            // Act
-            _traceChangeManager.RemoveTracedChanges([cuesheet1]);
-            // Assert
-            Assert.IsTrue(tracedObjectHistoryChangedFired);
-            Assert.IsTrue(_traceChangeManager.CanUndo);
-            _traceChangeManager.Undo();
-            _traceChangeManager.Undo();
-            Assert.IsFalse(_traceChangeManager.CanUndo);
-            Assert.IsNull(cuesheet2.CDTextfile);
-            Assert.IsNull(cuesheet2.Title);
-        }
+            Artist = "Track 1 Artist",
+            Title = "Track 1 Title",
+            Finish = new TimeSpan(0, 2, 30)
+        };
+        var cuesheet = new Cuesheet()
+        {
+            Audiofiles = [
+                new() {
+                    Tracks = [track],
+                }
+            ]
+        };
+        _traceChangeManager.AddChange(new(cuesheet.Audiofiles.First(), new(Enumerable.Empty<Track>(), nameof(Audiofile.Tracks))));
+        _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Finish))));
+        _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Title))));
+        _traceChangeManager.AddChange(new(track, new(null, nameof(Track.Artist))));
+        _traceChangeManager.Undo();
+        // Act
+        _traceChangeManager.Reset();
+        // Assert
+        Assert.IsFalse(_traceChangeManager.CanUndo);
+        Assert.IsFalse(_traceChangeManager.CanRedo);
+    }
+
+    [TestMethod()]
+    public void RemoveTracedChanges_RemovesChanges_WhenChangesAvailable()
+    {
+        // Arrange
+        var cuesheet1 = new Cuesheet()
+        {
+            Artist = "Test Artist Cuesheet 1",
+            Title = "Test Title Cuesheet 1"
+        };
+        var cuesheet2 = new Cuesheet()
+        {
+            CDTextfile = new("CD Testfile.cdt"),
+            Title = "Test Title Cuesheet 2"
+        };
+        _traceChangeManager.AddChange(new(cuesheet1, new(null, nameof(Cuesheet.Artist))));
+        _traceChangeManager.AddChange(new(cuesheet1, new(null, nameof(Cuesheet.Title))));
+        _traceChangeManager.AddChange(new(cuesheet2, new(null, nameof(Cuesheet.CDTextfile))));
+        _traceChangeManager.AddChange(new(cuesheet2, new(null, nameof(Cuesheet.Title))));
+        var tracedObjectHistoryChangedFired = false;
+        _traceChangeManager.TracedObjectHistoryChanged += delegate
+        {
+            tracedObjectHistoryChangedFired = true;
+        };
+        // Act
+        _traceChangeManager.RemoveTracedChanges([cuesheet1]);
+        // Assert
+        Assert.IsTrue(tracedObjectHistoryChangedFired);
+        Assert.IsTrue(_traceChangeManager.CanUndo);
+        _traceChangeManager.Undo();
+        _traceChangeManager.Undo();
+        Assert.IsFalse(_traceChangeManager.CanUndo);
+        Assert.IsNull(cuesheet2.CDTextfile);
+        Assert.IsNull(cuesheet2.Title);
+    }
+
+    [TestMethod()]
+    public void RemoveTracedChanges_RemovesNoChanges_WhenNoChangesAvailable()
+    {
+        // Arrange
+        var cuesheet1 = new Cuesheet();
+        var cuesheet2 = new Cuesheet()
+        {
+            CDTextfile = new("CD Testfile.cdt"),
+            Title = "Test Title Cuesheet 2"
+        };
+        _traceChangeManager.AddChange(new(cuesheet2, new(null, nameof(Cuesheet.CDTextfile))));
+        _traceChangeManager.AddChange(new(cuesheet2, new(null, nameof(Cuesheet.Title))));
+        var tracedObjectHistoryChangedFired = false;
+        _traceChangeManager.TracedObjectHistoryChanged += delegate
+        {
+            tracedObjectHistoryChangedFired = true;
+        };
+        // Act
+        _traceChangeManager.RemoveTracedChanges([cuesheet1]);
+        // Assert
+        Assert.IsTrue(tracedObjectHistoryChangedFired);
+        Assert.IsTrue(_traceChangeManager.CanUndo);
+        _traceChangeManager.Undo();
+        _traceChangeManager.Undo();
+        Assert.IsFalse(_traceChangeManager.CanUndo);
+        Assert.IsNull(cuesheet2.CDTextfile);
+        Assert.IsNull(cuesheet2.Title);
     }
 }

@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -19,100 +19,99 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AudioCuesheetEditor.Tests.Model.Entity
+namespace AudioCuesheetEditor.Tests.Model.Entity;
+
+[TestClass()]
+public class ValidationResultTests
 {
-    [TestClass()]
-    public class ValidationResultTests
+    [TestMethod]
+    public void Create_NoValidation_ReturnsExpectedResult()
     {
-        [TestMethod]
-        public void Create_NoValidation_ReturnsExpectedResult()
+        // Arrange & Act
+        var validationResult = ValidationResult.Create(ValidationStatus.NoValidation);
+
+        // Assert
+        Assert.AreEqual(ValidationStatus.NoValidation, validationResult.Status);
+        Assert.IsEmpty(validationResult.ValidationMessages);
+    }
+
+    [TestMethod]
+    public void Create_Success_ReturnsExpectedResult()
+    {
+        // Arrange & Act
+        var validationResult = ValidationResult.Create(ValidationStatus.Success);
+
+        // Assert
+        Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
+        Assert.IsEmpty(validationResult.ValidationMessages);
+    }
+
+    [TestMethod]
+    public void Create_Error_ReturnsExpectedResult()
+    {
+        // Arrange & Act
+        var validationResult = ValidationResult.Create(ValidationStatus.Error);
+
+        // Assert
+        Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+        Assert.IsEmpty(validationResult.ValidationMessages);
+    }
+
+    [TestMethod]
+    public void Create_SuccessWithMessages_ReturnsErrorStatus()
+    {
+        // Arrange
+        var validationMessages = new List<ValidationMessage> { new("Testmessage!") };
+
+        // Act
+        var validationResult = ValidationResult.Create(ValidationStatus.Success, validationMessages);
+
+        // Assert
+        Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+        CollectionAssert.AreEqual(validationMessages.ToList(), validationResult.ValidationMessages.ToList());
+    }
+
+    [TestMethod]
+    public void Create_NoValidationWithMessages_ReturnsErrorStatus()
+    {
+        // Arrange
+        var validationMessages = new List<ValidationMessage> { new("Testmessage!") };
+
+        // Act
+        var validationResult = ValidationResult.Create(ValidationStatus.NoValidation, validationMessages);
+
+        // Assert
+        Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+        CollectionAssert.AreEqual(validationMessages.ToList(), validationResult.ValidationMessages.ToList());
+    }
+
+    [TestMethod]
+    public void Default_Status_IsNoValidation()
+    {
+        // Arrange & Act
+        var validationResult = new ValidationResult();
+
+        // Assert
+        Assert.AreEqual(ValidationStatus.NoValidation, validationResult.Status);
+        Assert.IsEmpty(validationResult.ValidationMessages);
+    }
+
+    [TestMethod]
+    public void Setting_ValidationMessages_SetsStatusToError()
+    {
+        // Arrange
+        var validationResult = new ValidationResult();
+        var messages = new List<ValidationMessage>
         {
-            // Arrange & Act
-            var validationResult = ValidationResult.Create(ValidationStatus.NoValidation);
+            new("Unit Test error1"),
+            new("Unit Test error2")
+        };
 
-            // Assert
-            Assert.AreEqual(ValidationStatus.NoValidation, validationResult.Status);
-            Assert.IsEmpty(validationResult.ValidationMessages);
-        }
+        // Act
+        validationResult.ValidationMessages = messages;
 
-        [TestMethod]
-        public void Create_Success_ReturnsExpectedResult()
-        {
-            // Arrange & Act
-            var validationResult = ValidationResult.Create(ValidationStatus.Success);
-
-            // Assert
-            Assert.AreEqual(ValidationStatus.Success, validationResult.Status);
-            Assert.IsEmpty(validationResult.ValidationMessages);
-        }
-
-        [TestMethod]
-        public void Create_Error_ReturnsExpectedResult()
-        {
-            // Arrange & Act
-            var validationResult = ValidationResult.Create(ValidationStatus.Error);
-
-            // Assert
-            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
-            Assert.IsEmpty(validationResult.ValidationMessages);
-        }
-
-        [TestMethod]
-        public void Create_SuccessWithMessages_ReturnsErrorStatus()
-        {
-            // Arrange
-            var validationMessages = new List<ValidationMessage> { new("Testmessage!") };
-
-            // Act
-            var validationResult = ValidationResult.Create(ValidationStatus.Success, validationMessages);
-
-            // Assert
-            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
-            CollectionAssert.AreEqual(validationMessages.ToList(), validationResult.ValidationMessages.ToList());
-        }
-
-        [TestMethod]
-        public void Create_NoValidationWithMessages_ReturnsErrorStatus()
-        {
-            // Arrange
-            var validationMessages = new List<ValidationMessage> { new("Testmessage!") };
-
-            // Act
-            var validationResult = ValidationResult.Create(ValidationStatus.NoValidation, validationMessages);
-
-            // Assert
-            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
-            CollectionAssert.AreEqual(validationMessages.ToList(), validationResult.ValidationMessages.ToList());
-        }
-
-        [TestMethod]
-        public void Default_Status_IsNoValidation()
-        {
-            // Arrange & Act
-            var validationResult = new ValidationResult();
-
-            // Assert
-            Assert.AreEqual(ValidationStatus.NoValidation, validationResult.Status);
-            Assert.IsEmpty(validationResult.ValidationMessages);
-        }
-
-        [TestMethod]
-        public void Setting_ValidationMessages_SetsStatusToError()
-        {
-            // Arrange
-            var validationResult = new ValidationResult();
-            var messages = new List<ValidationMessage>
-            {
-                new("Unit Test error1"),
-                new("Unit Test error2")
-            };
-
-            // Act
-            validationResult.ValidationMessages = messages;
-
-            // Assert
-            CollectionAssert.AreEqual(messages.ToList(), validationResult.ValidationMessages.ToList());
-            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
-        }
+        // Assert
+        CollectionAssert.AreEqual(messages.ToList(), validationResult.ValidationMessages.ToList());
+        Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
     }
 }

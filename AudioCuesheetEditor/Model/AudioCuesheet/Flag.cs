@@ -16,55 +16,54 @@
 using AudioCuesheetEditor.Extensions;
 using System.Text.Json.Serialization;
 
-namespace AudioCuesheetEditor.Model.AudioCuesheet
+namespace AudioCuesheetEditor.Model.AudioCuesheet;
+
+[JsonConverter(typeof(FlagJsonConverter))]
+public class Flag
 {
-    [JsonConverter(typeof(FlagJsonConverter))]
-    public class Flag
+    /// <summary>
+    /// 4CH (Four channel audio)
+    /// </summary>
+    public static readonly Flag FourCH = new("4 channel audio (4CH)", "4CH");
+    /// <summary>
+    /// DCP (Digital copy permitted)
+    /// </summary>
+    public static readonly Flag DCP = new("Digital copy permitted (DCP)", "DCP");
+    /// <summary>
+    /// PRE (Pre-emphasis enabled)
+    /// </summary>
+    public static readonly Flag PRE = new("Pre-emphasis enabled (PRE)", "PRE");
+    /// <summary>
+    /// SCMS (Serial copy management system)
+    /// </summary>
+    public static readonly Flag SCMS = new("Serial copy management system (SCMS)", "SCMS");
+
+    public static readonly IReadOnlyCollection<Flag> AvailableFlags;
+    static Flag()
     {
-        /// <summary>
-        /// 4CH (Four channel audio)
-        /// </summary>
-        public static readonly Flag FourCH = new("4 channel audio (4CH)", "4CH");
-        /// <summary>
-        /// DCP (Digital copy permitted)
-        /// </summary>
-        public static readonly Flag DCP = new("Digital copy permitted (DCP)", "DCP");
-        /// <summary>
-        /// PRE (Pre-emphasis enabled)
-        /// </summary>
-        public static readonly Flag PRE = new("Pre-emphasis enabled (PRE)", "PRE");
-        /// <summary>
-        /// SCMS (Serial copy management system)
-        /// </summary>
-        public static readonly Flag SCMS = new("Serial copy management system (SCMS)", "SCMS");
-
-        public static readonly IReadOnlyCollection<Flag> AvailableFlags;
-        static Flag()
+        var list = new List<Flag>
         {
-            var list = new List<Flag>
-            {
-                FourCH,
-                DCP,
-                PRE,
-                SCMS
-            };
-            AvailableFlags = list.AsReadOnly();
-        }
+            FourCH,
+            DCP,
+            PRE,
+            SCMS
+        };
+        AvailableFlags = list.AsReadOnly();
+    }
 
-        public String Name { get; private set; }
-        public String CuesheetLabel { get; private set; }
-        private Flag(String name, String cuesheetLabel)
+    public string Name { get; private set; }
+    public string CuesheetLabel { get; private set; }
+    Flag(string name, string cuesheetLabel)
+    {
+        if (string.IsNullOrEmpty(name) == true)
         {
-            if (String.IsNullOrEmpty(name) == true)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-            if (String.IsNullOrEmpty(cuesheetLabel) == true)
-            {
-                throw new ArgumentNullException(nameof(cuesheetLabel));
-            }
-            Name = name;
-            CuesheetLabel = cuesheetLabel;
+            throw new ArgumentNullException(nameof(name));
         }
+        if (string.IsNullOrEmpty(cuesheetLabel) == true)
+        {
+            throw new ArgumentNullException(nameof(cuesheetLabel));
+        }
+        Name = name;
+        CuesheetLabel = cuesheetLabel;
     }
 }

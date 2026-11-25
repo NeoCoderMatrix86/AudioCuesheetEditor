@@ -16,28 +16,28 @@
 using AudioCuesheetEditor.End2EndTests.Models;
 using Microsoft.Playwright;
 
-namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
+namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop;
+
+[TestClass]
+public class TracingTest : PlaywrightTestBase
 {
-    [TestClass]
-    public class TracingTest : PlaywrightTestBase
+    [TestMethod]
+    public async Task UndoRedo_ShouldRestoreTrackState_WhenUndoAndRedoAreUsed()
     {
-        [TestMethod]
-        public async Task UndoRedo_ShouldRestoreTrackState_WhenUndoAndRedoAreUsed()
-        {
-            var bar = new AppBar(TestPage);
-            var detailView = new DetailView(TestPage);
-            await detailView.GotoAsync();
-            await detailView.AddAudiofileAsync();
-            await detailView.AddTrackAsync(0);
-            await detailView.EditTrackAsync("Test Artist 1");
-            await Expect(bar.UndoButton).ToBeEnabledAsync();
-            await Expect(bar.RedoButton).ToBeDisabledAsync();
-            await detailView.EditTrackAsync(title: "Test Title 1");
-            await Expect(bar.UndoButton).ToBeEnabledAsync();
-            await Expect(bar.RedoButton).ToBeDisabledAsync();
-            await bar.UndoAsync();
-            await bar.UndoAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+        var bar = new AppBar(TestPage);
+        var detailView = new DetailView(TestPage);
+        await detailView.GotoAsync();
+        await detailView.AddAudiofileAsync();
+        await detailView.AddTrackAsync(0);
+        await detailView.EditTrackAsync("Test Artist 1");
+        await Expect(bar.UndoButton).ToBeEnabledAsync();
+        await Expect(bar.RedoButton).ToBeDisabledAsync();
+        await detailView.EditTrackAsync(title: "Test Title 1");
+        await Expect(bar.UndoButton).ToBeEnabledAsync();
+        await Expect(bar.RedoButton).ToBeDisabledAsync();
+        await bar.UndoAsync();
+        await bar.UndoAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
     - 'row ""Select all rows # Artist Title Begin End Length Status""':
       - columnheader ""Select all rows"":
@@ -70,10 +70,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - cell
   - rowgroup:
     - row");
-            await Expect(bar.RedoButton).ToBeEnabledAsync();
-            await bar.RedoAsync();
-            await bar.RedoAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+        await Expect(bar.RedoButton).ToBeEnabledAsync();
+        await bar.RedoAsync();
+        await bar.RedoAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
     - 'row ""Select all rows # Artist Title Begin End Length Status""':
       - columnheader ""Select all rows"":
@@ -108,8 +108,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - cell
   - rowgroup:
     - row");
-            await detailView.EditTrackAsync("Mozart", "Eine kleine Nachtmusik");
-            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+        await detailView.EditTrackAsync("Mozart", "Eine kleine Nachtmusik");
+        await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
     - 'row ""Select all rows # Artist Title Begin End Length Status""':
       - columnheader ""Select all rows"":
@@ -144,8 +144,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - cell
   - rowgroup:
     - row");
-            await bar.UndoAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+        await bar.UndoAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
     - 'row ""Select all rows # Artist Title Begin End Length Status""':
       - columnheader ""Select all rows"":
@@ -180,19 +180,19 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - cell
   - rowgroup:
     - row");
-        }
+    }
 
-        [TestMethod]
-        public async Task UndoRedo_ShouldRestoreTrackState_WhenModalEdit()
-        {
-            var bar = new AppBar(TestPage);
-            var detailView = new DetailView(TestPage);
-            await detailView.GotoAsync();
-            await detailView.AddAudiofileAsync();
-            await detailView.AddTrackAsync(0);
-            await detailView.SelectTracksAsync([1]);
-            await detailView.EditTracksModalAsync("Test Track Artist 1", "Test Track Title 1", "00:02:23", ["channel audio (4CH)", "Serial copy management system"]);
-            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+    [TestMethod]
+    public async Task UndoRedo_ShouldRestoreTrackState_WhenModalEdit()
+    {
+        var bar = new AppBar(TestPage);
+        var detailView = new DetailView(TestPage);
+        await detailView.GotoAsync();
+        await detailView.AddAudiofileAsync();
+        await detailView.AddTrackAsync(0);
+        await detailView.SelectTracksAsync([1]);
+        await detailView.EditTracksModalAsync("Test Track Artist 1", "Test Track Title 1", "00:02:23", ["channel audio (4CH)", "Serial copy management system"]);
+        await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
     - 'row ""Select all rows # Artist Title Begin End Length Status""':
       - columnheader ""Select all rows"":
@@ -227,8 +227,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - cell
   - rowgroup:
     - row");
-            await bar.UndoAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+        await bar.UndoAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
     - 'row ""Select all rows # Artist Title Begin End Length Status""':
       - columnheader ""Select all rows"":
@@ -261,8 +261,8 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - cell
   - rowgroup:
     - row");
-            await bar.RedoAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+        await bar.RedoAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
     - 'row ""Select all rows # Artist Title Begin End Length Status""':
       - columnheader ""Select all rows"":
@@ -297,32 +297,32 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - cell
   - rowgroup:
     - row");
-        }
+    }
 
-        [TestMethod]
-        public async Task UndoRedo_ShouldRestoreCuesheet_WhenUsingImport()
-        {
-            var bar = new AppBar(TestPage);
-            var importView = new ImportView(TestPage, DeviceName != null);
-            await importView.GotoAsync();
-            await importView.ImportFileAsync("Textimport with Cuesheetdata.txt");
-            await importView.SetSchemeCommonDataAsync("Artist - Title - ");
-            await importView.SelectSchemeCommonDataPlaceholderAsync("Cataloguenumber");
-            await importView.ClearSchemeAudiofilesAsync();
-            await importView.Analyze();
-            await Expect(bar.UndoButton).ToBeDisabledAsync();
-            await Expect(bar.RedoButton).ToBeDisabledAsync();
-            await importView.CompleteImportAsync();
-            await Expect(bar.UndoButton).ToBeEnabledAsync();
-            await Expect(bar.RedoButton).ToBeDisabledAsync();
-            await bar.UndoAsync();
-            await Expect(bar.UndoButton).ToBeDisabledAsync();
-            await Expect(bar.RedoButton).ToBeEnabledAsync();
-            await bar.RedoAsync();
-            await Expect(importView.CuesheetArtistInput).ToHaveValueAsync("DJFreezeT");
-            await Expect(importView.CuesheetTitleInput).ToHaveValueAsync("Rabbit Hole Mix");
-            await Expect(importView.CatalogueNumberInput).ToHaveValueAsync("01 23456 78912 3");
-            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+    [TestMethod]
+    public async Task UndoRedo_ShouldRestoreCuesheet_WhenUsingImport()
+    {
+        var bar = new AppBar(TestPage);
+        var importView = new ImportView(TestPage, DeviceName != null);
+        await importView.GotoAsync();
+        await importView.ImportFileAsync("Textimport with Cuesheetdata.txt");
+        await importView.SetSchemeCommonDataAsync("Artist - Title - ");
+        await importView.SelectSchemeCommonDataPlaceholderAsync("Cataloguenumber");
+        await importView.ClearSchemeAudiofilesAsync();
+        await importView.Analyze();
+        await Expect(bar.UndoButton).ToBeDisabledAsync();
+        await Expect(bar.RedoButton).ToBeDisabledAsync();
+        await importView.CompleteImportAsync();
+        await Expect(bar.UndoButton).ToBeEnabledAsync();
+        await Expect(bar.RedoButton).ToBeDisabledAsync();
+        await bar.UndoAsync();
+        await Expect(bar.UndoButton).ToBeDisabledAsync();
+        await Expect(bar.RedoButton).ToBeEnabledAsync();
+        await bar.RedoAsync();
+        await Expect(importView.CuesheetArtistInput).ToHaveValueAsync("DJFreezeT");
+        await Expect(importView.CuesheetTitleInput).ToHaveValueAsync("Rabbit Hole Mix");
+        await Expect(importView.CatalogueNumberInput).ToHaveValueAsync("01 23456 78912 3");
+        await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
     - 'row ""Select all rows # Artist Title Begin End Length Status""':
       - columnheader ""Select all rows"":
@@ -1155,21 +1155,21 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - button
   - rowgroup:
     - row");
-        }
+    }
 
-        [TestMethod]
-        public async Task UndoRedo_ShouldRestoreTrackState_WhenUndoWithAudiofile()
-        {
-            var bar = new AppBar(TestPage);
-            var detailView = new DetailView(TestPage);
-            await detailView.GotoAsync();
-            await detailView.AddAudiofileAsync();
-            await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
-            await detailView.AddTrackAsync(0);
-            await detailView.AddTrackAsync(0);
-            await Expect(bar.UndoButton).ToBeEnabledAsync();
-            await Expect(bar.RedoButton).ToBeDisabledAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+    [TestMethod]
+    public async Task UndoRedo_ShouldRestoreTrackState_WhenUndoWithAudiofile()
+    {
+        var bar = new AppBar(TestPage);
+        var detailView = new DetailView(TestPage);
+        await detailView.GotoAsync();
+        await detailView.AddAudiofileAsync();
+        await detailView.SetAudiofileInputFileAsync(0, "Kalimba.mp3");
+        await detailView.AddTrackAsync(0);
+        await detailView.AddTrackAsync(0);
+        await Expect(bar.UndoButton).ToBeEnabledAsync();
+        await Expect(bar.RedoButton).ToBeDisabledAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
     - 'row ""Select all rows # Artist Title Begin End Length Status""':
       - columnheader ""Select all rows"":
@@ -1221,10 +1221,10 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
         - button
   - rowgroup:
     - row");
-            await bar.UndoAsync();
-            await Expect(bar.UndoButton).ToBeEnabledAsync();
-            await Expect(bar.RedoButton).ToBeEnabledAsync();
-            await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
+        await bar.UndoAsync();
+        await Expect(bar.UndoButton).ToBeEnabledAsync();
+        await Expect(bar.RedoButton).ToBeEnabledAsync();
+        await Expect(TestPage.GetByRole(AriaRole.Table)).ToMatchAriaSnapshotAsync(@"- table:
   - rowgroup:
     - 'row ""Select all rows # Artist Title Begin End Length Status""':
       - columnheader ""Select all rows"":
@@ -1257,6 +1257,5 @@ namespace AudioCuesheetEditor.End2EndTests.Tests.Desktop
       - cell
   - rowgroup:
     - row");
-        }
     }
 }

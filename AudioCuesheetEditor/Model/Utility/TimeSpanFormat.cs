@@ -14,114 +14,112 @@
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
 using AudioCuesheetEditor.Model.Entity;
+using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace AudioCuesheetEditor.Model.Utility
+namespace AudioCuesheetEditor.Model.Utility;
+
+public class TimeSpanFormat : Validateable
 {
-    public class TimeSpanFormat : Validateable
+    public const string Days = "Days";
+    public const string Hours = "Hours";
+    public const string Minutes = "Minutes";
+    public const string Seconds = "Seconds";
+    public const string Milliseconds = "Milliseconds";
+
+    public static readonly IEnumerable<string> AvailableTimespanScheme;
+
+    static TimeSpanFormat()
     {
-        public const String Days = "Days";
-        public const String Hours = "Hours";
-        public const String Minutes = "Minutes";
-        public const String Seconds = "Seconds";
-        public const String Milliseconds = "Milliseconds";
+        AvailableTimespanScheme = [Days, Hours, Minutes, Seconds, Milliseconds];
+    }
 
-        public static readonly IEnumerable<String> AvailableTimespanScheme;
+    public event EventHandler? SchemeChanged;
 
-        static TimeSpanFormat()
+    public string? Scheme
+    {
+        get;
+        set
         {
-            AvailableTimespanScheme = [Days, Hours, Minutes, Seconds, Milliseconds];
+            field = value;
+            SchemeChanged?.Invoke(this, EventArgs.Empty);
+            OnValidateablePropertyChanged();
         }
+    }
 
-        public event EventHandler? SchemeChanged;
-
-        private string? scheme;
-
-        public String? Scheme
+    public TimeSpan? ParseTimeSpan(string input)
+    {
+        TimeSpan? timespan = null;
+        if ((string.IsNullOrEmpty(Scheme) == false) && (string.IsNullOrEmpty(input) == false))
         {
-            get => scheme;
-            set
+            var pattern = CreateFlexibleRegexPattern(Scheme);
+            var match = Regex.Match(input, pattern);
+            if (match.Success)
             {
-                scheme = value;
-                SchemeChanged?.Invoke(this, EventArgs.Empty);
-                OnValidateablePropertyChanged();
-            }
-        }
-
-        public TimeSpan? ParseTimeSpan(String input)
-        {
-            TimeSpan? timespan = null;
-            if ((String.IsNullOrEmpty(Scheme) == false) && (String.IsNullOrEmpty(input) == false))
-            {
-                var pattern = CreateFlexibleRegexPattern(Scheme);
-                var match = Regex.Match(input, pattern);
-                if (match.Success)
+                int days = 0, hours = 0, minutes = 0, seconds = 0, milliseconds = 0;
+                foreach (var groupName in match.Groups.Keys)
                 {
-                    int days = 0, hours = 0, minutes = 0, seconds = 0, milliseconds = 0;
-                    foreach (var groupName in match.Groups.Keys)
+                    switch (groupName)
                     {
-                        switch (groupName)
-                        {
-                            case nameof(Days):
-                                days = Convert.ToInt32(match.Groups[groupName].Value);
-                                break;
-                            case nameof(Hours):
-                                hours = Convert.ToInt32(match.Groups[groupName].Value);
-                                break;
-                            case nameof(Minutes):
-                                minutes = Convert.ToInt32(match.Groups[groupName].Value);
-                                break;
-                            case nameof(Seconds):
-                                seconds = Convert.ToInt32(match.Groups[groupName].Value);
-                                break;
-                            case nameof(Milliseconds):
-                                milliseconds = Convert.ToInt32(match.Groups[groupName].Value);
-                                break;
-                        }
+                        case nameof(Days):
+                            days = Convert.ToInt32(match.Groups[groupName].Value, CultureInfo.CurrentCulture);
+                            break;
+                        case nameof(Hours):
+                            hours = Convert.ToInt32(match.Groups[groupName].Value, CultureInfo.CurrentCulture);
+                            break;
+                        case nameof(Minutes):
+                            minutes = Convert.ToInt32(match.Groups[groupName].Value, CultureInfo.CurrentCulture);
+                            break;
+                        case nameof(Seconds):
+                            seconds = Convert.ToInt32(match.Groups[groupName].Value, CultureInfo.CurrentCulture);
+                            break;
+                        case nameof(Milliseconds):
+                            milliseconds = Convert.ToInt32(match.Groups[groupName].Value, CultureInfo.CurrentCulture);
+                            break;
                     }
-                    timespan = new TimeSpan(days, hours, minutes, seconds, milliseconds);
                 }
+                timespan = new TimeSpan(days, hours, minutes, seconds, milliseconds);
             }
-            return timespan;
         }
+        return timespan;
+    }
 
-        public override ValidationResult Validate(string property)
+    public override ValidationResult Validate(string propertyName)
+    {
+        var validationStatus = ValidationStatus.NoValidation;
+        List<ValidationMessage>? validationMessages = null;
+        switch (propertyName)
         {
-            ValidationStatus validationStatus = ValidationStatus.NoValidation;
-            List<ValidationMessage>? validationMessages = null;
-            switch (property)
-            {
-                case nameof(Scheme):
-                    validationStatus = ValidationStatus.Success;
-                    if (String.IsNullOrEmpty(Scheme) == false)
+            case nameof(Scheme):
+                validationStatus = ValidationStatus.Success;
+                if (string.IsNullOrEmpty(Scheme) == false)
+                {
+                    if ((Scheme.Contains(Days) == false)
+                        && (Scheme.Contains(Hours) == false)
+                        && (Scheme.Contains(Minutes) == false)
+                        && (Scheme.Contains(Seconds) == false)
+                        && (Scheme.Contains(Milliseconds) == false))
                     {
-                        if ((Scheme.Contains(Days) == false)
-                            && (Scheme.Contains(Hours) == false)
-                            && (Scheme.Contains(Minutes) == false)
-                            && (Scheme.Contains(Seconds) == false)
-                            && (Scheme.Contains(Milliseconds) == false))
-                        {
-                            validationMessages ??= [];
-                            validationMessages.Add(new ValidationMessage("{0} contains no placeholder!", nameof(Scheme)));
-                        }
+                        validationMessages ??= [];
+                        validationMessages.Add(new ValidationMessage("{0} contains no placeholder!", nameof(Scheme)));
                     }
-                    break;
-            }
-            return ValidationResult.Create(validationStatus, validationMessages);
+                }
+                break;
         }
+        return ValidationResult.Create(validationStatus, validationMessages);
+    }
 
-        private static string CreateFlexibleRegexPattern(string scheme)
-        {
-            var regex = Regex.Escape(scheme);
+    static string CreateFlexibleRegexPattern(string scheme)
+    {
+        var regex = Regex.Escape(scheme);
 
-            regex = regex.Replace(Days, $"(?<{nameof(Days)}>\\d+)");
-            regex = regex.Replace(Hours, $"(?<{nameof(Hours)}>\\d+)");
-            regex = regex.Replace(Minutes, $"(?<{nameof(Minutes)}>\\d+)");
-            regex = regex.Replace(Seconds, $"(?<{nameof(Seconds)}>\\d+)");
-            regex = regex.Replace(Milliseconds, $"(?<{nameof(Milliseconds)}>\\d+)");
-            regex = regex.Replace(@"\\:", @"[\s|:.,-]?");
+        regex = regex.Replace(Days, $"(?<{nameof(Days)}>\\d+)");
+        regex = regex.Replace(Hours, $"(?<{nameof(Hours)}>\\d+)");
+        regex = regex.Replace(Minutes, $"(?<{nameof(Minutes)}>\\d+)");
+        regex = regex.Replace(Seconds, $"(?<{nameof(Seconds)}>\\d+)");
+        regex = regex.Replace(Milliseconds, $"(?<{nameof(Milliseconds)}>\\d+)");
+        regex = regex.Replace(@"\\:", @"[\s|:.,-]?");
 
-            return $"^{regex}$";
-        }
+        return $"^{regex}$";
     }
 }

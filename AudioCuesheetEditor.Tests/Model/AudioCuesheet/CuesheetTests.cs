@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -18,75 +18,74 @@ using AudioCuesheetEditor.Model.Entity;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 
-namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet
+namespace AudioCuesheetEditor.Tests.Model.AudioCuesheet;
+
+[TestClass()]
+public class CuesheetTests
 {
-    [TestClass()]
-    public class CuesheetTests
+    [TestMethod]
+    public void Validate_AudiofilesEmpty_ReturnsValidationStatusError()
     {
-        [TestMethod]
-        public void Validate_AudiofilesEmpty_ReturnsValidationStatusError()
-        {
-            // Arrange
-            var cuesheet = new Cuesheet();
-            // Act
-            var validationResult = cuesheet.Validate(nameof(Cuesheet.Audiofiles));
-            // Assert
-            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
-        }
+        // Arrange
+        var cuesheet = new Cuesheet();
+        // Act
+        var validationResult = cuesheet.Validate(nameof(Cuesheet.Audiofiles));
+        // Assert
+        Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+    }
 
-        [TestMethod]
-        public void Validate_ArtistNull_ReturnsValidationStatusError()
-        {
-            // Arrange
-            var cuesheet = new Cuesheet();
-            // Act
-            var validationResult = cuesheet.Validate(nameof(Cuesheet.Artist));
-            // Assert
-            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
-        }
+    [TestMethod]
+    public void Validate_ArtistNull_ReturnsValidationStatusError()
+    {
+        // Arrange
+        var cuesheet = new Cuesheet();
+        // Act
+        var validationResult = cuesheet.Validate(nameof(Cuesheet.Artist));
+        // Assert
+        Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+    }
 
-        [TestMethod]
-        public void Validate_TitleNull_ReturnsValidationStatusError()
-        {
-            // Arrange
-            var cuesheet = new Cuesheet();
-            // Act
-            var validationResult = cuesheet.Validate(nameof(Cuesheet.Title));
-            // Assert
-            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
-        }
+    [TestMethod]
+    public void Validate_TitleNull_ReturnsValidationStatusError()
+    {
+        // Arrange
+        var cuesheet = new Cuesheet();
+        // Act
+        var validationResult = cuesheet.Validate(nameof(Cuesheet.Title));
+        // Assert
+        Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+    }
 
-        [TestMethod]
-        public void Validate_CataloguenumberWithLetters_ReturnsValidationStatusError()
+    [TestMethod]
+    public void Validate_CataloguenumberWithLetters_ReturnsValidationStatusError()
+    {
+        // Arrange
+        var cuesheet = new Cuesheet()
         {
-            // Arrange
-            var cuesheet = new Cuesheet()
-            {
-                Cataloguenumber = nameof(Validate_CataloguenumberWithLetters_ReturnsValidationStatusError)
-            };
-            // Act
-            var validationResult = cuesheet.Validate(nameof(Cuesheet.Cataloguenumber));
-            // Assert
-            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
-            Assert.AreEqual("{0} must only contain numbers!", validationResult.ValidationMessages.First().Message);
-            Assert.AreEqual(nameof(Cuesheet.Cataloguenumber), validationResult.ValidationMessages.First().Parameter?.First().ToString());
-        }
+            Cataloguenumber = nameof(Validate_CataloguenumberWithLetters_ReturnsValidationStatusError)
+        };
+        // Act
+        var validationResult = cuesheet.Validate(nameof(Cuesheet.Cataloguenumber));
+        // Assert
+        Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+        Assert.AreEqual("{0} must only contain numbers!", validationResult.ValidationMessages.First().Message);
+        Assert.AreEqual(nameof(Cuesheet.Cataloguenumber), validationResult.ValidationMessages.First().Parameter?.First().ToString());
+    }
 
-        [TestMethod]
-        public void Validate_CataloguenumberLengthUnequal13_ReturnsValidationStatusError()
+    [TestMethod]
+    public void Validate_CataloguenumberLengthUnequal13_ReturnsValidationStatusError()
+    {
+        // Arrange
+        var cuesheet = new Cuesheet()
         {
-            // Arrange
-            var cuesheet = new Cuesheet()
-            {
-                Cataloguenumber = "012345678"
-            };
-            // Act
-            var validationResult = cuesheet.Validate(nameof(Cuesheet.Cataloguenumber));
-            // Assert
-            Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
-            Assert.AreEqual("{0} has an invalid length. Allowed length is {1}!", validationResult.ValidationMessages.First().Message);
-            Assert.AreEqual(nameof(Cuesheet.Cataloguenumber), validationResult.ValidationMessages.First().Parameter?.First().ToString());
-            Assert.AreEqual(13, validationResult.ValidationMessages.First().Parameter?.Last());
-        }
+            Cataloguenumber = "012345678"
+        };
+        // Act
+        var validationResult = cuesheet.Validate(nameof(Cuesheet.Cataloguenumber));
+        // Assert
+        Assert.AreEqual(ValidationStatus.Error, validationResult.Status);
+        Assert.AreEqual("{0} has an invalid length. Allowed length is {1}!", validationResult.ValidationMessages.First().Message);
+        Assert.AreEqual(nameof(Cuesheet.Cataloguenumber), validationResult.ValidationMessages.First().Parameter?.First().ToString());
+        Assert.AreEqual(13, validationResult.ValidationMessages.First().Parameter?.Last());
     }
 }

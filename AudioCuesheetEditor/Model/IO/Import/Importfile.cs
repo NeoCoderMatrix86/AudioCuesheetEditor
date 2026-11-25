@@ -16,18 +16,17 @@
 using AudioCuesheetEditor.Model.AudioCuesheet.Import;
 using AudioCuesheetEditor.Services.IO;
 
-namespace AudioCuesheetEditor.Model.IO.Import
+namespace AudioCuesheetEditor.Model.IO.Import;
+
+public class Importfile : IImportfile
 {
-    public class Importfile : IImportfile
-    {
-        /// <inheritdoc />
-        public Exception? AnalyseException { get; set; }
-        /// <inheritdoc />
-        public ImportCuesheet? AnalyzedCuesheet { get; set; }
-        public ImportFileType FileType { get; set; }
-        /// <inheritdoc />
-        public string? FileContentRecognized { get; set; }
-        /// <inheritdoc />
-        public string? FileContent { get; set; }
-    }
+    /// <inheritdoc />
+    public Exception? AnalyseException { get; set; }
+    /// <inheritdoc />
+    public ImportCuesheet? AnalyzedCuesheet { get; set; }
+    public ImportFileType FileType { get; set; }
+    /// <inheritdoc />
+    public string? FileContentRecognized { get; set; }
+    /// <inheritdoc />
+    public string? FileContent { get; set; }
 }

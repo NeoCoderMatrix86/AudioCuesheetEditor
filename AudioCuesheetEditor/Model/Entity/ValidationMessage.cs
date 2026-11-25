@@ -15,42 +15,41 @@
 //<http: //www.gnu.org/licenses />.
 using Microsoft.Extensions.Localization;
 
-namespace AudioCuesheetEditor.Model.Entity
-{
-    public class ValidationMessage
-    {
-        public ValidationMessage(String message, params object[]? args)
-        {
-            if (String.IsNullOrEmpty(message) == true)
-            {
-                throw new ArgumentNullException(nameof(message));
-            }
-            Message = message;
-            Parameter = args;
-        }
-        public String Message { get; private set; }
-        public object[]? Parameter { get; private set; }
+namespace AudioCuesheetEditor.Model.Entity;
 
-        public String GetMessageLocalized(IStringLocalizer<ValidationMessage> localizer)
+public class ValidationMessage
+{
+    public ValidationMessage(string message, params object[]? args)
+    {
+        if (string.IsNullOrEmpty(message) == true)
         {
-            object[]? arguments = null;
-            if (Parameter != null)
-            {
-                arguments = new object[Parameter.Length];
-                Parameter.CopyTo(arguments, 0);
-            }
-            if (arguments != null)
-            {
-                for (int i = 0; i < arguments.Length; i++)
-                {
-                    if ((arguments[i] != null) && (arguments[i].GetType() == typeof(String)))
-                    {
-                        arguments[i] = localizer[(String)arguments[i]];
-                    }
-                }
-                return localizer[Message, arguments];
-            }
-            return localizer[Message];
+            throw new ArgumentNullException(nameof(message));
         }
+        Message = message;
+        Parameter = args;
+    }
+    public string Message { get; private set; }
+    public object[]? Parameter { get; private set; }
+
+    public string GetMessageLocalized(IStringLocalizer<ValidationMessage> localizer)
+    {
+        object[]? arguments = null;
+        if (Parameter != null)
+        {
+            arguments = new object[Parameter.Length];
+            Parameter.CopyTo(arguments, 0);
+        }
+        if (arguments != null)
+        {
+            for (var i = 0; i < arguments.Length; i++)
+            {
+                if ((arguments[i] != null) && (arguments[i].GetType() == typeof(string)))
+                {
+                    arguments[i] = localizer[(string)arguments[i]];
+                }
+            }
+            return localizer[Message, arguments];
+        }
+        return localizer[Message];
     }
 }

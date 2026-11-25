@@ -1,8 +1,10 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
-labels: 'unreviewed bug'
+title: ""
+labels: ["unreviewed"]
+type: Bug
+projects: ["NeoCoderMatrix86/2"]
 
 ---
 

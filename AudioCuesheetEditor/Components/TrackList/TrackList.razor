@@ -1,0 +1,309 @@
+<!--
+This file is part of AudioCuesheetEditor.
+
+AudioCuesheetEditor is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+AudioCuesheetEditor is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Foobar.  If not, see
+<http: //www.gnu.org/licenses />.
+-->
+@inherits BaseLocalizedComponent
+
+@inject IStringLocalizer<TrackList> _localizer
+@inject IStringLocalizer<ValidationMessage> _validationMessageLocalizer
+@inject ApplicationOptionsTimeSpanParser _applicationOptionsTimeSpanParser
+@inject AutocompleteManager _autocompleteManager
+@inject IDialogManager _editTrackModalManager
+@inject ValidationService _validationService
+@inject PlaybackService _playbackService
+@inject IDialogService _dialogService
+@inject IDialogManager _dialogManager
+@inject ITrackManager _trackManager
+@inject ICuesheetManager _cuesheetManager
+@inject ITraceChangeManager _traceChangeManager
+@inject IAudiofileManager _audiofileManager
+
+@switch (CurrentViewMode)
+{
+    case ViewMode.DetailView:
+    case ViewMode.ImportView:
+        <div aria-label="@_localizer["Track table controls"]">
+            <TrackListControlButtons AddButtonClicked="AddTrackClicked" EditSelectedTracksClicked="EditSelectedTracksClicked" EditSelectedTracksDisabled="_selectedTracks.Count == 0"
+                                     DeleteSelectedTracksClicked="DeleteSelectedTracksClicked" DeleteSelectedTracksDisabled="_selectedTracks.Count == 0"
+                                     DeleteAllTracksClicked="OnDeleteAllTracksClicked" DeleteAllTracksDisabled="Audiofile?.Tracks.Any() == false"
+                                     MoveTracksUpDisabled="!_cuesheetManager.IsMoveUpPossible(_selectedTracks)" MoveTracksUpClicked="() => _cuesheetManager.MoveUp(_selectedTracks)"
+                                     MoveTracksDownDisabled="!_cuesheetManager.IsMoveDownPossible(_selectedTracks)" MoveTracksDownClicked="() => _cuesheetManager.MoveDown(_selectedTracks)"
+                                     CopySelectedTracksDisabled="_selectedTracks.Count != 1" CopySelectedTracksClicked="() => CopyTrackClicked()"
+                                     FixedHeader="_fixedTableHeader" FixedHeaderClicked="() => _fixedTableHeader = !_fixedTableHeader" MoveTracksUpSeveralClicked="MoveTracksUpSeveralClicked"
+                                     MoveTracksDownSeveralClicked="MoveTracksDownSeveralClicked" />
+        </div>
+        break;
+}
+
+<MudForm @ref="_form">
+    <MudDataGrid T="Track" Items="Audiofile?.Tracks" ReadOnly="false" Bordered MultiSelection SelectOnRowClick="false" @bind-SelectedItems="_selectedTracks" EditTrigger="DataGridEditTrigger.OnRowClick"
+                 EditMode="DataGridEditMode.Cell" ColumnResizeMode="ResizeMode.Column" RowContextMenuClick="OpenMenuContent" Height="@(_fixedTableHeader == true ? "600px" : null)"
+                 FixedHeader="_fixedTableHeader" Validator="_form" Virtualize SortMode="SortMode.None">
+        <Columns>
+            <SelectColumn Hidden="CurrentViewMode == ViewMode.RecordView" />
+            <TemplateColumn Title="@_localizer["Controls"]" Hidden="CurrentViewMode != ViewMode.RecordView">
+                <EditTemplate>
+                    <MudIconButton Icon="@Icons.Material.Outlined.Delete" Variant="Variant.Filled" Color="Color.Error" OnClick="() => _audiofileManager.RemoveTracks(Audiofile!, [context.Item])" />
+                </EditTemplate>
+            </TemplateColumn>
+            <PropertyColumn Property="x => x.Position" Title="#" Editable="false" HeaderStyle="width: 1px;" />
+            <PropertyColumn Property="x => x.Artist" Title="@_localizer["Artist"]">
+                <EditTemplate>
+                    <ArtistColumn Track="context.Item" />
+                </EditTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Title" Title="@_localizer["Title"]">
+                <EditTemplate>
+                    <TitleColumn Track="context.Item" CurrentViewMode="CurrentViewMode" />
+                </EditTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Begin" Title="@_localizer["Begin"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
+                <CellTemplate>
+                    @_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Begin)
+                </CellTemplate>
+                <EditTemplate>
+                    <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Begin)" ValueChanged="(string value) => TimespanChanged(context.Item, x => x.Begin, value)"
+                                  Validation="(string? newBegin) => _validationService.Validate(context.Item, nameof(Track.Begin))" Style="width: 55px;" />
+                </EditTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Finish" Title="@_localizer["End"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
+                <CellTemplate>
+                    @_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Finish)
+                </CellTemplate>
+                <EditTemplate>
+                    <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Finish)" ValueChanged="(string value) => TimespanChanged(context.Item, x => x.Finish, value)"
+                                  Validation="(string? newEnd) => _validationService.Validate(context.Item, nameof(Track.Finish))" Style="width: 55px;" />
+                </EditTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="x => x.Length" Title="@_localizer["Length"]" Editable="CurrentViewMode != ViewMode.RecordView" HeaderStyle="width: 1px;">
+                <CellTemplate>
+                    @_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Length)
+                </CellTemplate>
+                <EditTemplate>
+                    <MudTextField Value="@_applicationOptionsTimeSpanParser.GetTimespanFormatted(context.Item.Length)" ValueChanged="(string value) => TimespanChanged(context.Item, x => x.Length, value)"
+                                  Validation="(string? newLength) => _validationService.Validate(context.Item, nameof(Track.Length))" Style="width: 55px;" />
+                </EditTemplate>
+            </PropertyColumn>
+            <TemplateColumn Title="@_localizer["Status"]" Hidden="CurrentViewMode != ViewMode.DetailView" HeaderStyle="width: 1px;">
+                <EditTemplate>
+                    @if (Audiofile?.Tracks.FirstOrDefault() != context.Item)
+                    {
+                        <MudTooltip Text="@GetLinkedTrackTooltip(context.Item)">
+                            <MudChip Icon="@GetLinkedTrackIcon(context.Item)" Color="Color.Secondary" OnClick="() => _trackManager.SetProperty(context.Item, x => x.IsLinkedToPreviousTrack, !context.Item.IsLinkedToPreviousTrack)" />
+                        </MudTooltip>
+                    }
+                </EditTemplate>
+            </TemplateColumn>
+        </Columns>
+    </MudDataGrid>
+</MudForm>
+
+<MudMenu PositionAtCursor @ref="_trackContextMenu">
+    @if (_contextMenuTrack != null)
+    {
+        <MudMenuItem Icon="@Icons.Material.Outlined.PlayArrow" Disabled="_playbackService.IsPlaybackPossible == false" OnClick="() => _playbackService.PlayAsync(_contextMenuTrack)">@_localizer["Start playback of this track"]</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Outlined.CopyAll" OnClick="() => CopyTrackClicked(_contextMenuTrack)">@_localizer["Duplicate this track"]</MudMenuItem>
+    }
+</MudMenu>
+
+@code {
+    HashSet<Track> _selectedTracks = new();
+    MudMenu? _trackContextMenu;
+    Track? _contextMenuTrack;
+    ApplicationOptions? _applicationOptions;
+    MudForm? _form;
+    Boolean _fixedTableHeader = false;
+
+    [Parameter]
+    [EditorRequired]
+    public Audiofile? Audiofile { get; set; }
+
+    [CascadingParameter]
+    public ViewMode CurrentViewMode { get; set; }
+
+    protected override void Dispose(bool disposing)
+    {
+        base.Dispose(disposing);
+        base.LocalStorageOptionsProvider.OptionSaved -= LocalStorageOptionsProvider_OptionSaved;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _applicationOptions = await base.LocalStorageOptionsProvider.GetOptionsAsync<ApplicationOptions>();
+        base.LocalStorageOptionsProvider.OptionSaved += LocalStorageOptionsProvider_OptionSaved;
+    }
+
+    void AddTrackClicked()
+    {
+        var newTrack = new Track()
+        {
+            Audiofile = Audiofile,
+            IsLinkedToPreviousTrack = _applicationOptions!.DefaultIsLinkedToPreviousTrack
+        };
+        _audiofileManager.AddTrack(Audiofile!, newTrack);
+    }
+
+    async Task EditSelectedTracksClicked()
+    {
+        await _editTrackModalManager.ShowAndHandleModalEditDialogAsync(_selectedTracks);
+    }
+
+    void DeleteSelectedTracksClicked()
+    {
+        _audiofileManager.RemoveTracks(Audiofile!, _selectedTracks);
+        _selectedTracks.Clear();
+    }
+
+    async Task OnDeleteAllTracksClicked()
+    {
+        var parameters = new DialogParameters<ConfirmationDialog>
+        {
+            { x => x.ConfirmText, _localizer["Are you sure you want to remove all tracks?"] },
+        };
+        var dialog = await _dialogService.ShowAsync<ConfirmationDialog>(_localizer["Confirm"], parameters);
+        var result = await dialog.Result;
+        if (result?.Canceled == false)
+        {
+            _audiofileManager.RemoveTracks(Audiofile!, Audiofile!.Tracks);
+            _selectedTracks.Clear();
+        }
+    }
+
+    void TitleSelected(Track track, MusicBrainzTrack? musicBrainzTrack)
+    {
+        track.Title = musicBrainzTrack?.Title;
+        switch (CurrentViewMode)
+        {
+            case ViewMode.DetailView:
+            case ViewMode.ImportView:
+                if ((String.IsNullOrEmpty(track.Artist)) && (String.IsNullOrEmpty(musicBrainzTrack?.Artist) == false))
+                {
+                    track.Artist = musicBrainzTrack.Artist;
+                }
+                if ((track.Length.HasValue == false) && (musicBrainzTrack?.Length.HasValue == true))
+                {
+                    track.Length = musicBrainzTrack?.Length;
+                }
+                break;
+        }
+    }
+
+    async Task CopyTrackClicked(Track? trackToCopy = null)
+    {
+        var trackThatWillBeCopied = trackToCopy;
+        if (trackThatWillBeCopied == null)
+        {
+            trackThatWillBeCopied = _selectedTracks.FirstOrDefault();
+        }
+        if (trackThatWillBeCopied != null)
+        {
+            var copy = _trackManager.Clone(trackThatWillBeCopied);
+            copy.Position = (ushort?)(trackThatWillBeCopied.Position + 1);
+            copy.Begin = trackThatWillBeCopied.Finish;
+            copy.Finish = null;
+            _audiofileManager.AddTrack(Audiofile!, copy);
+            await EditTrackModalClicked(copy);
+        }
+    }
+
+    async Task EditTrackModalClicked(Track trackToEdit)
+    {
+        await _editTrackModalManager.ShowAndHandleModalEditDialogAsync([trackToEdit]);
+    }
+
+    async Task OpenMenuContent(DataGridRowClickEventArgs<Track> args)
+    {
+        _contextMenuTrack = args.Item;
+        if (_trackContextMenu != null)
+        {
+            await _trackContextMenu.OpenMenuAsync(args.MouseEventArgs);
+        }
+    }
+
+    String GetLinkedTrackIcon(Track track)
+    {
+        if (track.IsLinkedToPreviousTrack)
+        {
+            return @Icons.Material.Outlined.Height;
+        }
+        else
+        {
+            return @Icons.Material.Outlined.VerticalAlignCenter;
+        }
+    }
+
+    String GetLinkedTrackTooltip(Track track)
+    {
+        if (track.IsLinkedToPreviousTrack)
+        {
+            return _localizer["Unlink this track from previous track"];
+        }
+        else
+        {
+            return _localizer["Link this track to previous track"];
+        }
+    }
+
+    void LocalStorageOptionsProvider_OptionSaved(object? sender, IOptions option)
+    {
+        if (option is ApplicationOptions applicationOption)
+        {
+            _applicationOptions = applicationOption;
+            StateHasChanged();
+        }
+    }
+
+    async Task PositionChanged(Track track, ushort? newPosition)
+    {
+        track.Position = newPosition;
+        if (_form != null)
+        {
+            await _form.ValidateAsync();
+        }
+    }
+
+    async Task TimespanChanged(Track track, System.Linq.Expressions.Expression<Func<Track, TimeSpan?>> expression, String value)
+    {
+        var timeSpan = await _applicationOptionsTimeSpanParser.GetTimespanAsync(value);
+        _traceChangeManager.BulkEdit = true;
+        _trackManager.SetProperty<TimeSpan?>(track, expression, timeSpan);
+        _trackManager.RecalculateLinkedTracksProperties(track);
+        _traceChangeManager.BulkEdit = false;
+        if (_form != null)
+        {
+            await _form.ValidateAsync();
+        }
+    }
+
+    async Task MoveTracksUpSeveralClicked()
+    {
+        var result = await _dialogManager.ShowInputDialogAsync<uint>(@_localizer["Move tracks up"], @_localizer["Number of positions to move up"], @_localizer["Enter positions to move up"], 1);
+        if (result.IsSuccess)
+        {
+            _cuesheetManager.MoveUp(_selectedTracks, result.Value);
+        }
+    }
+
+    async Task MoveTracksDownSeveralClicked()
+    {
+        var result = await _dialogManager.ShowInputDialogAsync<uint>(@_localizer["Move tracks down"], @_localizer["Number of positions to move down"], @_localizer["Enter positions to move down"], 1);
+        if (result.IsSuccess)
+        {
+            _cuesheetManager.MoveDown(_selectedTracks, result.Value);
+        }
+    }
+}

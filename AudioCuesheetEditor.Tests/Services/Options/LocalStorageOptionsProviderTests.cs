@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -28,77 +28,76 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AudioCuesheetEditor.Tests.Services.Options
+namespace AudioCuesheetEditor.Tests.Services.Options;
+
+[TestClass()]
+public class LocalStorageOptionsProviderTests
 {
-    [TestClass()]
-    public class LocalStorageOptionsProviderTests
+    readonly LocalStorageOptionsProvider _service;
+    readonly Mock<IJSRuntime> _jsRuntime = new();
+    readonly Mock<IStringLocalizer<ValidationMessage>> _localizer = new();
+
+    public LocalStorageOptionsProviderTests()
     {
-        private readonly LocalStorageOptionsProvider _service;
-        private readonly Mock<IJSRuntime> _jsRuntime = new();
-        private readonly Mock<IStringLocalizer<ValidationMessage>> _localizer = new();
+        _service = new(_jsRuntime.Object, _localizer.Object);
+    }
 
-        public LocalStorageOptionsProviderTests()
+    [TestMethod]
+    public async Task SaveOptionsAsync_NonValidatableOptions_ReturnsSuccessAsync()
+    {
+        // Arrange
+        var options = new ExportOptions();
+        var eventRaised = false;
+        _service.OptionSaved += delegate
         {
-            _service = new(_jsRuntime.Object, _localizer.Object);
-        }
+            eventRaised = true;
+        };
+        // Act
+        var result = await _service.SaveOptionsAsync(options);
+        // Assert
+        Assert.IsTrue(result.IsSuccess);
+        Assert.IsTrue(eventRaised);
+    }
 
-        [TestMethod]
-        public async Task SaveOptionsAsync_NonValidatableOptions_ReturnsSuccessAsync()
+    [TestMethod]
+    public async Task SaveOptionsAsync_ValidOptions_ReturnsSuccessAsync()
+    {
+        // Arrange
+        var options = new DownloadOptions()
         {
-            // Arrange
-            var options = new ExportOptions();
-            Boolean eventRaised = false;
-            _service.OptionSaved += delegate
-            {
-                eventRaised = true;
-            };
-            // Act
-            var result = await _service.SaveOptionsAsync(options);
-            // Assert
-            Assert.IsTrue(result.IsSuccess);
-            Assert.IsTrue(eventRaised);
-        }
+            ProjectFilename = "Test.ace",
+            CuesheetFilename = "Test.cue"
+        };
+        var eventRaised = false;
+        _service.OptionSaved += delegate
+        {
+            eventRaised = true;
+        };
+        // Act
+        var result = await _service.SaveOptionsAsync(options);
+        // Assert
+        Assert.IsTrue(result.IsSuccess);
+        Assert.IsTrue(eventRaised);
+    }
 
-        [TestMethod]
-        public async Task SaveOptionsAsync_ValidOptions_ReturnsSuccessAsync()
+    [TestMethod]
+    public async Task SaveOptionsAsync_InvalidOptions_ReturnsFailureAsync()
+    {
+        // Arrange
+        var options = new DownloadOptions()
         {
-            // Arrange
-            var options = new DownloadOptions()
-            {
-                ProjectFilename = "Test.ace",
-                CuesheetFilename = "Test.cue"
-            };
-            Boolean eventRaised = false;
-            _service.OptionSaved += delegate
-            {
-                eventRaised = true;
-            };
-            // Act
-            var result = await _service.SaveOptionsAsync(options);
-            // Assert
-            Assert.IsTrue(result.IsSuccess);
-            Assert.IsTrue(eventRaised);
-        }
-
-        [TestMethod]
-        public async Task SaveOptionsAsync_InvalidOptions_ReturnsFailureAsync()
+            CuesheetFilename = null,
+            ProjectFilename = null
+        };
+        var eventRaised = false;
+        _service.OptionSaved += delegate
         {
-            // Arrange
-            var options = new DownloadOptions()
-            {
-                CuesheetFilename = null,
-                ProjectFilename = null
-            };
-            Boolean eventRaised = false;
-            _service.OptionSaved += delegate
-            {
-                eventRaised = true;
-            };
-            // Act
-            var result = await _service.SaveOptionsAsync(options);
-            // Assert
-            Assert.IsFalse(result.IsSuccess);
-            Assert.IsFalse(eventRaised);
-        }
+            eventRaised = true;
+        };
+        // Act
+        var result = await _service.SaveOptionsAsync(options);
+        // Assert
+        Assert.IsFalse(result.IsSuccess);
+        Assert.IsFalse(eventRaised);
     }
 }
