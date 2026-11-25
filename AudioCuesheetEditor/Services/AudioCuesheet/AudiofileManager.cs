@@ -13,14 +13,15 @@
 //You should have received a copy of the GNU General Public License
 //along with Foobar.  If not, see
 //<http: //www.gnu.org/licenses />.
+using System.Linq.Expressions;
+using System.Reflection;
 using AudioCuesheetEditor.Model.AudioCuesheet;
 using AudioCuesheetEditor.Model.IO.Audio;
 using AudioCuesheetEditor.Services.IO;
 using AudioCuesheetEditor.Services.UI;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
-using System.Linq.Expressions;
-using System.Reflection;
+using Toolbelt.Blazor.HotKeys2;
 
 namespace AudioCuesheetEditor.Services.AudioCuesheet;
 
@@ -41,7 +42,7 @@ public class AudiofileManager(IFileInputManager fileInputManager, ITraceChangeMa
         _traceChangeManager.BulkEdit = true;
         if (string.IsNullOrEmpty(audiofile.ObjectURL) == false)
         {
-            await ClearPropertiesAsync(audiofile, false);
+            await ClearPropertiesAsync(audiofile);
         }
         var codec = _fileInputManager.GetAudioCodec(browserFile.Name, browserFile.ContentType);
         var objectUrl = await _fileInputManager.GetObjectUrlAsync(browserFile);
@@ -64,9 +65,33 @@ public class AudiofileManager(IFileInputManager fileInputManager, ITraceChangeMa
     }
 
     /// <inheritdoc/>
-    public async Task ClearPropertiesAsync(Audiofile audiofile, bool setTracing = true)
+    public void SetProperties(Audiofile audiofile, Audiofile sourceFile)
     {
-        if (setTracing)
+        var runningInTransaction = _traceChangeManager.BulkEdit;
+        if (runningInTransaction == false)
+        {
+            _traceChangeManager.BulkEdit = true;
+        }
+        var codecChanged = SetValue(audiofile, x => x.AudioCodec, sourceFile.AudioCodec);
+        var nameChanged = SetValue(audiofile, x => x.Name, sourceFile.Name);
+        var objectUrlChanged = SetValue(audiofile, x => x.ObjectURL, sourceFile.ObjectURL);
+        var durationChanged = SetValue(audiofile, x => x.Duration, sourceFile.Duration);
+        SetLastTrackEnd(audiofile);
+        if (codecChanged || nameChanged || objectUrlChanged || durationChanged)
+        {
+            AudiofileChanged?.Invoke(this, audiofile);
+        }
+        if (runningInTransaction == false)
+        {
+            _traceChangeManager.BulkEdit = false;
+        }
+    }
+
+    /// <inheritdoc/>
+    public async Task ClearPropertiesAsync(Audiofile audiofile)
+    {
+        var runningInTransaction = _traceChangeManager.BulkEdit;
+        if (runningInTransaction == false)
         {
             _traceChangeManager.BulkEdit = true;
         }
@@ -78,7 +103,7 @@ public class AudiofileManager(IFileInputManager fileInputManager, ITraceChangeMa
         var nameChanged = SetValue(audiofile, x => x.Name, null);
         var objectUrlChanged = SetValue(audiofile, x => x.ObjectURL, null);
         var durationChanged = SetValue(audiofile, x => x.Duration, null);
-        if (setTracing)
+        if (runningInTransaction == false)
         {
             _traceChangeManager.BulkEdit = false;
             if (codecChanged || nameChanged || objectUrlChanged || durationChanged)

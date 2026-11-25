@@ -1,4 +1,4 @@
-﻿//This file is part of AudioCuesheetEditor.
+//This file is part of AudioCuesheetEditor.
 
 //AudioCuesheetEditor is free software: you can redistribute it and/or modify
 //it under the terms of the GNU General Public License as published by
@@ -33,12 +33,17 @@ public interface IAudiofileManager
     /// <param name="browserFile"></param>
     Task SetPropertiesAsync(Audiofile audiofile, IBrowserFile browserFile);
     /// <summary>
+    /// Set properties from another audiofile
+    /// </summary>
+    /// <param name="audiofile"></param>
+    /// <param name="sourceFile">Source of the properties</param>
+    void SetProperties(Audiofile audiofile, Audiofile sourceFile);
+    /// <summary>
     /// Clear properties of an audiofile
     /// </summary>
     /// <param name="audiofile"></param>
-    /// <param name="setTracing">Parameter controlling if tracing should be handled by this service or by calling services</param>
     /// <returns></returns>
-    Task ClearPropertiesAsync(Audiofile audiofile, bool setTracing = true);
+    Task ClearPropertiesAsync(Audiofile audiofile);
     /// <summary>
     /// Set property for an audio file
     /// </summary>
